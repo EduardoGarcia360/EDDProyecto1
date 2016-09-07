@@ -7,154 +7,141 @@
     <x>0</x>
     <y>0</y>
     <width>1063</width>
-    <height>723</height>
+    <height>705</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>460</x>
-      <y>0</y>
-      <width>141</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Tablero Nivel 0</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>830</x>
-      <y>0</y>
-      <width>141</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Tablero Nivel 1</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>820</x>
-      <y>340</y>
-      <width>141</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Tablero Nivel 2</string>
-    </property>
-   </widget>
-   <widget class="QScrollArea" name="tablero0">
-    <property name="geometry">
-     <rect>
-      <x>380</x>
-      <y>30</y>
-      <width>301</width>
-      <height>271</height>
-     </rect>
-    </property>
-    <property name="widgetResizable">
-     <bool>true</bool>
-    </property>
-    <widget class="QWidget" name="scrollAreaWidgetContents">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>299</width>
-       <height>269</height>
-      </rect>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QScrollArea" name="tablero1">
-    <property name="geometry">
-     <rect>
-      <x>720</x>
-      <y>30</y>
-      <width>301</width>
-      <height>271</height>
-     </rect>
-    </property>
-    <property name="widgetResizable">
-     <bool>true</bool>
-    </property>
-    <widget class="QWidget" name="scrollAreaWidgetContents_2">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>299</width>
-       <height>269</height>
-      </rect>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QScrollArea" name="tablero2">
-    <property name="geometry">
-     <rect>
-      <x>740</x>
-      <y>370</y>
-      <width>301</width>
-      <height>271</height>
-     </rect>
-    </property>
-    <property name="widgetResizable">
-     <bool>true</bool>
-    </property>
-    <widget class="QWidget" name="scrollAreaWidgetContents_3">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>299</width>
-       <height>269</height>
-      </rect>
-     </property>
-    </widget>
-   </widget>
    <widget class="QTabWidget" name="cosa">
     <property name="geometry">
      <rect>
-      <x>12</x>
-      <y>29</y>
-      <width>341</width>
-      <height>321</height>
+      <x>10</x>
+      <y>0</y>
+      <width>1041</width>
+      <height>641</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
-      <string>Tab 1</string>
+      <string>Juego</string>
      </attribute>
-     <widget class="QLabel" name="label_4">
+     <widget class="QScrollArea" name="tablero0">
       <property name="geometry">
        <rect>
-        <x>230</x>
-        <y>110</y>
-        <width>67</width>
+        <x>370</x>
+        <y>30</y>
+        <width>301</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>299</width>
+         <height>269</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>10</y>
+        <width>141</width>
         <height>17</height>
        </rect>
       </property>
       <property name="text">
-       <string>mostrar</string>
+       <string>Tablero Nivel 0</string>
+      </property>
+     </widget>
+     <widget class="QScrollArea" name="tablero1">
+      <property name="geometry">
+       <rect>
+        <x>710</x>
+        <y>30</y>
+        <width>301</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents_2">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>299</width>
+         <height>269</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>820</x>
+        <y>10</y>
+        <width>141</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Tablero Nivel 1</string>
+      </property>
+     </widget>
+     <widget class="QScrollArea" name="tablero2">
+      <property name="geometry">
+       <rect>
+        <x>710</x>
+        <y>330</y>
+        <width>301</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents_3">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>299</width>
+         <height>269</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>820</x>
+        <y>310</y>
+        <width>141</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Tablero Nivel 2</string>
       </property>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
-      <string>Tab 2</string>
+      <string>Reportes</string>
      </attribute>
      <widget class="QLabel" name="label_5">
       <property name="geometry">
