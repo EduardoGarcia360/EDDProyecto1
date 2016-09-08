@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "QString"
+#include "QMessageBox"
 using namespace std;
 
 /*fichas*/
@@ -41,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     blanco.setColor(QPalette::Window, Qt::white);
     gris.setColor(QPalette::Window, Qt::gray);
 
-    ui->setupUi(this);
+    //ui->setupUi(this);
 
     fondo0 = new QLabel();
     fondo1 = new QLabel();
@@ -243,7 +245,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tablero1->setWidget(fondo1);
     ui->tablero2->setWidget(fondo2);
 
-    ui->label_5->setText("el papu");
+    //ui->label_5->setText("el papu");
 
     /*--------------MODIFICAR EL LABEL----------------
      * QLabel *ejemplo = new QLabel("algo para mostrar");
@@ -270,4 +272,9 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_btnmover_clicked()
+{
+    QMessageBox::information(this,"esta mierda","ya funciona");
 }
