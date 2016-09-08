@@ -284,20 +284,17 @@ void MainWindow::on_btnmover_clicked()
         ui->lblerror->setText("debes ingresar algo coño!");
     }else{
         QStringList arreglodato = dato.split("-");
-        /*
+
         for(int i=0;i<arreglodato.length(); i++){
-
+            /*recorro el arreglo y agrego los item*/
             ui->listamovimientos->addItem(arreglodato.value(i));
-
         }
-        */
-        QString uno = arreglodato.value(3);
-
-        //string algo = uno.toStdString();
-        //substr(posiciion inicio, cuantos caracteres mas a partir de)
-        //string pos = algo.substr(0,1);
-        //QString c = QString::fromLocal8Bit(pos.c_str());;
-        ui->listamovimientos->addItem(dato.at(4));
+        /*obtengo la posicion 2 ([0][1][2]) que contiene la casilla*/
+        QString uno = arreglodato.at(2);
+        /*en "uno" esta almacenada la posicion 2, luego retorno el primer
+         *caracter de "uno" de (C4) retorna (C)
+         * */
+        ui->listamovimientos->addItem(uno.at(0));
 
     }
 
