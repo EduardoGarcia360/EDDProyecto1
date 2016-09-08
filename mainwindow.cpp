@@ -47,117 +47,192 @@ MainWindow::MainWindow(QWidget *parent) :
     fondo1 = new QLabel();
     fondo2 = new QLabel();
 
-    /*creacion de tableros eje invertido (y,x)*/
-    for(int columna=1; columna<9; columna++){
-        for(int fila=1; fila<9; fila++){
+    for(int x=0; x<9; x++){
+        for(int y=0; y<9; y++){
+
             /*para tablero nivel 0*/
-            tab0[columna][fila] = new QLabel(fondo0);
-            tab0[columna][fila]->setGeometry(fila*32 ,columna*30,32,30); //ancho, alto
-            tab0[columna][fila]->setAutoFillBackground(true);
+            tab0[x][y] = new QLabel(fondo0);
+            tab0[x][y]->setGeometry(x*32,y*30,32,30); //ancho, alto
+            tab0[x][y]->setAutoFillBackground(true);
             /*para tablero nivel 1*/
-            tab1[columna][fila] = new QLabel(fondo1);
-            tab1[columna][fila]->setGeometry(fila*32 ,columna*30,32,30);
-            tab1[columna][fila]->setAutoFillBackground(true);
+            tab1[x][y] = new QLabel(fondo1);
+            tab1[x][y]->setGeometry(x*32 ,y*30,32,30);
+            tab1[x][y]->setAutoFillBackground(true);
             /*para tablero nivel 2*/
-            tab2[columna][fila] = new QLabel(fondo2);
-            tab2[columna][fila]->setGeometry(fila*32 ,columna*30,32,30);
-            tab2[columna][fila]->setAutoFillBackground(true);
-            /*coloreando cada casilla*/
-            if(fila==1 || fila==3 || fila==5 || fila==7){
-                if(columna==1 || columna==3 || columna==5 || columna==7){
-                    tab0[columna][fila]->setPalette(blanco);
-                    tab1[columna][fila]->setPalette(blanco);
-                    tab2[columna][fila]->setPalette(blanco);
-                }else{
-                    tab0[columna][fila]->setPalette(gris);
-                    tab1[columna][fila]->setPalette(gris);
-                    tab2[columna][fila]->setPalette(gris);
+            tab2[x][y] = new QLabel(fondo2);
+            tab2[x][y]->setGeometry(x*32 ,y*30,32,30);
+            tab2[x][y]->setAutoFillBackground(true);
+
+            /*colocando nombre de fila y columna*/
+            if(y==0){
+                /*colocando nombre a las columnas*/
+                if(x==1){
+                    tab0[x][y]->setText("1");
+                    tab1[x][y]->setText("1");
+                    tab2[x][y]->setText("1");
+                }else if(x==2){
+                    tab0[x][y]->setText("2");
+                    tab1[x][y]->setText("2");
+                    tab2[x][y]->setText("2");
+                }else if(x==3){
+                    tab0[x][y]->setText("3");
+                    tab1[x][y]->setText("3");
+                    tab2[x][y]->setText("3");
+                }else if(x==4){
+                    tab0[x][y]->setText("4");
+                    tab1[x][y]->setText("4");
+                    tab2[x][y]->setText("4");
+                }else if(x==5){
+                    tab0[x][y]->setText("5");
+                    tab1[x][y]->setText("5");
+                    tab2[x][y]->setText("5");
+                }else if(x==6){
+                    tab0[x][y]->setText("6");
+                    tab1[x][y]->setText("6");
+                    tab2[x][y]->setText("6");
+                }else if(x==7){
+                    tab0[x][y]->setText("7");
+                    tab1[x][y]->setText("7");
+                    tab2[x][y]->setText("7");
+                }else if(x==8){
+                    tab0[x][y]->setText("8");
+                    tab1[x][y]->setText("8");
+                    tab2[x][y]->setText("8");
+                }
+            }else if(x==0){
+                /*colocando nombre a las filas*/
+                if(y==1){
+                    tab0[x][y]->setText("H");
+                    tab1[x][y]->setText("H");
+                    tab2[x][y]->setText("H");
+                }else if(y==2){
+                    tab0[x][y]->setText("G");
+                    tab1[x][y]->setText("G");
+                    tab2[x][y]->setText("G");
+                }else if(y==3){
+                    tab0[x][y]->setText("F");
+                    tab1[x][y]->setText("F");
+                    tab2[x][y]->setText("F");
+                }else if(y==4){
+                    tab0[x][y]->setText("E");
+                    tab1[x][y]->setText("E");
+                    tab2[x][y]->setText("E");
+                }else if(y==5){
+                    tab0[x][y]->setText("D");
+                    tab1[x][y]->setText("D");
+                    tab2[x][y]->setText("D");
+                }else if(y==6){
+                    tab0[x][y]->setText("C");
+                    tab1[x][y]->setText("C");
+                    tab2[x][y]->setText("C");
+                }else if(y==7){
+                    tab0[x][y]->setText("B");
+                    tab1[x][y]->setText("B");
+                    tab2[x][y]->setText("B");
+                }else if(y==8){
+                    tab0[x][y]->setText("A");
+                    tab1[x][y]->setText("A");
+                    tab2[x][y]->setText("A");
                 }
             }else{
-                if(columna==1 || columna==3 || columna==5 || columna==7){
-                    tab0[columna][fila]->setPalette(gris);
-                    tab1[columna][fila]->setPalette(gris);
-                    tab2[columna][fila]->setPalette(gris);
+                /*coloreando cada casilla*/
+                if(y==1 || y==3 || y==5 || y==7){
+                    if(x==1 || x==3 || x==5 || x==7){
+                        tab0[x][y]->setPalette(blanco);
+                        tab1[x][y]->setPalette(blanco);
+                        tab2[x][y]->setPalette(blanco);
+                    }else{
+                        tab0[x][y]->setPalette(gris);
+                        tab1[x][y]->setPalette(gris);
+                        tab2[x][y]->setPalette(gris);
+                    }
                 }else{
-                    tab0[columna][fila]->setPalette(blanco);
-                    tab1[columna][fila]->setPalette(blanco);
-                    tab2[columna][fila]->setPalette(blanco);
+                    if(x==1 || x==3 || x==5 || x==7){
+                        tab0[x][y]->setPalette(gris);
+                        tab1[x][y]->setPalette(gris);
+                        tab2[x][y]->setPalette(gris);
+                    }else{
+                        tab0[x][y]->setPalette(blanco);
+                        tab1[x][y]->setPalette(blanco);
+                        tab2[x][y]->setPalette(blanco);
+                    }
                 }
             }
         } //fin for columna
     } //fin for fila
 
     /*agregando las piezas*/
-    for(int fila=1; fila<9; fila++){
-        for(int columna=1; columna<9; columna++){
+    for(int x=1; x<9; x++){
+        for(int y=1; y<9; y++){
             /*agregando fichas negras*/
-            if(fila==1){
-                if(columna==1){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(caballonegro));
-                    tab2[fila][columna]->setPixmap(QPixmap::fromImage(caballonegro));
-                }else if(columna==8){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(caballonegro));
-                    tab1[fila][columna]->setPixmap(QPixmap::fromImage(caballonegro));
-                }else if(columna==2){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(alfilnegro));
-                    tab2[fila][columna]->setPixmap(QPixmap::fromImage(alfilnegro));
-                }else if(columna==7){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(alfilnegro));
-                    tab1[fila][columna]->setPixmap(QPixmap::fromImage(alfilnegro));
-                }else if(columna==3){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(torrenegro));
-                    tab2[fila][columna]->setPixmap(QPixmap::fromImage(torrenegro));
-                }else if(columna==6){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(torrenegro));
-                    tab1[fila][columna]->setPixmap(QPixmap::fromImage(torrenegro));
-                }else if(columna==4){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(reynegro));
-                }else if(columna==5){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(damanegro));
+            if(y==1){
+                if(x==1){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
+                    tab2[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
+                }else if(x==8){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
+                    tab1[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
+                }else if(x==2){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
+                    tab2[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
+                }else if(x==7){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
+                    tab1[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
+                }else if(x==3){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
+                    tab2[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
+                }else if(x==6){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
+                    tab1[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
+                }else if(x==4){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(reynegro));
+                }else if(x==5){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(damanegro));
                 }
-            }else if(fila==2){
-                if(columna==1 || columna==2 || columna==3){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(peonnegro));
-                    tab2[fila][columna]->setPixmap(QPixmap::fromImage(peonnegro));
-                }else if(columna==6 || columna==7 || columna==8){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(peonnegro));
-                    tab1[fila][columna]->setPixmap(QPixmap::fromImage(peonnegro));
+            }else if(y==2){
+                if(x==1 || x==2 || x==3){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
+                    tab2[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
+                }else if(x==6 || x==7 || x==8){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
+                    tab1[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
                 }else{
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(peonnegro));
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
                 }
-            }else if(fila==7){ //agregando fichas blancas
-                if(columna==1 || columna==2 || columna==3){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(peonblanco));
-                    tab1[fila][columna]->setPixmap(QPixmap::fromImage(peonblanco));
-                }else if(columna==6 || columna==7 || columna==8){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(peonblanco));
-                    tab2[fila][columna]->setPixmap(QPixmap::fromImage(peonblanco));
+            }else if(y==7){
+                /*agregando fichas blancas*/
+                if(x==1 || x==2 || x==3){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
+                    tab1[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
+                }else if(x==6 || x==7 || x==8){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
+                    tab2[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
                 }else{
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(peonblanco));
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
                 }
-            }else if(fila==8){
-                if(columna==1){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(caballoblanco));
-                    tab1[fila][columna]->setPixmap(QPixmap::fromImage(caballoblanco));
-                }else if(columna==8){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(caballoblanco));
-                    tab2[fila][columna]->setPixmap(QPixmap::fromImage(caballoblanco));
-                }else if(columna==2){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(alfilblanco));
-                    tab1[fila][columna]->setPixmap(QPixmap::fromImage(alfilblanco));
-                }else if(columna==7){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(alfilblanco));
-                    tab2[fila][columna]->setPixmap(QPixmap::fromImage(alfilblanco));
-                }else if(columna==3){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(torreblanco));
-                    tab1[fila][columna]->setPixmap(QPixmap::fromImage(torreblanco));
-                }else if(columna==6){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(torreblanco));
-                    tab2[fila][columna]->setPixmap(QPixmap::fromImage(torreblanco));
-                }else if(columna==4){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(reyblanco));
-                }else if(columna==5){
-                    tab0[fila][columna]->setPixmap(QPixmap::fromImage(damablanco));
+            }else if(y==8){
+                if(x==1){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
+                    tab1[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
+                }else if(x==8){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
+                    tab2[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
+                }else if(x==2){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
+                    tab1[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
+                }else if(x==7){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
+                    tab2[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
+                }else if(x==3){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
+                    tab1[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
+                }else if(x==6){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
+                    tab2[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
+                }else if(x==4){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(reyblanco));
+                }else if(x==5){
+                    tab0[x][y]->setPixmap(QPixmap::fromImage(damablanco));
                 }
             }
         }
@@ -181,6 +256,14 @@ MainWindow::MainWindow(QWidget *parent) :
      * gridlayout (Tablero0,1,2) nos sirve para acomodar por filas y columnas un objeto
      * ui->Tablero1->addWidget(ejemplo,0,0);
      * ---addWidget(objeto,fila,columna);
+     * */
+
+    /*-------------COORDENADAS DEL TABLERO (x,y)-------------
+     * (0,0)(1,0)(2,0)(3,0)..
+     * (0,1)(1,1)(2,1)(3,1)..
+     * (0,2)(1,2)(2,2)(3,2)..
+     * (0,3)(1,3)(2,3)(3,3)..
+     * (0,4)..
      * */
 }
 
