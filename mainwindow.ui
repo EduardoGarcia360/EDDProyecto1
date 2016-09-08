@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>0</y>
+      <y>10</y>
       <width>1011</width>
       <height>631</height>
      </rect>
@@ -156,7 +156,7 @@
        <rect>
         <x>40</x>
         <y>50</y>
-        <width>67</width>
+        <width>111</width>
         <height>17</height>
        </rect>
       </property>
@@ -169,7 +169,7 @@
        <rect>
         <x>30</x>
         <y>160</y>
-        <width>67</width>
+        <width>171</width>
         <height>17</height>
        </rect>
       </property>
@@ -182,7 +182,7 @@
        <rect>
         <x>30</x>
         <y>190</y>
-        <width>67</width>
+        <width>181</width>
         <height>17</height>
        </rect>
       </property>
@@ -206,10 +206,10 @@
      <widget class="QLabel" name="lblerror">
       <property name="geometry">
        <rect>
-        <x>80</x>
+        <x>26</x>
         <y>260</y>
-        <width>67</width>
-        <height>17</height>
+        <width>211</width>
+        <height>20</height>
        </rect>
       </property>
       <property name="text">
@@ -234,7 +234,7 @@
        <rect>
         <x>30</x>
         <y>330</y>
-        <width>67</width>
+        <width>121</width>
         <height>17</height>
        </rect>
       </property>
@@ -247,7 +247,7 @@
        <rect>
         <x>30</x>
         <y>360</y>
-        <width>67</width>
+        <width>71</width>
         <height>17</height>
        </rect>
       </property>
@@ -260,7 +260,7 @@
        <rect>
         <x>30</x>
         <y>390</y>
-        <width>67</width>
+        <width>91</width>
         <height>17</height>
        </rect>
       </property>
@@ -277,6 +277,9 @@
         <height>27</height>
        </rect>
       </property>
+      <property name="placeholderText">
+       <string>ej. P-0-C4</string>
+      </property>
      </widget>
      <widget class="QPushButton" name="btnmover">
       <property name="geometry">
@@ -289,6 +292,81 @@
       </property>
       <property name="text">
        <string>mover</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblturnoactual">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>360</y>
+        <width>121</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbtnnormal">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>70</y>
+        <width>117</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Normal</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbtncontratiempo">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>100</y>
+        <width>171</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Contra Tiempo (min)</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtcontratiempo">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>100</y>
+        <width>113</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="placeholderText">
+       <string>00:00</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lbltiemporestante">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>330</y>
+        <width>67</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="listamovimientos">
+      <property name="geometry">
+       <rect>
+        <x>350</x>
+        <y>320</y>
+        <width>256</width>
+        <height>192</height>
+       </rect>
       </property>
      </widget>
     </widget>

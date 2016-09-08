@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "QString"
+#include "string"
 #include "QMessageBox"
+#include "iostream"
 using namespace std;
 
 /*fichas*/
@@ -276,5 +278,29 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_btnmover_clicked()
 {
-    QMessageBox::information(this,"esta mierda","ya funciona");
+    QString dato = ui->txtmovimiento->text();
+
+    if(dato.isEmpty() || dato.isNull()){
+        ui->lblerror->setText("debes ingresar algo coño!");
+    }else{
+        QStringList arreglodato = dato.split("-");
+        /*
+        for(int i=0;i<arreglodato.length(); i++){
+
+            ui->listamovimientos->addItem(arreglodato.value(i));
+
+        }
+        */
+        QString uno = arreglodato.value(3);
+
+        //string algo = uno.toStdString();
+        //substr(posiciion inicio, cuantos caracteres mas a partir de)
+        //string pos = algo.substr(0,1);
+        //QString c = QString::fromLocal8Bit(pos.c_str());;
+        ui->listamovimientos->addItem(dato.at(4));
+
+    }
+
+
+
 }
