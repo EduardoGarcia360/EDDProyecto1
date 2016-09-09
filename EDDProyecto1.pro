@@ -13,8 +13,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    MatrizOrtogonal.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    MatrizOrtogonal.h
 
 FORMS    += mainwindow.ui
