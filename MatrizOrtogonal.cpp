@@ -178,10 +178,12 @@ void Matriz::insertar(int fila, int columna, char * valor)
     //FIN_COLUMNAS
 }//fin insertar en matriz
 
-void Matriz::recorrerFilas()
+
+/*ejes invertidos recorrido para Filas sera el de columnas y viceversa*/
+void Matriz::recorrerColumnas()
 {
     Encabezado * eFila = eFilas->primero;
-    cout << "Recorrido Por Filas: ";
+    cout << "Recorrido Por Columnas: ";
 
     while(eFila != NULL)
     {
@@ -193,37 +195,41 @@ void Matriz::recorrerFilas()
             if(eFila->siguiente != NULL || actual->derecha != NULL)
             {
                 cout << "->";
+            }else{
+                cout << "||";
             }
 
             actual = actual->derecha;
         }
-
+        cout << "||";
         eFila = eFila->siguiente;
     }
 
     cout << endl;
 }
 
-void Matriz::recorrerColumnas()
+void Matriz::recorrerFilas()
 {
     Encabezado * eColumna = eColumnas->primero;
-    cout << "Recorrido Por Columnas: ";
+    cout << "Recorrido Por Filas: ";
 
     while(eColumna != NULL)
     {
         Nodo * actual = eColumna->acceso;
-        while(actual != NULL)
+        while(actual->valor != NULL)
         {
             cout << actual->valor;
 
             if(eColumna->siguiente != NULL || actual->abajo != NULL)
             {
                 cout << "->";
+            }else{
+                cout << "||";
             }
 
             actual = actual->abajo;
         }
-
+        cout << "||";
         eColumna = eColumna->siguiente;
     }
 

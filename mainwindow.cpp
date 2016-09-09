@@ -4,6 +4,7 @@
 #include "string"
 #include "QMessageBox"
 #include "iostream"
+#include "MatrizOrtogonal.h"
 using namespace std;
 
 /*fichas*/
@@ -14,9 +15,9 @@ QLabel* tab0[9][9];
 QLabel* tab1[9][9];
 QLabel* tab2[9][9];
 /*matriz para validar posiciones*/
-int tablogic0[9][9];
-int tablogic1[9][9];
-int tablogic2[9][9];
+Matriz * tablogic0;
+Matriz * tablogic1;
+Matriz * tablogic2;
 /*fondo para los scrollarea*/
 QLabel* fondo0;
 QLabel* fondo1;
@@ -49,7 +50,10 @@ MainWindow::MainWindow(QWidget *parent) :
     blanco.setColor(QPalette::Window, Qt::white);
     gris.setColor(QPalette::Window, Qt::gray);
 
-    //ui->setupUi(this);
+    /*inicializando matrices ortogonales*/
+    tablogic0 = new Matriz();
+    tablogic1 = new Matriz();
+    tablogic2 = new Matriz();
 
     fondo0 = new QLabel();
     fondo1 = new QLabel();
@@ -177,124 +181,112 @@ MainWindow::MainWindow(QWidget *parent) :
                 if(x==1){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
-                    tablogic0[x][y] = 5;
-                    tablogic2[x][y] = 5;
+                    tablogic0->insertar(x,y,"cn");
+                    tablogic2->insertar(x,y,"cn");
                 }else if(x==8){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
-                    tablogic0[x][y] = 5;
-                    tablogic1[x][y] = 5;
+                    tablogic0->insertar(x,y,"cn");
+                    tablogic1->insertar(x,y,"cn");
                 }else if(x==2){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
-                    tablogic0[x][y] = 4;
-                    tablogic2[x][y] = 4;
+                    tablogic0->insertar(x,y,"an");
+                    tablogic2->insertar(x,y,"an");
                 }else if(x==7){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
-                    tablogic0[x][y] = 4;
-                    tablogic1[x][y] = 4;
+                    tablogic0->insertar(x,y,"an");
+                    tablogic1->insertar(x,y,"an");
                 }else if(x==3){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
-                    tablogic0[x][y] = 3;
-                    tablogic2[x][y] = 3;
+                    tablogic0->insertar(x,y,"tn");
+                    tablogic2->insertar(x,y,"tn");
                 }else if(x==6){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
-                    tablogic0[x][y] = 3;
-                    tablogic1[x][y] = 3;
+                    tablogic0->insertar(x,y,"tn");
+                    tablogic1->insertar(x,y,"tn");
                 }else if(x==4){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(reynegro));
-                    tablogic0[x][y] = 1;
+                    tablogic0->insertar(x,y,"rn");
                 }else if(x==5){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(damanegro));
-                    tablogic0[x][y] = 2;
+                    tablogic0->insertar(x,y,"dn");
                 }
             }else if(y==2){
                 if(x==1 || x==2 || x==3){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
-                    tablogic0[x][y] = 6;
-                    tablogic2[x][y] = 6;
+                    tablogic0->insertar(x,y,"pn");
+                    tablogic2->insertar(x,y,"pn");
                 }else if(x==6 || x==7 || x==8){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
-                    tablogic0[x][y] = 6;
-                    tablogic1[x][y] = 6;
+                    tablogic0->insertar(x,y,"pn");
+                    tablogic1->insertar(x,y,"pn");
                 }else{
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
-                    tablogic0[x][y] = 6;
-                    tablogic1[x][y] = 0;
-                    tablogic2[x][y] = 0;
+                    tablogic0->insertar(x,y,"pn");
                 }
             }else if(y==7){
                 /*agregando fichas blancas*/
                 if(x==1 || x==2 || x==3){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
-                    tablogic0[x][y] = 16;
-                    tablogic1[x][y] = 16;
+                    tablogic0->insertar(x,y,"pb");
+                    tablogic1->insertar(x,y,"pb");
                 }else if(x==6 || x==7 || x==8){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
-                    tablogic0[x][y] = 16;
-                    tablogic2[x][y] = 16;
+                    tablogic0->insertar(x,y,"pb");
+                    tablogic2->insertar(x,y,"pb");
                 }else if(x==4 || x==5){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
-                    tablogic0[x][y] = 16;
-                    tablogic1[x][y] = 0;
-                    tablogic2[x][y] = 0;
+                    tablogic0->insertar(x,y,"pb");
                 }
             }else if(y==8){
                 if(x==1){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
-                    tablogic0[x][y] = 15;
-                    tablogic1[x][y] = 15;
+                    tablogic0->insertar(x,y,"cb");
+                    tablogic1->insertar(x,y,"cb");
                 }else if(x==8){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
-                    tablogic0[x][y] = 15;
-                    tablogic2[x][y] = 15;
+                    tablogic0->insertar(x,y,"cb");
+                    tablogic2->insertar(x,y,"cb");
                 }else if(x==2){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
-                    tablogic0[x][y] = 14;
-                    tablogic1[x][y] = 14;
+                    tablogic0->insertar(x,y,"ab");
+                    tablogic1->insertar(x,y,"ab");
                 }else if(x==7){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
-                    tablogic0[x][y] = 14;
-                    tablogic2[x][y] = 14;
+                    tablogic0->insertar(x,y,"ab");
+                    tablogic2->insertar(x,y,"ab");
                 }else if(x==3){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
-                    tablogic0[x][y] = 13;
-                    tablogic1[x][y] = 13;
+                    tablogic0->insertar(x,y,"tb");
+                    tablogic1->insertar(x,y,"tb");
                 }else if(x==6){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
-                    tablogic0[x][y] = 13;
-                    tablogic2[x][y] = 13;
+                    tablogic0->insertar(x,y,"tb");
+                    tablogic2->insertar(x,y,"tb");
                 }else if(x==4){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(reyblanco));
-                    tablogic0[x][y] = 11;
+                    tablogic0->insertar(x,y,"rb");
                 }else if(x==5){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(damablanco));
-                    tablogic0[x][y] = 12;
+                    tablogic0->insertar(x,y,"db");
                 }
-            }else{
-                tablogic0[x][y] = 0;
-                tablogic1[x][y] = 0;
-                tablogic2[x][y] = 0;
             }
         }
     }
-
-    std::cout<<tablogic0[3][3]<<std::endl;
-    std::cout<<tablogic0[2][1]<<std::endl;
-    std::cout<<tablogic1[2][1]<<std::endl;
 
     /*lo agregamos al scrollpane*/
     ui->tablero0->setWidget(fondo0);
@@ -319,10 +311,16 @@ MainWindow::MainWindow(QWidget *parent) :
      * */
 
     /*-------------MATRIZ LOGICA-------------
-     * Piezas negras: 1=REY, 2=DAMA, 3=TORRE, 4=ALFIL, 5=CABALLO, 6=PEON
-     * Piezas blancas: 11=REY, 12=DAMA, 13=TORRE, 14=ALFIL, 15=CABALLO, 16=PEON
+     * Piezas negras: rn=REY, dn=DAMA, tn=TORRE, an=ALFIL, cn=CABALLO, pn=PEON
+     * Piezas blancas: rb=REY, db=DAMA, tb=TORRE, ab=ALFIL, cb=CABALLO, pb=PEON
+     * n = nada.
      * servira para ubicar las fichas en el tablero
      * */
+    tablogic0->insertar(3,3,"u");
+    std::cout<<"Mostrando Columnas del tablero 0"<<std::endl;
+    tablogic0->recorrerColumnas();
+    std::cout<<"Mostrando Filas del tablero 0"<<std::endl;
+    tablogic0->recorrerFilas();
 }
 
 MainWindow::~MainWindow()
