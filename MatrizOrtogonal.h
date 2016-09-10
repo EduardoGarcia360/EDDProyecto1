@@ -44,7 +44,10 @@ struct Matriz
     void insertar(int fila, int columna, char * valor);
     void recorrerFilas();
     void recorrerColumnas();
+    bool hayficha(char * nombre);
+    bool moverpeon(char * pieza, int x, int y);
 };
+
 
 
 #endif // MATRIZORTOGONAL

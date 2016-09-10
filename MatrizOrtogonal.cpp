@@ -184,27 +184,23 @@ void Matriz::recorrerColumnas()
 {
     Encabezado * eFila = eFilas->primero;
     cout << "Recorrido Por Columnas: ";
-
     while(eFila != NULL)
     {
         Nodo * actual = eFila->acceso;
         while(actual != NULL)
         {
             cout << actual->valor;
-
             if(eFila->siguiente != NULL || actual->derecha != NULL)
             {
                 cout << "->";
             }else{
                 cout << "||";
             }
-
             actual = actual->derecha;
         }
         cout << "||";
         eFila = eFila->siguiente;
     }
-
     cout << endl;
 }
 
@@ -212,26 +208,91 @@ void Matriz::recorrerFilas()
 {
     Encabezado * eColumna = eColumnas->primero;
     cout << "Recorrido Por Filas: ";
-
     while(eColumna != NULL)
     {
         Nodo * actual = eColumna->acceso;
-        while(actual->valor != NULL)
+        while(actual != NULL)
         {
             cout << actual->valor;
-
             if(eColumna->siguiente != NULL || actual->abajo != NULL)
             {
                 cout << "->";
             }else{
                 cout << "||";
             }
-
             actual = actual->abajo;
         }
         cout << "||";
         eColumna = eColumna->siguiente;
     }
-
     cout << endl;
+}
+
+/*verificamos la existencia de alguna ficha*/
+bool Matriz::hayficha(char * nombre){
+    /*se hace un recorrido por columnas*/
+    Encabezado * eFila = eFilas->primero;
+    int contador = 0;
+    while(eFila != NULL){
+        Nodo * actual = eFila->acceso;
+        while(actual!=NULL){
+            if(actual->valor == nombre){ //si encuetra almenos una ficha
+                contador++;
+            }
+            actual = actual->derecha;
+        }
+        eFila = eFila->siguiente;
+    }
+    if(contador>0){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+bool Matriz::moverpeon(char *pieza, int destx, int desty){
+    Encabezado * eFila = eFilas->primero;
+    bool correcto=false;
+    while(eFila != NULL){
+        Nodo * actual = eFila->acceso;
+        while(actual != NULL){
+            if(actual->valor == pieza){
+                /*cuando encuentra un peon hace las validaciones*/
+                int y = actual->columna;
+                int x = actual->fila;
+
+                if(x<destx){
+                    int nX = x-1;
+                    if(nX==destx){
+                        int maY = y+1;
+                        int meY = y-1;
+                        if(meY == desty || maY== desty || y==desty){
+                            correcto=true;
+                            break;
+                        }else{
+                            actual = actual->derecha;
+                        }
+                    }else{
+                        actual = actual->derecha;
+                    }
+                }else if(x == destx){
+
+                }else if(x > destx){
+
+                }
+            }else{
+                actual = actual->derecha;
+            }
+        }
+        if(correcto){
+           break;
+        }else{
+            eFila = eFila->siguiente;
+        }
+    }
+    if(correcto){
+        return true;
+    }else{
+        return false;
+    }
 }
