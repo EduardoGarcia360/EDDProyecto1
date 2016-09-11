@@ -15,7 +15,6 @@ Encabezado::Encabezado(int id)
     this->id = id;
 }
 
-/*lista doblemente enlazada para los encabezados fila y columna*/
 void ListaEncabezados::insertar(Encabezado * nuevo)
 {
     if(primero == NULL)
@@ -54,26 +53,26 @@ void ListaEncabezados::insertar(Encabezado * nuevo)
             }
         }
     }
-}//fin insertar
+}
 
 Encabezado * ListaEncabezados::getEncabezado(int id)
 {
     Encabezado * actual = primero;
     while(actual != NULL)
     {
-        if(actual->id == id) //si el "id" del nodo actual es igual al id mandado.
+        if(actual->id == id)
         {
-            /*retorna el nodo*/
             return actual;
         }
+
         actual = actual->siguiente;
     }
+
     return NULL;
 }
 
 Matriz::Matriz()
 {
-    /*lista doblemente enlazada para fila y columna*/
     this->eFilas = new ListaEncabezados();
     this->eColumnas = new ListaEncabezados();
 }
@@ -82,19 +81,8 @@ void Matriz::insertar(int fila, int columna, char * valor)
 {
     Nodo * nuevo = new Nodo(fila, columna, valor);
 
-    /*Primero se hace la insercion en filas*/
-
-    /* eFila almacena el nodo de la fila si existiera,
-     * en caso contrario almacena un NULO.
-     * 1. buscamos la fila 3: getEncabezado(3)
-     *      [0]<=>[1]<=>[2]<=>[3]<=>[5]->//
-     * retorna [3]
-     * 2. buscamos la fila 6: getEncabezado(6)
-     *      [0]<=>[1]<=>[2]<=>[3]<=>[5]->//
-     * retorna NULL
-     * */
+    //INSERCION_FILAS
     Encabezado * eFila = eFilas->getEncabezado(fila);
-
     if(eFila == NULL) //Si no existe encabezado se crea.
     {
         eFila = new Encabezado(fila);
@@ -176,31 +164,36 @@ void Matriz::insertar(int fila, int columna, char * valor)
         }
     }
     //FIN_COLUMNAS
-}//fin insertar en matriz
+}
 
-
-/*ejes invertidos recorrido para Filas sera el de columnas y viceversa*/
 void Matriz::recorrerColumnas()
 {
     Encabezado * eFila = eFilas->primero;
     cout << "Recorrido Por Columnas: ";
+
     while(eFila != NULL)
     {
         Nodo * actual = eFila->acceso;
         while(actual != NULL)
         {
-            cout << actual->valor;
-            if(eFila->siguiente != NULL || actual->derecha != NULL)
-            {
-                cout << "->";
+            if(actual->valor != NULL){
+                cout << actual->valor;
+                if(eFila->siguiente != NULL || actual->derecha != NULL)
+                {
+                    cout << "->";
+                }else{
+                    cout << "||";
+                }
+
+                actual = actual->derecha;
             }else{
-                cout << "||";
+                break;
             }
-            actual = actual->derecha;
         }
         cout << "||";
         eFila = eFila->siguiente;
     }
+
     cout << endl;
 }
 
@@ -208,23 +201,32 @@ void Matriz::recorrerFilas()
 {
     Encabezado * eColumna = eColumnas->primero;
     cout << "Recorrido Por Filas: ";
+
     while(eColumna != NULL)
     {
         Nodo * actual = eColumna->acceso;
         while(actual != NULL)
         {
-            cout << actual->valor;
-            if(eColumna->siguiente != NULL || actual->abajo != NULL)
-            {
-                cout << "->";
+            if(actual->valor != NULL){
+                cout << actual->valor;
+
+                if(eColumna->siguiente != NULL || actual->abajo != NULL)
+                {
+                    cout << "->";
+                }else{
+                    cout << "||";
+                }
+
+                actual = actual->abajo;
             }else{
-                cout << "||";
+                break;
             }
-            actual = actual->abajo;
+
         }
         cout << "||";
         eColumna = eColumna->siguiente;
     }
+
     cout << endl;
 }
 
@@ -250,6 +252,7 @@ bool Matriz::hayficha(char * nombre){
     }
 }
 
+/*movimientos*/
 bool Matriz::moverpeon(char *pieza, int destx, int desty){
     Encabezado * eFila = eFilas->primero;
     bool correcto=false;
