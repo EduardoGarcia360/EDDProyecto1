@@ -168,8 +168,8 @@ MainWindow::MainWindow(QWidget *parent) :
                     }
                 }
             }
-        } //fin for columna
-    } //fin for fila
+        }
+    }
 
     /*agregando las piezas*/
     for(int x=1; x<9; x++){
@@ -181,9 +181,6 @@ MainWindow::MainWindow(QWidget *parent) :
                     tab2[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
                     tablogic0->insertar(x,y,"Cn");
                     tablogic2->insertar(x,y,"Cn");
-
-                    //tablogic0->insertar(3,3,"u");
-                    //tablogic0->insertar(3,2,"uio");
                 }else if(x==8){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
@@ -295,12 +292,29 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tablero1->setWidget(fondo1);
     ui->tablero2->setWidget(fondo2);
 
-    tablogic0->insertar(3,3,"u");
+    /*--------------MODIFICAR EL LABEL----------------
+         * QLabel *ejemplo = new QLabel("algo para mostrar");
+         * ---para cambiar el color del label
+         * ejemplo->setAutoFillBackground(true);
+         * ejemplo->setPalette(gris);
+         * ---para colocar una imagen en el label
+         * ejemplo->setPixmap(QPixmap::fromImage(peonnegro));
+         * */
 
-    std::cout<<"Mostrando Columnas del tablero 0"<<std::endl;
-    tablogic0->recorrerColumnas();
-    std::cout<<"Mostrando Filas del tablero 0"<<std::endl;
-    tablogic0->recorrerFilas();
+        /*-------------COORDENADAS DEL TABLERO (x,y)-------------
+         * (0,0)(1,0)(2,0)(3,0)..
+         * (0,1)(1,1)(2,1)(3,1)..
+         * (0,2)(1,2)(2,2)(3,2)..
+         * (0,3)(1,3)(2,3)(3,3)..
+         * (0,4)..
+         * */
+
+        /*-------------MATRIZ LOGICA-------------
+         * Piezas negras: rn=REY, dn=DAMA, tn=TORRE, an=ALFIL, cn=CABALLO, pn=PEON
+         * Piezas blancas: rb=REY, db=DAMA, tb=TORRE, ab=ALFIL, cb=CABALLO, pb=PEON
+         * n = nada.
+         * servira para ubicar las fichas en el tablero
+         * */
 }
 
 MainWindow::~MainWindow()
@@ -333,8 +347,23 @@ void MainWindow::on_btnmover_clicked()
                 /*turno del jugador 1 fichas negras*/
 
                 /*validando que sea una ficha correcta*/
-                if(ficha== "R"){
+                if(ficha=="R"){
+                    cout<< "--ENTRO EN R---" << endl;
+                    QString nFicha = ficha+"n";
+                    QByteArray bnficha = nFicha.toLatin1();
+                    char *charbnficha = bnficha.data();
 
+                    QString destino = arreglocoordenada.at(2); //"C4"
+                    QString dx = destino.at(0);
+                    QString dy = destino.at(1);
+                    int x = dx.toInt();
+                    int y = dy.toInt();
+                    bool prueba = tablogic0->moverpeon("Rn",3,1); //pieza,x,y
+                    if(prueba){
+                        ui->lblerror->setText("si");
+                    }else{
+                        ui->lblerror->setText("ban");
+                    }
                 }else if(ficha=="D"){
 
                 }else if(ficha=="T"){
@@ -348,12 +377,12 @@ void MainWindow::on_btnmover_clicked()
                     QByteArray bnficha = nFicha.toLatin1();
                     char *charbnficha = bnficha.data();
 
-                    QString destino = arreglocoordenada.at(2);
+                    QString destino = arreglocoordenada.at(2); //"C4"
                     QString dx = destino.at(0);
                     QString dy = destino.at(1);
                     int x = dx.toInt();
                     int y = dy.toInt();
-                    bool prueba = tablogic0->moverpeon(charbnficha,x,y);
+                    bool prueba = tablogic0->moverpeon(charbnficha,2,4); //pieza,x,y
                     if(prueba){
                         ui->lblerror->setText("si");
                     }else{

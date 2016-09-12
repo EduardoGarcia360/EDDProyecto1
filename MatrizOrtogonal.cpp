@@ -253,47 +253,100 @@ bool Matriz::hayficha(char * nombre){
 }
 
 /*movimientos*/
-bool Matriz::moverpeon(char *pieza, int destx, int desty){
+bool Matriz::moverpeon(char *pieza, int destino_x, int destino_y){
+    /*recorrido por columnas*/
     Encabezado * eFila = eFilas->primero;
     bool correcto=false;
     while(eFila != NULL){
         Nodo * actual = eFila->acceso;
         while(actual != NULL){
-            if(actual->valor == pieza){
-                /*cuando encuentra un peon hace las validaciones*/
-                int y = actual->columna;
-                int x = actual->fila;
-
-                if(x<destx){
-                    int nX = x-1;
-                    if(nX==destx){
-                        int maY = y+1;
-                        int meY = y-1;
-                        if(meY == desty || maY== desty || y==desty){
+            if(actual->valor != NULL){
+                if(actual->valor == pieza){
+                    int actual_x = actual->fila;
+                    int actual_y = actual->columna;
+                    cout << "posicion actual x" << endl;
+                    cout << actual_x << endl;
+                    cout << "posicion actual y" << endl;
+                    cout << actual_y << endl;
+                    if(actual_x < destino_x){
+                        cout << "-----ENTRO EN ACTUAL_X < DESTINO_X" << endl;
+                        /*---mover a la columna derecha:
+                         * ej. posicion actual (3,4)
+                         * posicion destino (4,4)
+                         * (2,4) [3,4] > [4,4]
+                         * */
+                        if(destino_x == actual_x+1){
+                            if(destino_y == actual_y-1 || destino_y == actual_y || destino_y == actual_y+1){
+                                /*si coincide la posicion es valida para mover el peon*/
+                                correcto=true;
+                                break;
+                            }else{
+                                /*si no coincide sigue avanzando*/
+                                actual = actual->derecha;
+                            }
+                        }else{
+                            /*si no es igual sigue avanzando*/
+                            actual = actual->derecha;
+                        }
+                    }else if(actual_x == destino_x){
+                        cout << "-----ENTRO EN ACTUAL_X = DESTINO_X" << endl;
+                        /*---mover en la misma columna:
+                         * ej. posicion actual (3,4)
+                         * posicion destino (3,3)
+                         * (2,3) [3,3] (4,3)
+                         *         ^
+                         * (2,4) [3,4] (4,4)
+                         * */
+                        if(destino_y==actual_y-1 || destino_y==actual_y+1){
+                            /*si coincide la posicion es valida*/
                             correcto=true;
                             break;
                         }else{
                             actual = actual->derecha;
                         }
+                    }else if(actual_x > destino_x){
+                        cout << "-----ENTRO EN ACTUAL_X > DESTINO_X" << endl;
+                        /*---mover a la columna izquierda:
+                         * ej. posicion actual (4,1)
+                         * posicion destino (3,1)
+                         * [3,1] < [4,1] (5,1)
+                         * */
+                        if(destino_x == actual_x-1){
+                            if(destino_y == actual_y-1 || destino_y == actual_y || destino_y == actual_y+1){
+                                /*si coincide la posicion es valida para mover el peon*/
+                                correcto=true;
+                                break;
+                            }else{
+                                /*si no coincide sigue avanzando*/
+                                actual = actual->derecha;
+                            }
+                        }else{
+                            /*si no es igual sigue avanzando*/
+                            actual = actual->derecha;
+                        }
                     }else{
-                        actual = actual->derecha;
+                        cout << "-----ENTRO EN ULTIMO ELSE" << endl;
+                        break;
                     }
-                }else if(x == destx){
-
-                }else if(x > destx){
-
+                }else{
+                    /*sigue recorriendo si no encuentra
+                     * la pieza buscada
+                     * */
+                    actual = actual->derecha;
                 }
             }else{
-                actual = actual->derecha;
+                break;
             }
-        }
-        if(correcto){
+        }//fin segundo while
+        if(correcto == true){
+            /*si alguna pieza coincide, se detiene el primer while*/
            break;
         }else{
             eFila = eFila->siguiente;
         }
-    }
-    if(correcto){
+    }//fin primer while
+
+    if(correcto == true){
         return true;
     }else{
         return false;
