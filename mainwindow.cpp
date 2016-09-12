@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "QString"
-#include "string"
+#include "string.h"
 #include "QMessageBox"
 #include "iostream"
 #include "MatrizOrtogonal.h"
@@ -350,6 +350,7 @@ void MainWindow::on_btnmover_clicked()
                 if(ficha=="R"){
                     cout<< "--ENTRO EN R---" << endl;
                     QString nFicha = ficha+"n";
+
                     QByteArray bnficha = nFicha.toLatin1();
                     char *charbnficha = bnficha.data();
 
@@ -373,20 +374,29 @@ void MainWindow::on_btnmover_clicked()
                 }else if(ficha=="C"){
 
                 }else if(ficha=="P"){
-                    QString nFicha = ficha+"n";
-                    QByteArray bnficha = nFicha.toLatin1();
-                    char *charbnficha = bnficha.data();
+                    cout<< "--ENTRO EN P---" << endl;
+                    /*convercion QString a char* */
+                    QString nficha = ficha+"n";
+                    char * cnficha = (char*)malloc(3);
+                    char * tmp = nficha.toLatin1().data();
+                    strcpy(cnficha, tmp);
+
+                    if(strcmp(cnficha,"Pn") == 0){
+                        ui->lbltiemporestante->setText("VALIDA");
+                    }else{
+                        ui->lbltiemporestante->setText("NO VALIDA");
+                    }
 
                     QString destino = arreglocoordenada.at(2); //"C4"
-                    QString dx = destino.at(0);
-                    QString dy = destino.at(1);
-                    int x = dx.toInt();
-                    int y = dy.toInt();
-                    bool prueba = tablogic0->moverpeon(charbnficha,2,4); //pieza,x,y
-                    if(prueba){
-                        ui->lblerror->setText("si");
+                    int destino_x = letra_a_numero(destino.at(0)); //"C" = 6
+                    QString qsy = destino.at(1);
+                    int destino_y = qsy.toInt(); //"4" a 4
+
+                    bool prueba = tablogic0->moverpeon(cnficha, destino_x, destino_y); //pieza,x,y
+                    if(prueba==true){
+                        ui->lblerror->setText("permitido");
                     }else{
-                        ui->lblerror->setText("ban");
+                        ui->lblerror->setText("no permitido");
                     }
                 }else{
                     ui->lblerror->setText("Pieza invalida.");
@@ -422,6 +432,29 @@ void MainWindow::on_btnmover_clicked()
         }
     }
 }//fin boton movimiento
+
+/*la declaracion de los metodos se hace en mainwindow.h*/
+int MainWindow::letra_a_numero(QString letra){
+    if(letra == "A"){
+        return 8;
+    }else if(letra == "B"){
+        return 7;
+    }else if(letra == "C"){
+        return 6;
+    }else if(letra == "D"){
+        return 5;
+    }else if(letra == "E"){
+        return 4;
+    }else if(letra == "F"){
+        return 3;
+    }else if(letra == "G"){
+        return 2;
+    }else if(letra == "H"){
+        return 1;
+    }else{
+        return 0;
+    }
+}
 
 //for(int i=0;i<arreglocoordenada.length(); i++){
     /*recorro el arreglo y agrego los item*/

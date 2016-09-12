@@ -17,6 +17,7 @@ public:
 
 private slots:
     void on_btnmover_clicked();
+    int letra_a_numero(QString letra);
 
 private:
     Ui::MainWindow *ui;

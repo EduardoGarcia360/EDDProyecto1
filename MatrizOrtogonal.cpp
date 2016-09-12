@@ -1,6 +1,8 @@
 #include <MatrizOrtogonal.h>
 #include <stdlib.h>
 #include <iostream>
+#include "string.h"
+
 using namespace std;
 
 Nodo::Nodo(int fila, int columna, char * valor)
@@ -253,7 +255,7 @@ bool Matriz::hayficha(char * nombre){
 }
 
 /*movimientos*/
-bool Matriz::moverpeon(char *pieza, int destino_x, int destino_y){
+bool Matriz::moverpeon(char * pieza, int destino_x, int destino_y){//char *pieza
     /*recorrido por columnas*/
     Encabezado * eFila = eFilas->primero;
     bool correcto=false;
@@ -261,7 +263,7 @@ bool Matriz::moverpeon(char *pieza, int destino_x, int destino_y){
         Nodo * actual = eFila->acceso;
         while(actual != NULL){
             if(actual->valor != NULL){
-                if(actual->valor == pieza){
+                if(strcmp(actual->valor,pieza) == 0){//if(actual->valor == pieza){
                     int actual_x = actual->fila;
                     int actual_y = actual->columna;
                     cout << "posicion actual x" << endl;
@@ -349,6 +351,7 @@ bool Matriz::moverpeon(char *pieza, int destino_x, int destino_y){
     if(correcto == true){
         return true;
     }else{
+        cout << "-----NINGUNA COINCIDENCIA" << endl;
         return false;
     }
 }
