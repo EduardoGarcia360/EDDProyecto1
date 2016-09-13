@@ -240,7 +240,7 @@ bool Matriz::hayficha(char * nombre){
     while(eFila != NULL){
         Nodo * actual = eFila->acceso;
         while(actual!=NULL){
-            if(actual->valor == nombre){ //si encuetra almenos una ficha
+            if(strcmp(actual->valor,nombre)){ //si encuetra almenos una ficha
                 contador++;
             }
             actual = actual->derecha;
@@ -263,7 +263,7 @@ bool Matriz::moverpeon(char * pieza, int destino_x, int destino_y){//char *pieza
         Nodo * actual = eFila->acceso;
         while(actual != NULL){
             if(actual->valor != NULL){
-                if(strcmp(actual->valor,pieza) == 0){//if(actual->valor == pieza){
+                if(strcmp(actual->valor,pieza) == 0){
                     int actual_x = actual->fila;
                     int actual_y = actual->columna;
                     cout << "posicion actual x" << endl;
@@ -272,13 +272,21 @@ bool Matriz::moverpeon(char * pieza, int destino_x, int destino_y){//char *pieza
                     cout << actual_y << endl;
                     if(actual_x < destino_x){
                         cout << "-----ENTRO EN ACTUAL_X < DESTINO_X" << endl;
-                        /*---mover a la columna derecha:
-                         * ej. posicion actual (3,4)
-                         * posicion destino (4,4)
-                         * (2,4) [3,4] > [4,4]
+                        /*---mover en diagonal a la columna derecha:
+                         * ej. para piezas blancas:
+                         * pos. actual (4,7)
+                         * pos. destino (5,6)
+                         * () () []
+                         * () []/()
+                         * ej. para piezas negras:
+                         * pos. actual (4,2)
+                         * pos. destino (5,3)
+                         * () []\()
+                         * () () []
                          * */
                         if(destino_x == actual_x+1){
-                            if(destino_y == actual_y-1 || destino_y == actual_y || destino_y == actual_y+1){
+                            /*peon solo puede moverse una casilla*/
+                            if(destino_y == actual_y-1 || destino_y == actual_y+1){
                                 /*si coincide la posicion es valida para mover el peon*/
                                 correcto=true;
                                 break;
@@ -287,7 +295,7 @@ bool Matriz::moverpeon(char * pieza, int destino_x, int destino_y){//char *pieza
                                 actual = actual->derecha;
                             }
                         }else{
-                            /*si no es igual sigue avanzando*/
+                            /*si es una casilla ubicada a 2 pos, sigue recorriendo*/
                             actual = actual->derecha;
                         }
                     }else if(actual_x == destino_x){
@@ -298,6 +306,8 @@ bool Matriz::moverpeon(char * pieza, int destino_x, int destino_y){//char *pieza
                          * (2,3) [3,3] (4,3)
                          *         ^
                          * (2,4) [3,4] (4,4)
+                         * actual_y -1 para las piezas negras que van bajando
+                         * actual_y +1 para las piezas blancas que van subiendo
                          * */
                         if(destino_y==actual_y-1 || destino_y==actual_y+1){
                             /*si coincide la posicion es valida*/
@@ -308,13 +318,20 @@ bool Matriz::moverpeon(char * pieza, int destino_x, int destino_y){//char *pieza
                         }
                     }else if(actual_x > destino_x){
                         cout << "-----ENTRO EN ACTUAL_X > DESTINO_X" << endl;
-                        /*---mover a la columna izquierda:
-                         * ej. posicion actual (4,1)
-                         * posicion destino (3,1)
-                         * [3,1] < [4,1] (5,1)
+                        /*---mover en diagonal a la columna izquierda:
+                         * ej. para piezas blancas:
+                         * pos. actual (4,7)
+                         * pos. destino (3,6)
+                         * () () []
+                         * ()\[] ()
+                         * ej. para piezas negras:
+                         * pos. actual (4,2)
+                         * pos. destino (3,3)
+                         * ()/[] ()
+                         * () () []
                          * */
                         if(destino_x == actual_x-1){
-                            if(destino_y == actual_y-1 || destino_y == actual_y || destino_y == actual_y+1){
+                            if(destino_y == actual_y-1 || destino_y == actual_y+1){
                                 /*si coincide la posicion es valida para mover el peon*/
                                 correcto=true;
                                 break;

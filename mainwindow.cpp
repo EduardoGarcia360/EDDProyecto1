@@ -342,29 +342,12 @@ void MainWindow::on_btnmover_clicked()
         }else{
             QString ficha = arreglocoordenada.at(0); //ficha = "p"
 
-            bool bFicha;
             if(jugador1){
                 /*turno del jugador 1 fichas negras*/
 
                 /*validando que sea una ficha correcta*/
                 if(ficha=="R"){
-                    cout<< "--ENTRO EN R---" << endl;
-                    QString nFicha = ficha+"n";
 
-                    QByteArray bnficha = nFicha.toLatin1();
-                    char *charbnficha = bnficha.data();
-
-                    QString destino = arreglocoordenada.at(2); //"C4"
-                    QString dx = destino.at(0);
-                    QString dy = destino.at(1);
-                    int x = dx.toInt();
-                    int y = dy.toInt();
-                    bool prueba = tablogic0->moverpeon("Rn",3,1); //pieza,x,y
-                    if(prueba){
-                        ui->lblerror->setText("si");
-                    }else{
-                        ui->lblerror->setText("ban");
-                    }
                 }else if(ficha=="D"){
 
                 }else if(ficha=="T"){
@@ -374,42 +357,46 @@ void MainWindow::on_btnmover_clicked()
                 }else if(ficha=="C"){
 
                 }else if(ficha=="P"){
-                    cout<< "--ENTRO EN P---" << endl;
-                    /*convercion QString a char* */
-                    QString nficha = ficha+"n";
-                    char * cnficha = (char*)malloc(3);
-                    char * tmp = nficha.toLatin1().data();
-                    strcpy(cnficha, tmp);
+                    QString tablero_destino = arreglocoordenada.at(1);
+                    int tabdest = tablero_destino.toInt();
 
-                    if(strcmp(cnficha,"Pn") == 0){
-                        ui->lbltiemporestante->setText("VALIDA");
+                    /*validar tablero*/
+                    if(tabdest==0 || tabdest==1 || tabdest==2){
+                        /*convercion QString a char* */
+                        QString nficha = ficha+"n";
+                        char * cnficha = (char*)malloc(3);
+                        char * tmp = nficha.toLatin1().data();
+                        strcpy(cnficha, tmp);
+
+                        bool haypiezas0, haypiezas1, haypiezas2;
+                        haypiezas0 = tablogic0->hayficha(cnficha);
+                        haypiezas1 = tablogic1->hayficha(cnficha);
+                        haypiezas2 = tablogic2->hayficha(cnficha);
+                        /*validar si hay piezas*/
+                        if(haypiezas0==true && haypiezas1==true && haypiezas2==true){
+
+                            QString destino = arreglocoordenada.at(2); //"C4"
+                            int destino_x = letra_a_numero(destino.at(0)); //"C" = 6
+                            if(destino_x != 0){
+                                QString qsy = destino.at(1);
+                                int destino_y = qsy.toInt(); //"4" a 4
+                                if(destino_y>0 && destino_y<=8){
+                                    bool valido_moverse = tablogic0->moverpeon(cnficha, destino_x, destino_y); //pieza,x,y
+                                }else{
+                                    QMessageBox::information(this,"Error!","Numero de columna fuera de rango.");
+                                }
+                            }else{
+                                QMessageBox::information(this,"Error!","Letra de fila fuera de Rango.");
+                            }
+                        }else{
+                            QMessageBox::information(this,"Error!","Ya no tienes Peones.");
+                        }
                     }else{
-                        ui->lbltiemporestante->setText("NO VALIDA");
-                    }
-
-                    QString destino = arreglocoordenada.at(2); //"C4"
-                    int destino_x = letra_a_numero(destino.at(0)); //"C" = 6
-                    QString qsy = destino.at(1);
-                    int destino_y = qsy.toInt(); //"4" a 4
-
-                    bool prueba = tablogic0->moverpeon(cnficha, destino_x, destino_y); //pieza,x,y
-                    if(prueba==true){
-                        ui->lblerror->setText("permitido");
-                    }else{
-                        ui->lblerror->setText("no permitido");
-                    }
+                        QMessageBox::information(this,"Error!","Num. de Tablero no Valido.");
+                    }//fin validar tablero
                 }else{
-                    ui->lblerror->setText("Pieza invalida.");
-                }
-                ui->lblturnoactual->setText("El Tato");
-
-
-                /*primero validar si hay fichas en existencia*/
-
-
-                /*al final se cambia el lblturnoactual por el nombre del siguiente jugador
-                 * y el bool jugador1 cambia a false.
-                 * */
+                    QMessageBox::information(this,"Error!","Pieza invalida o Usa Mayuscula.");
+                }//fin validar piezas
             }else{
                 /*turno del jugador 2 fichas blancas*/
 
