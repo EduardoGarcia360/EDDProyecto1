@@ -372,8 +372,8 @@ void MainWindow::on_btnmover_clicked()
                         haypiezas0 = tablogic0->hayficha(cnficha);
                         haypiezas1 = tablogic1->hayficha(cnficha);
                         haypiezas2 = tablogic2->hayficha(cnficha);
-                        /*validar si hay piezas*/
-                        if(haypiezas0==true && haypiezas1==true && haypiezas2==true){
+                        /*validar si hay almenos una pieza en algun tablero*/
+                        if(haypiezas0==true || haypiezas1==true || haypiezas2==true){
 
                             QString destino = arreglocoordenada.at(2); //"C4"
                             int destino_x = letra_a_numero(destino.at(0)); //"C" = 6
@@ -381,7 +381,17 @@ void MainWindow::on_btnmover_clicked()
                                 QString qsy = destino.at(1);
                                 int destino_y = qsy.toInt(); //"4" a 4
                                 if(destino_y>0 && destino_y<=8){
-                                    bool valido_moverse = tablogic0->moverpeon(cnficha, destino_x, destino_y); //pieza,x,y
+
+                                    /*valido si la coordenada es valida paraq que algun peon pueda moverse*/
+                                    if(tablogic0->moverpeon(cnficha, destino_x, destino_y) == true){
+                                        /*si hay una pieza que cumpla con el movimiento en el nivel 0*/
+                                    }else if(tablogic1->moverpeon(cnficha, destino_x, destino_y) == true){
+                                        /*si hay una pieza que cumpla con el movimiento en el nivel 1*/
+                                    }else if(tablogic2->moverpeon(cnficha, destino_x, destino_y) == true){
+                                        /*si hay una pieza que cumpla con el movimiento en el nivel 2*/
+                                    }else{
+                                        QMessageBox::information(this,"Error!","Ninguna pieza puede moverse a esa posicion.");
+                                    }
                                 }else{
                                     QMessageBox::information(this,"Error!","Numero de columna fuera de rango.");
                                 }
