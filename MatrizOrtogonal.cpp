@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include "string.h"
+#include "QString"
 
 using namespace std;
 
@@ -254,6 +255,76 @@ bool Matriz::hayficha(char * nombre){
     }
 }
 
+int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
+    /*recorrido por columnas*/
+    Encabezado * eFila = eFilas->primero;
+    bool correcto=false;
+    QString coordenada;
+    while(eFila != NULL){
+        Nodo * actual = eFila->acceso;
+        while(actual != NULL){
+            if(actual->valor != NULL){
+                if(strcmp(actual->valor,pieza) == 0){
+                    int actual_x = actual->fila;
+                    int actual_y = actual->columna;
+                    if(actual_x < destino_x){
+                        if(destino_x == actual_x+1){
+                            if(destino_y == actual_y-1 || destino_y == actual_y+1){
+                                coordenada = actual_x + "0" + actual_y;
+                                correcto=true;
+                                break;
+                            }else{
+                                actual = actual->derecha;
+                            }
+                        }else{
+                            actual = actual->derecha;
+                        }
+                    }else if(actual_x == destino_x){
+                        if(destino_y==actual_y-1 || destino_y==actual_y+1){
+                            correcto=true;
+                            coordenada = actual_x + "0" + actual_y;
+                            break;
+                        }else{
+                            actual = actual->derecha;
+                        }
+                    }else if(actual_x > destino_x){
+                        if(destino_x == actual_x-1){
+                            if(destino_y == actual_y-1 || destino_y == actual_y+1){
+                                coordenada = actual_x + "0" + actual_y;
+                                correcto=true;
+                                break;
+                            }else{
+                                actual = actual->derecha;
+                            }
+                        }else{
+                            actual = actual->derecha;
+                        }
+                    }else{
+                        break;
+                    }
+                }else{
+                    actual = actual->derecha;
+                }
+            }else{
+                break;
+            }
+        }//fin segundo while
+        if(correcto == true){
+           break;
+        }else{
+            eFila = eFila->siguiente;
+        }
+    }//fin primer while
+
+    if(correcto == true){
+        int ncoor = coordenada.toInt();
+        return ncoor;
+    }else{
+        return 0;
+    }
+
+}
+
 /*movimientos*/
 bool Matriz::moverpeon(char * pieza, int destino_x, int destino_y){//char *pieza
     /*recorrido por columnas*/
@@ -368,7 +439,6 @@ bool Matriz::moverpeon(char * pieza, int destino_x, int destino_y){//char *pieza
     if(correcto == true){
         return true;
     }else{
-        cout << "-----NINGUNA COINCIDENCIA" << endl;
         return false;
     }
 }

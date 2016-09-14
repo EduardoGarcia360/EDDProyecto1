@@ -46,6 +46,7 @@ struct Matriz
 
     bool hayficha(char * nombre);
     bool moverpeon(char * pieza, int x, int y);
+    int ubicacion_peon(char * pieza, int x, int y);
 };
 
 

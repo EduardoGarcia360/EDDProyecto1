@@ -456,38 +456,36 @@ void MainWindow::on_btnmover_clicked()
                                 if(destino_y>0 && destino_y<=8){
 
                                     /*valido si la coordenada es valida paraq que algun peon pueda moverse*/
-                                    if(tablogic0->moverpeon(cnficha, destino_x, destino_y) == true){
+                                    if(tablogic0->moverpeon(cnficha, destino_x, destino_y) > 0){
                                         /*si hay una pieza que cumpla con el movimiento en el nivel 0*/
+                                        QMessageBox::information(this,"Mov. no valido","ahuevo papu");
                                         int pieza = tabpos0[destino_x][destino_y];
                                         if(pieza == 0){
                                             /*posicion libre*/
                                         }else if(pieza >=7 && pieza <=12){
                                             /*hay una pieza blanca en esa posicion*/
-
                                         }else{
                                             /*hay una pieza negra en esa posicion*/
                                             QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
                                         }
-                                    }else if(tablogic1->moverpeon(cnficha, destino_x, destino_y) == true){
+                                    }else if(tablogic1->moverpeon(cnficha, destino_x, destino_y) >0){
                                         /*si hay una pieza que cumpla con el movimiento en el nivel 1*/
                                         int pieza = tabpos1[destino_x][destino_y];
                                         if(pieza == 0){
                                             /*posicion libre*/
                                         }else if(pieza >=7 && pieza <=12){
                                             /*hay una pieza blanca en esa posicion*/
-
                                         }else{
                                             /*hay una pieza negra en esa posicion*/
                                             QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
                                         }
-                                    }else if(tablogic2->moverpeon(cnficha, destino_x, destino_y) == true){
+                                    }else if(tablogic2->moverpeon(cnficha, destino_x, destino_y) >0){
                                         /*si hay una pieza que cumpla con el movimiento en el nivel 2*/
                                         int pieza = tabpos2[destino_x][destino_y];
                                         if(pieza == 0){
                                             /*posicion libre*/
                                         }else if(pieza >=7 && pieza <=12){
                                             /*hay una pieza blanca en esa posicion*/
-
                                         }else{
                                             /*hay una pieza negra en esa posicion*/
                                             QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
