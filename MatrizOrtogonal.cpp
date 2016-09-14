@@ -267,10 +267,11 @@ int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
                 if(strcmp(actual->valor,pieza) == 0){
                     int actual_x = actual->fila;
                     int actual_y = actual->columna;
+
                     if(actual_x < destino_x){
                         if(destino_x == actual_x+1){
                             if(destino_y == actual_y-1 || destino_y == actual_y+1){
-                                coordenada = actual_x + "0" + actual_y;
+                                coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
                                 correcto=true;
                                 break;
                             }else{
@@ -282,7 +283,7 @@ int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
                     }else if(actual_x == destino_x){
                         if(destino_y==actual_y-1 || destino_y==actual_y+1){
                             correcto=true;
-                            coordenada = actual_x + "0" + actual_y;
+                            coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
                             break;
                         }else{
                             actual = actual->derecha;
@@ -290,7 +291,7 @@ int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
                     }else if(actual_x > destino_x){
                         if(destino_x == actual_x-1){
                             if(destino_y == actual_y-1 || destino_y == actual_y+1){
-                                coordenada = actual_x + "0" + actual_y;
+                                coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
                                 correcto=true;
                                 break;
                             }else{
@@ -317,7 +318,7 @@ int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
     }//fin primer while
 
     if(correcto == true){
-        int ncoor = coordenada.toInt();
+        int ncoor = coordenada.toInt(); //retorno coordenada separada por un 0 205 = (2,5)
         return ncoor;
     }else{
         return 0;
@@ -325,120 +326,3 @@ int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
 
 }
 
-/*movimientos*/
-bool Matriz::moverpeon(char * pieza, int destino_x, int destino_y){//char *pieza
-    /*recorrido por columnas*/
-    Encabezado * eFila = eFilas->primero;
-    bool correcto=false;
-    while(eFila != NULL){
-        Nodo * actual = eFila->acceso;
-        while(actual != NULL){
-            if(actual->valor != NULL){
-                if(strcmp(actual->valor,pieza) == 0){
-                    int actual_x = actual->fila;
-                    int actual_y = actual->columna;
-                    cout << "posicion actual x" << endl;
-                    cout << actual_x << endl;
-                    cout << "posicion actual y" << endl;
-                    cout << actual_y << endl;
-                    if(actual_x < destino_x){
-                        cout << "-----ENTRO EN ACTUAL_X < DESTINO_X" << endl;
-                        /*---mover en diagonal a la columna derecha:
-                         * ej. para piezas blancas:
-                         * pos. actual (4,7)
-                         * pos. destino (5,6)
-                         * () () []
-                         * () []/()
-                         * ej. para piezas negras:
-                         * pos. actual (4,2)
-                         * pos. destino (5,3)
-                         * () []\()
-                         * () () []
-                         * */
-                        if(destino_x == actual_x+1){
-                            /*peon solo puede moverse una casilla*/
-                            if(destino_y == actual_y-1 || destino_y == actual_y+1){
-                                /*si coincide la posicion es valida para mover el peon*/
-                                correcto=true;
-                                break;
-                            }else{
-                                /*si no coincide sigue avanzando*/
-                                actual = actual->derecha;
-                            }
-                        }else{
-                            /*si es una casilla ubicada a 2 pos, sigue recorriendo*/
-                            actual = actual->derecha;
-                        }
-                    }else if(actual_x == destino_x){
-                        cout << "-----ENTRO EN ACTUAL_X = DESTINO_X" << endl;
-                        /*---mover en la misma columna:
-                         * ej. posicion actual (3,4)
-                         * posicion destino (3,3)
-                         * (2,3) [3,3] (4,3)
-                         *         ^
-                         * (2,4) [3,4] (4,4)
-                         * actual_y -1 para las piezas negras que van bajando
-                         * actual_y +1 para las piezas blancas que van subiendo
-                         * */
-                        if(destino_y==actual_y-1 || destino_y==actual_y+1){
-                            /*si coincide la posicion es valida*/
-                            correcto=true;
-                            break;
-                        }else{
-                            actual = actual->derecha;
-                        }
-                    }else if(actual_x > destino_x){
-                        cout << "-----ENTRO EN ACTUAL_X > DESTINO_X" << endl;
-                        /*---mover en diagonal a la columna izquierda:
-                         * ej. para piezas blancas:
-                         * pos. actual (4,7)
-                         * pos. destino (3,6)
-                         * () () []
-                         * ()\[] ()
-                         * ej. para piezas negras:
-                         * pos. actual (4,2)
-                         * pos. destino (3,3)
-                         * ()/[] ()
-                         * () () []
-                         * */
-                        if(destino_x == actual_x-1){
-                            if(destino_y == actual_y-1 || destino_y == actual_y+1){
-                                /*si coincide la posicion es valida para mover el peon*/
-                                correcto=true;
-                                break;
-                            }else{
-                                /*si no coincide sigue avanzando*/
-                                actual = actual->derecha;
-                            }
-                        }else{
-                            /*si no es igual sigue avanzando*/
-                            actual = actual->derecha;
-                        }
-                    }else{
-                        cout << "-----ENTRO EN ULTIMO ELSE" << endl;
-                        break;
-                    }
-                }else{
-                    /*sigue recorriendo si no encuentra
-                     * la pieza buscada
-                     * */
-                    actual = actual->derecha;
-                }
-            }else{
-                break;
-            }
-        }//fin segundo while
-        if(correcto == true){
-            /*si alguna pieza coincide, se detiene el primer while*/
-           break;
-        }else{
-            eFila = eFila->siguiente;
-        }
-    }//fin primer while
-
-    if(correcto == true){
-        return true;
-    }else{
-        return false;
-    }
-}
