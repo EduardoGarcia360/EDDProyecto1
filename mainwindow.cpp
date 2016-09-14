@@ -397,6 +397,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_btnmover_clicked()
 {
+
     QString coordenada = ui->txtmovimiento->text();
 
     if(coordenada.isEmpty() || coordenada.isNull()){
@@ -449,10 +450,11 @@ void MainWindow::on_btnmover_clicked()
                         if(haypiezas0==true || haypiezas1==true || haypiezas2==true){
 
                             QString destino = arreglocoordenada.at(2); //"C4"
-                            int destino_x = letra_a_numero(destino.at(0)); //"C" = 6
+                            QString qsx = destino.at(1);
+                            int destino_x = qsx.toInt();  //"4" a 4
                             if(destino_x != 0){
-                                QString qsy = destino.at(1);
-                                int destino_y = qsy.toInt(); //"4" a 4
+
+                                int destino_y = letra_a_numero(destino.at(0)); //"C" a 6
                                 if(destino_y>0 && destino_y<=8){
 
                                     /*valido si la coordenada es valida paraq que algun peon pueda moverse*/
@@ -461,12 +463,36 @@ void MainWindow::on_btnmover_clicked()
                                     int ub2 = tablogic2->ubicacion_peon(cnficha, destino_x, destino_y);
                                     if(ub0 > 0){//if(tablogic0->moverpeon(cnficha, destino_x, destino_y)
                                         /*si hay una pieza que cumpla con el movimiento en el nivel 0*/
-                                        ui->lblerror->setText("awebo papu");
                                         int pieza = tabpos0[destino_x][destino_y];
+                                        QString coo = QString::number(ub0); //ej. 406
+                                        QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
+                                        QString tmp = arr_coo.at(0);
+                                        int actual_x = tmp.toInt(); //4
+                                        tmp = arr_coo.at(1);
+                                        int actual_y = tmp.toInt(); //6
+                                        cout << "pos actual que retorna la ortogonal" << endl;
+                                        cout << actual_x << endl;
+                                        cout << actual_y << endl;
+
                                         if(pieza == 0){
                                             /*posicion libre*/
+                                            tabpos0[actual_x][actual_y] = 0;
+                                            tablogic0->insertar(actual_x,actual_y,"N");
+                                            tab0[actual_x][actual_y]->setText(" ");
+
+                                            cout << "pos destino que convierte F2 a coord." << endl;
+                                            cout << destino_x << endl;
+                                            cout << destino_y << endl;
+
+                                            tabpos0[destino_x][destino_y] = 6;
+                                            tablogic0->insertar(destino_x,destino_y,"Pn");
+                                            tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
+
+                                            ui->listamovimientos->addItem(coordenada);
+                                            ui->txtmovimiento->setText("");
+                                            //jugador1=false;
                                         }else if(pieza >=7 && pieza <=12){
-                                            /*hay una pieza blanca en esa posicion*/
+                                            /*hay una pieza blanca para comer en esa posicion*/
                                         }else{
                                             /*hay una pieza negra en esa posicion*/
                                             QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
