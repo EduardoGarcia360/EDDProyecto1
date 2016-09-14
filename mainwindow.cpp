@@ -14,6 +14,10 @@ QImage peonblanco, alfilblanco, caballoblanco, torreblanco, damablanco, reyblanc
 QLabel* tab0[9][9];
 QLabel* tab1[9][9];
 QLabel* tab2[9][9];
+/*matriz de numero para validar posiciones de las piezas*/
+int tabpos0[9][9];
+int tabpos1[9][9];
+int tabpos2[9][9];
 /*matriz para validar posiciones*/
 Matriz* tablogic0 = new Matriz();
 Matriz* tablogic1 = new Matriz();
@@ -181,38 +185,61 @@ MainWindow::MainWindow(QWidget *parent) :
                     tab2[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
                     tablogic0->insertar(x,y,"Cn");
                     tablogic2->insertar(x,y,"Cn");
+                    tabpos0[x][y]=5;
+                    tabpos1[x][y]=0;
+                    tabpos2[x][y]=5;
                 }else if(x==8){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
                     tablogic0->insertar(x,y,"Cn");
                     tablogic1->insertar(x,y,"Cn");
+                    tabpos0[x][y]=5;
+                    tabpos1[x][y]=5;
+                    tabpos2[x][y]=0;
                 }else if(x==2){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
                     tablogic0->insertar(x,y,"An");
                     tablogic2->insertar(x,y,"An");
-
+                    tabpos0[x][y]=4;
+                    tabpos1[x][y]=0;
+                    tabpos2[x][y]=4;
                 }else if(x==7){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
                     tablogic0->insertar(x,y,"An");
                     tablogic1->insertar(x,y,"An");
+                    tabpos0[x][y]=4;
+                    tabpos1[x][y]=4;
+                    tabpos2[x][y]=0;
                 }else if(x==3){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
                     tablogic0->insertar(x,y,"Tn");
                     tablogic2->insertar(x,y,"Tn");
+                    tabpos0[x][y]=3;
+                    tabpos1[x][y]=0;
+                    tabpos2[x][y]=3;
                 }else if(x==6){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
                     tablogic0->insertar(x,y,"Tn");
                     tablogic1->insertar(x,y,"Tn");
+                    tabpos0[x][y]=3;
+                    tabpos1[x][y]=3;
+                    tabpos2[x][y]=0;
                 }else if(x==4){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(reynegro));
                     tablogic0->insertar(x,y,"Rn");
+                    tabpos0[x][y]=1;
+                    tabpos1[x][y]=0;
+                    tabpos2[x][y]=0;
                 }else if(x==5){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(damanegro));
                     tablogic0->insertar(x,y,"Dn");
+                    tabpos0[x][y]=2;
+                    tabpos1[x][y]=0;
+                    tabpos2[x][y]=0;
                 }
             }else if(y==2){
                 if(x==1 || x==2 || x==3){
@@ -220,14 +247,23 @@ MainWindow::MainWindow(QWidget *parent) :
                     tab2[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
                     tablogic0->insertar(x,y,"Pn");
                     tablogic2->insertar(x,y,"Pn");
+                    tabpos0[x][y]=6;
+                    tabpos1[x][y]=0;
+                    tabpos2[x][y]=6;
                 }else if(x==6 || x==7 || x==8){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
                     tablogic0->insertar(x,y,"Pn");
                     tablogic1->insertar(x,y,"Pn");
+                    tabpos0[x][y]=6;
+                    tabpos1[x][y]=6;
+                    tabpos2[x][y]=0;
                 }else{
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
                     tablogic0->insertar(x,y,"Pn");
+                    tabpos0[x][y]=6;
+                    tabpos1[x][y]=0;
+                    tabpos2[x][y]=0;
                 }
             }else if(y==7){
                 /*agregando fichas blancas*/
@@ -236,14 +272,23 @@ MainWindow::MainWindow(QWidget *parent) :
                     tab1[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
                     tablogic0->insertar(x,y,"Pb");
                     tablogic1->insertar(x,y,"Pb");
+                    tabpos0[x][y]=12;
+                    tabpos1[x][y]=12;
+                    tabpos2[x][y]=0;
                 }else if(x==6 || x==7 || x==8){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
                     tablogic0->insertar(x,y,"Pb");
                     tablogic2->insertar(x,y,"Pb");
+                    tabpos0[x][y]=12;
+                    tabpos1[x][y]=0;
+                    tabpos2[x][y]=12;
                 }else if(x==4 || x==5){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
                     tablogic0->insertar(x,y,"Pb");
+                    tabpos0[x][y]=12;
+                    tabpos1[x][y]=0;
+                    tabpos2[x][y]=0;
                 }
             }else if(y==8){
                 if(x==1){
@@ -251,38 +296,66 @@ MainWindow::MainWindow(QWidget *parent) :
                     tab1[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
                     tablogic0->insertar(x,y,"Cb");
                     tablogic1->insertar(x,y,"Cb");
+                    tabpos0[x][y]=11;
+                    tabpos1[x][y]=11;
+                    tabpos2[x][y]=0;
                 }else if(x==8){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
                     tablogic0->insertar(x,y,"Cb");
                     tablogic2->insertar(x,y,"Cb");
+                    tabpos0[x][y]=11;
+                    tabpos1[x][y]=0;
+                    tabpos2[x][y]=11;
                 }else if(x==2){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
                     tablogic0->insertar(x,y,"Ab");
                     tablogic1->insertar(x,y,"Ab");
+                    tabpos0[x][y]=10;
+                    tabpos1[x][y]=10;
+                    tabpos2[x][y]=0;
                 }else if(x==7){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
                     tablogic0->insertar(x,y,"Ab");
                     tablogic2->insertar(x,y,"Ab");
+                    tabpos0[x][y]=10;
+                    tabpos1[x][y]=0;
+                    tabpos2[x][y]=10;
                 }else if(x==3){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
                     tablogic0->insertar(x,y,"Tb");
                     tablogic1->insertar(x,y,"Tb");
+                    tabpos0[x][y]=9;
+                    tabpos1[x][y]=9;
+                    tabpos2[x][y]=0;
                 }else if(x==6){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
                     tablogic0->insertar(x,y,"Tb");
                     tablogic2->insertar(x,y,"Tb");
+                    tabpos0[x][y]=9;
+                    tabpos1[x][y]=0;
+                    tabpos2[x][y]=9;
                 }else if(x==4){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(reyblanco));
-                    tablogic0->insertar(x,y,"Tb");
+                    tablogic0->insertar(x,y,"Rb");
+                    tabpos0[x][y]=7;
+                    tabpos1[x][y]=0;
+                    tabpos2[x][y]=0;
                 }else if(x==5){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(damablanco));
                     tablogic0->insertar(x,y,"Db");
+                    tabpos0[x][y]=8;
+                    tabpos1[x][y]=0;
+                    tabpos2[x][y]=0;
                 }
+            }else{
+                tabpos0[x][y]=0;
+                tabpos1[x][y]=0;
+                tabpos2[x][y]=0;
             }
         }
     }
@@ -385,10 +458,40 @@ void MainWindow::on_btnmover_clicked()
                                     /*valido si la coordenada es valida paraq que algun peon pueda moverse*/
                                     if(tablogic0->moverpeon(cnficha, destino_x, destino_y) == true){
                                         /*si hay una pieza que cumpla con el movimiento en el nivel 0*/
+                                        int pieza = tabpos0[destino_x][destino_y];
+                                        if(pieza == 0){
+                                            /*posicion libre*/
+                                        }else if(pieza >=7 && pieza <=12){
+                                            /*hay una pieza blanca en esa posicion*/
+
+                                        }else{
+                                            /*hay una pieza negra en esa posicion*/
+                                            QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
+                                        }
                                     }else if(tablogic1->moverpeon(cnficha, destino_x, destino_y) == true){
                                         /*si hay una pieza que cumpla con el movimiento en el nivel 1*/
+                                        int pieza = tabpos1[destino_x][destino_y];
+                                        if(pieza == 0){
+                                            /*posicion libre*/
+                                        }else if(pieza >=7 && pieza <=12){
+                                            /*hay una pieza blanca en esa posicion*/
+
+                                        }else{
+                                            /*hay una pieza negra en esa posicion*/
+                                            QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
+                                        }
                                     }else if(tablogic2->moverpeon(cnficha, destino_x, destino_y) == true){
                                         /*si hay una pieza que cumpla con el movimiento en el nivel 2*/
+                                        int pieza = tabpos2[destino_x][destino_y];
+                                        if(pieza == 0){
+                                            /*posicion libre*/
+                                        }else if(pieza >=7 && pieza <=12){
+                                            /*hay una pieza blanca en esa posicion*/
+
+                                        }else{
+                                            /*hay una pieza negra en esa posicion*/
+                                            QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
+                                        }
                                     }else{
                                         QMessageBox::information(this,"Error!","Ninguna pieza puede moverse a esa posicion.");
                                     }
