@@ -388,6 +388,11 @@ MainWindow::MainWindow(QWidget *parent) :
          * n = nada.
          * servira para ubicar las fichas en el tablero
          * */
+    cout << "mostrando columnas" << endl;
+    tablogic0->recorrerColumnas();
+    QString todo = tablogic0->estado_matriz();
+    cout << "mostrando todo tab0" << endl;
+    cout << todo.toStdString() << endl;
 }
 
 MainWindow::~MainWindow()
@@ -495,6 +500,7 @@ void MainWindow::on_btnmover_clicked()
                                             /*hay una pieza blanca para comer en esa posicion*/
                                         }else{
                                             /*hay una pieza negra en esa posicion*/
+                                            ui->txtmovimiento->setText("");
                                             QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
                                         }
                                     }else if(ub1 >0){
@@ -520,21 +526,26 @@ void MainWindow::on_btnmover_clicked()
                                             QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
                                         }
                                     }else{
+                                        ui->txtmovimiento->setText("");
                                         QMessageBox::information(this,"Error!","Ninguna pieza puede moverse a esa posicion.");
                                     }
                                 }else{
+                                    ui->txtmovimiento->setText("");
                                     QMessageBox::information(this,"Error!","Numero de columna fuera de rango.");
                                 }
                             }else{
+                                ui->txtmovimiento->setText("");
                                 QMessageBox::information(this,"Error!","Letra de fila fuera de Rango.");
                             }
                         }else{
+                            ui->txtmovimiento->setText("");
                             QMessageBox::information(this,"Error!","Ya no tienes Peones.");
                         }
                     }else{
                         QMessageBox::information(this,"Error!","Num. de Tablero no Valido.");
                     }//fin validar tablero
                 }else{
+                    ui->txtmovimiento->setText("");
                     QMessageBox::information(this,"Error!","Pieza invalida o Usa Mayuscula.");
                 }//fin validar piezas
             }else{
@@ -560,7 +571,7 @@ void MainWindow::on_btnmover_clicked()
     }
 }//fin boton movimiento
 
-/*la declaracion de los metodos se hace en mainwindow.h*/
+/*la declaracion de los nuevos metodos se hace en mainwindow.h*/
 int MainWindow::letra_a_numero(QString letra){
     if(letra == "A"){
         return 8;
@@ -581,6 +592,10 @@ int MainWindow::letra_a_numero(QString letra){
     }else{
         return 0;
     }
+}
+
+void MainWindow::crear_grafico(){
+
 }
 
 //for(int i=0;i<arreglocoordenada.length(); i++){

@@ -1,5 +1,6 @@
 #ifndef MatrizOrtogonal
 #define MatrizOrtogonal
+#include "QString"
 
 typedef struct Nodo Nodo;
 typedef struct Encabezado Encabezado;
@@ -46,6 +47,7 @@ struct Matriz
 
     bool hayficha(char * nombre);
     int ubicacion_peon(char * pieza, int x, int y);
+    QString estado_matriz();
 };
 
 

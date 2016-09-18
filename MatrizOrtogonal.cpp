@@ -185,7 +185,7 @@ void Matriz::recorrerColumnas()
                 {
                     cout << "->";
                 }else{
-                    cout << "||";
+                    //cout << "||";
                 }
 
                 actual = actual->derecha;
@@ -324,5 +324,48 @@ int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
         return 0;
     }
 
+}
+
+QString Matriz::estado_matriz(){
+    /*recorrido por columnas*/
+    Encabezado * eFila = eFilas->primero;
+    QString tablero = "";
+    char* dato_nodo = (char*)malloc(2);
+    int contador =0;
+    while(eFila != NULL)
+    {
+        Nodo * actual = eFila->acceso;
+        while(actual != NULL)
+        {
+            if(actual->valor != NULL){
+                strcpy(dato_nodo, actual->valor); //dato_nodo = "Rn"
+                /*char* a qstring*/
+                QString texto_nodo = QString::fromStdString(dato_nodo);
+                tablero += "node" + QString::number(contador) + "[label=\"" + texto_nodo + "\"];#" + QString::number(contador);
+
+
+
+                if(eFila->siguiente != NULL || actual->derecha != NULL)
+                {
+                    tablero += "%";
+                    /*valores=node0[label="Rn"];#0%
+                     * Rn->
+                     * */
+                    contador++;
+                }
+
+                actual = actual->derecha;
+            }else{
+                break;
+            }
+        }//fin segundo while
+        tablero += "fincol";
+        /*node0label[]#0%....%node10[label...]#10%fincol
+         * cn->pn->cb->fincol
+         * */
+        eFila = eFila->siguiente;
+    }//fin primer while
+
+    return tablero;
 }
 
