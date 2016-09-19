@@ -18,7 +18,8 @@ public:
 private slots:
     void on_btnmover_clicked();
     int letra_a_numero(QString letra);
-    void crear_grafico();
+    void crear_grafico(int n);
+    QString nombre_correcto(QString pieza);
 
 private:
     Ui::MainWindow *ui;

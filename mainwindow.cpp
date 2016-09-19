@@ -5,6 +5,7 @@
 #include "QMessageBox"
 #include "iostream"
 #include "MatrizOrtogonal.h"
+#include "listasimple.h"
 using namespace std;
 
 /*fichas*/
@@ -28,6 +29,8 @@ QLabel* fondo1;
 QLabel* fondo2;
 /*bool para validar el turno del jugador*/
 bool jugador1 = true;
+
+ListaEnlazada * milista = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -388,11 +391,16 @@ MainWindow::MainWindow(QWidget *parent) :
          * n = nada.
          * servira para ubicar las fichas en el tablero
          * */
-    cout << "mostrando columnas" << endl;
-    tablogic0->recorrerColumnas();
-    QString todo = tablogic0->estado_matriz();
-    cout << "mostrando todo tab0" << endl;
-    cout << todo.toStdString() << endl;
+
+    milista->agregar("hola");
+    milista->agregar("mundo");
+    milista->agregar("en");
+    milista->agregar("mi");
+    milista->agregar("pinshi");
+    milista->agregar("lista");
+    milista->agregar(">:v");
+    milista->mostrar();
+
 }
 
 MainWindow::~MainWindow()
@@ -594,10 +602,49 @@ int MainWindow::letra_a_numero(QString letra){
     }
 }
 
-void MainWindow::crear_grafico(){
+void MainWindow::crear_grafico(int n){
+    QString tablero_completo="";
+    //QStringList
+    if(n == 0){
+        tablero_completo = tablogic0->estado_matriz();
+    }else if(n == 1){
+        tablero_completo = tablogic1->estado_matriz();
+    }else{
+        tablero_completo = tablogic2->estado_matriz();
+    }
+
+    /*primero separar por columnas*/
+    QStringList columnas = tablero_completo.split("fincol");
 
 }
 
+QString MainWindow::nombre_correcto(QString pieza){
+    if(pieza == "Rn"){
+        return "Rey n.";
+    }else if(pieza == "Dn"){
+        return "Dama n.";
+    }else if(pieza == "Tn"){
+        return "Torre n.";
+    }else if(pieza == "An"){
+        return "Alfil n.";
+    }else if(pieza == "Cn"){
+        return "Caballo n.";
+    }else if(pieza == "Pn"){
+        return "Peon n.";
+    }else if(pieza == "Rb"){
+        return "Rey b.";
+    }else if(pieza == "Db"){
+        return "Dama b.";
+    }else if(pieza == "Tb"){
+        return "Torre b.";
+    }else if(pieza == "Ab"){
+        return "Alfil b.";
+    }else if(pieza == "Cb"){
+        return "Caballo b.";
+    }else if(pieza == "Pb"){
+        return "Peon b.";
+    }
+}
 //for(int i=0;i<arreglocoordenada.length(); i++){
     /*recorro el arreglo y agrego los item*/
     //ui->listamovimientos->addItem(arreglocoordenada.value(i));

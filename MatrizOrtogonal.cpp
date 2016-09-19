@@ -67,10 +67,8 @@ Encabezado * ListaEncabezados::getEncabezado(int id)
         {
             return actual;
         }
-
         actual = actual->siguiente;
     }
-
     return NULL;
 }
 
@@ -83,7 +81,6 @@ Matriz::Matriz()
 void Matriz::insertar(int fila, int columna, char * valor)
 {
     Nodo * nuevo = new Nodo(fila, columna, valor);
-
     //INSERCION_FILAS
     Encabezado * eFila = eFilas->getEncabezado(fila);
     if(eFila == NULL) //Si no existe encabezado se crea.
@@ -116,16 +113,13 @@ void Matriz::insertar(int fila, int columna, char * valor)
 
                 actual = actual->derecha;
             }
-
             if(actual->derecha == NULL) //Inserción al final
             {
                 actual->derecha = nuevo;
                 nuevo->izquierda = actual;
             }
         }
-    }
-    //FIN_FILAS
-
+    }//FIN_FILAS
     //INSERCION_COLUMNAS
     Encabezado * eColumna = eColumnas->getEncabezado(columna);
     if(eColumna == NULL) //Si no existe encabezado se crea.
@@ -155,7 +149,6 @@ void Matriz::insertar(int fila, int columna, char * valor)
                     actual->abajo = nuevo;
                     break;
                 }
-
                 actual = actual->abajo;
             }
 
@@ -165,8 +158,7 @@ void Matriz::insertar(int fila, int columna, char * valor)
                 nuevo->arriba = actual;
             }
         }
-    }
-    //FIN_COLUMNAS
+    }//FIN_COLUMNAS
 }
 
 void Matriz::recorrerColumnas()
@@ -331,7 +323,7 @@ QString Matriz::estado_matriz(){
     Encabezado * eFila = eFilas->primero;
     QString tablero = "";
     char* dato_nodo = (char*)malloc(2);
-    int contador =0;
+    int contador =0, x=0, y=0;
     while(eFila != NULL)
     {
         Nodo * actual = eFila->acceso;
@@ -340,20 +332,18 @@ QString Matriz::estado_matriz(){
             if(actual->valor != NULL){
                 strcpy(dato_nodo, actual->valor); //dato_nodo = "Rn"
                 /*char* a qstring*/
+                x = actual->fila;
+                y = actual->columna;
                 QString texto_nodo = QString::fromStdString(dato_nodo);
-                tablero += "node" + QString::number(contador) + "[label=\"" + texto_nodo + "\"];#" + QString::number(contador);
-
-
-
+                tablero += "node" + QString::number(contador) + "[label=\"" + texto_nodo + "\"];#" + QString::number(contador) + "#" + QString::number(x) + "#" + QString::number(y);
                 if(eFila->siguiente != NULL || actual->derecha != NULL)
                 {
                     tablero += "%";
-                    /*valores=node0[label="Rn"];#0%
+                    /*valores=node0[label="Rn"];#0#2#3%
                      * Rn->
                      * */
                     contador++;
                 }
-
                 actual = actual->derecha;
             }else{
                 break;

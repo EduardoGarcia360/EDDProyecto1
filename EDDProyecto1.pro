@@ -14,9 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    MatrizOrtogonal.cpp
+    MatrizOrtogonal.cpp \
+    listasimple.cpp
 
 HEADERS  += mainwindow.h \
-    MatrizOrtogonal.h
+    MatrizOrtogonal.h \
+    listasimple.h
 
 FORMS    += mainwindow.ui
