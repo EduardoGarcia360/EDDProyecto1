@@ -29,8 +29,11 @@ QLabel* fondo1;
 QLabel* fondo2;
 /*bool para validar el turno del jugador*/
 bool jugador1 = true;
-
-ListaEnlazada * milista = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
+/*para almacenar los nodos para graficar*/
+ListaEnlazada * lista_nodos = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
+ListaEnlazada * lista_numero = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
+ListaEnlazada * lista_x = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
+ListaEnlazada * lista_y = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -391,16 +394,7 @@ MainWindow::MainWindow(QWidget *parent) :
          * n = nada.
          * servira para ubicar las fichas en el tablero
          * */
-
-    milista->agregar("hola");
-    milista->agregar("mundo");
-    milista->agregar("en");
-    milista->agregar("mi");
-    milista->agregar("pinshi");
-    milista->agregar("lista");
-    milista->agregar(">:v");
-    milista->mostrar();
-
+    crear_grafico(0);
 }
 
 MainWindow::~MainWindow()
@@ -421,6 +415,7 @@ void MainWindow::on_btnmover_clicked()
          * [P][0][C4]
          * (0)(1)(2)
          * */
+
         QStringList arreglocoordenada = coordenada.split("-");
 
         /*validamos que tenga los datos correctos*/
@@ -489,6 +484,7 @@ void MainWindow::on_btnmover_clicked()
 
                                         if(pieza == 0){
                                             /*posicion libre*/
+                                            cout << "pos libre" << endl;
                                             tabpos0[actual_x][actual_y] = 0;
                                             tablogic0->insertar(actual_x,actual_y,"N");
                                             tab0[actual_x][actual_y]->setText(" ");
@@ -612,10 +608,82 @@ void MainWindow::crear_grafico(int n){
     }else{
         tablero_completo = tablogic2->estado_matriz();
     }
-
+    QString nodo_por_columna="";
     /*primero separar por columnas*/
     QStringList columnas = tablero_completo.split("fincol");
 
+    for(int i=0; i<columnas.length()-1; i++){
+        QString columna = columnas.value(i);
+
+        /*separar cada nodo*/
+        QStringList datos_nodo = columna.split("%");
+
+        /*-1 debido a que queda un espacio vacio al final :v*/
+        for(int k=0; k<datos_nodo.length()-1; k++){
+            QString cada_nodo = datos_nodo.value(k);
+            /*separar cada dato del nodo*/
+            QStringList separado = cada_nodo.split("#");
+
+            for(int j=0; j<separado.length(); j++){
+                if(j == 0){
+                    QString nodo = separado.value(j);
+                    char* cnodo = (char*)malloc(20);
+                    char* tmp = nodo.toLatin1().data();
+                    strcpy(cnodo, tmp);
+                    lista_nodos->agregar(cnodo);
+                }else if(j == 1){
+                    QString numero = separado.value(j);
+                    nodo_por_columna += numero + "#";
+                    char* cnumero = (char*)malloc(2);
+                    char* tmp = numero.toLatin1().data();
+                    strcpy(cnumero, tmp);
+                    lista_numero->agregar(cnumero);
+                }else if(j == 2){
+                    QString x = separado.value(j);
+                    nodo_por_columna += x + "#";
+                    char* cx = (char*)malloc(1);
+                    char* tmp = x.toLatin1().data();
+                    strcpy(cx, tmp);
+                    lista_x->agregar(cx);
+                }else if(j == 3){
+                    QString y = separado.value(j);
+                    nodo_por_columna += y;
+                    char* cy = (char*)malloc(1);
+                    char* tmp = y.toLatin1().data();
+                    strcpy(cy, tmp);
+                    lista_y->agregar(cy);
+                }
+            }//fin recorrer separando #
+            nodo_por_columna += "%";
+        }//fin recorrer separando %
+        nodo_por_columna += "fincol";
+    }//fin recorrer separando fincol
+    /*fin separar datos y mandarlos a sus respectivas listas*/
+
+    /*creando los subgraph cluster*/
+    cout << "------- subgraf----------------- " << endl;
+    cout << nodo_por_columna.toStdString() << endl;
+    QStringList subgraf = nodo_por_columna.split("fincol"); //0#1#1%1#1#2%2#1#3%...
+    QString subgraf_cluster = "";
+    int contador_subclust =0;
+
+    for(int i=0; i<subgraf.length()-1; i++){
+        subgraf_cluster += "subgraph cluster"+QString::number(contador_subclust)+"{";
+        QString columna =  subgraf.value(i);
+        QStringList nodos = columna.split("%");//[0#1#1][1#1#2][2#1#3][....
+        for(int j=0; j<nodos.length()-1; j++){
+            QString nodo = nodos.value(j);
+            QStringList datos_nodo = nodo.split("#");//[0][1][1]
+            QString ndn = datos_nodo.value(0);
+            int numero_nodo = ndn.toInt();
+            int numero_nodo_siguiente = numero_nodo +1;
+            subgraf_cluster += "\"node"+QString::number(numero_nodo) + "\" -> \"node" + QString::number(numero_nodo_siguiente)+"\";";
+            subgraf_cluster += "\"node"+QString::number(numero_nodo_siguiente) + "\" -> \"node" + QString::number(numero_nodo)+"\";";
+        }//fin recorrer, separando %
+        subgraf_cluster += "}";
+        contador_subclust++;
+    }//fin recorrer, separando fincol
+    cout << subgraf_cluster.toStdString() << endl;
 }
 
 QString MainWindow::nombre_correcto(QString pieza){

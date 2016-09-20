@@ -343,6 +343,8 @@ QString Matriz::estado_matriz(){
                      * Rn->
                      * */
                     contador++;
+                }else{
+                    tablero += "%";
                 }
                 actual = actual->derecha;
             }else{
