@@ -81,6 +81,9 @@ Matriz::Matriz()
 void Matriz::insertar(int fila, int columna, char * valor)
 {
     Nodo * nuevo = new Nodo(fila, columna, valor);
+    //agregue esto
+    nuevo->derecha = NULL;
+    nuevo->abajo = NULL;
     //INSERCION_FILAS
     Encabezado * eFila = eFilas->getEncabezado(fila);
     if(eFila == NULL) //Si no existe encabezado se crea.
@@ -141,7 +144,7 @@ void Matriz::insertar(int fila, int columna, char * valor)
             Nodo * actual = eColumna->acceso;
             while(actual->abajo != NULL)
             {
-                if(nuevo->fila < actual->abajo->fila) //Inserción en el medio
+                if(nuevo->fila <= actual->abajo->fila) //Inserción en el medio
                 {
                     nuevo->abajo = actual->abajo;
                     actual->abajo->arriba = nuevo;
@@ -161,10 +164,10 @@ void Matriz::insertar(int fila, int columna, char * valor)
     }//FIN_COLUMNAS
 }
 
-void Matriz::recorrerColumnas()
+void Matriz::recorrerFilas()
 {
     Encabezado * eFila = eFilas->primero;
-    cout << "Recorrido Por Columnas: ";
+    cout << "Recorrido Por Filas: ";
 
     while(eFila != NULL)
     {
@@ -173,6 +176,7 @@ void Matriz::recorrerColumnas()
         {
             if(actual->valor != NULL){
                 cout << actual->valor;
+
                 if(eFila->siguiente != NULL || actual->derecha != NULL)
                 {
                     cout << "->";
@@ -192,10 +196,10 @@ void Matriz::recorrerColumnas()
     cout << endl;
 }
 
-void Matriz::recorrerFilas()
+void Matriz::recorrerColumnas()
 {
     Encabezado * eColumna = eColumnas->primero;
-    cout << "Recorrido Por Filas: ";
+    cout << "Recorrido Por columnas: ";
 
     while(eColumna != NULL)
     {
@@ -228,17 +232,17 @@ void Matriz::recorrerFilas()
 /*verificamos la existencia de alguna ficha*/
 bool Matriz::hayficha(char * nombre){
     /*se hace un recorrido por columnas*/
-    Encabezado * eFila = eFilas->primero;
+    Encabezado * eColumna = eColumnas->primero;
     int contador = 0;
-    while(eFila != NULL){
-        Nodo * actual = eFila->acceso;
+    while(eColumna != NULL){
+        Nodo * actual = eColumna->acceso;
         while(actual!=NULL){
             if(strcmp(actual->valor,nombre)){ //si encuetra almenos una ficha
                 contador++;
             }
-            actual = actual->derecha;
+            actual = actual->abajo;
         }
-        eFila = eFila->siguiente;
+        eColumna = eColumna->siguiente;
     }
     if(contador>0){
         return true;
@@ -249,63 +253,101 @@ bool Matriz::hayficha(char * nombre){
 
 int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
     /*recorrido por columnas*/
-    Encabezado * eFila = eFilas->primero;
+    Encabezado * eColumna = eColumnas->primero;
     bool correcto=false;
     QString coordenada;
-    while(eFila != NULL){
-        Nodo * actual = eFila->acceso;
+    while(eColumna != NULL){
+        Nodo * actual = eColumna->acceso;
+
         while(actual != NULL){
             if(actual->valor != NULL){
+
+                /*validaciones para peon negro*/
                 if(strcmp(actual->valor,pieza) == 0){
+                    /*encontro la pieza*/
                     int actual_x = actual->fila;
                     int actual_y = actual->columna;
 
+                    //cout<<"ubicacion peon: actuales"<<endl;
+                    //cout<<actual_x<<endl;
+                    //cout<<actual_y<<endl;
                     if(actual_x < destino_x){
-                        if(destino_x == actual_x+1){
-                            if(destino_y == actual_y-1 || destino_y == actual_y+1){
+                        /*movimiento hacia abajo*/
+                        if(destino_x == actual_x + 1){
+                            //el peon solo puede moverse una casilla
+                            if(actual_y == destino_y){
+                                //movera hacia abajo la pieza
                                 coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
-                                correcto=true;
+                                correcto = true;
                                 break;
                             }else{
-                                actual = actual->derecha;
+                                //movera hacia abajo en diagonal izquierda/derecha la pieza
+                                if(actual_x != 2){
+                                    //si esta en cualquier otra fila
+                                    if(actual_y + 1 == destino_y && actual_y + 1 < 9){
+                                        //diagonal derecha
+                                        coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                                        correcto = true;
+                                        break;
+                                    }else if(actual_y - 1 == destino_y && actual_y - 1 > 0){
+                                        //diagonal izquierda
+                                        coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                                        correcto = true;
+                                        break;
+                                    }else{
+                                        actual = actual->abajo;
+                                    }
+                                }else{
+                                    /* regla impuesta:
+                                     * no se puede mover un peon negro en diagonal si esta en la fila inicio
+                                     * */
+                                    actual = actual->abajo;
+                                }
                             }
                         }else{
-                            actual = actual->derecha;
-                        }
-                    }else if(actual_x == destino_x){
-                        if(destino_y==actual_y-1 || destino_y==actual_y+1){
-                            correcto=true;
-                            coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
-                            break;
-                        }else{
-                            actual = actual->derecha;
+                            actual = actual->abajo;
                         }
                     }else if(actual_x > destino_x){
-                        if(destino_x == actual_x-1){
-                            if(destino_y == actual_y-1 || destino_y == actual_y+1){
-                                coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
-                                correcto=true;
-                                break;
+                        /*movimiento hacia arriba*/
+                        if(destino_x == actual_x - 1){
+                            //el peon solo puede regresar una casilla
+                            if(actual_y != destino_y){
+                                //movera hacia arriba en diagonal izq/der la pieza
+                                if(actual_y + 1 == destino_y && actual_y + 1 < 9){
+                                    //diagonal derecha
+                                    coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                                    correcto = true;
+                                    break;
+                                }else if(actual_y - 1 == destino_y && actual_y - 1 > 0){
+                                    //diagonal izquierda
+                                    coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                                    correcto = true;
+                                    break;
+                                }else{
+                                    actual = actual->abajo;
+                                }
                             }else{
-                                actual = actual->derecha;
+                                actual = actual->abajo;
                             }
                         }else{
-                            actual = actual->derecha;
+                            actual = actual->abajo;
                         }
                     }else{
                         break;
                     }
                 }else{
-                    actual = actual->derecha;
+                    /*si no la encontro continua hacia abajo de la columna*/
+                    actual = actual->abajo;
                 }
             }else{
                 break;
             }
         }//fin segundo while
+
         if(correcto == true){
            break;
         }else{
-            eFila = eFila->siguiente;
+            eColumna = eColumna->siguiente;
         }
     }//fin primer while
 
@@ -320,33 +362,38 @@ int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
 
 QString Matriz::estado_matriz(){
     /*recorrido por columnas*/
-    Encabezado * eFila = eFilas->primero;
+    Encabezado * eColumna = eColumnas->primero;
     QString tablero = "";
     char* dato_nodo = (char*)malloc(2);
     int contador =0, x=0, y=0;
-    while(eFila != NULL)
+    while(eColumna != NULL)
     {
-        Nodo * actual = eFila->acceso;
+        Nodo * actual = eColumna->acceso;
         while(actual != NULL)
         {
             if(actual->valor != NULL){
                 strcpy(dato_nodo, actual->valor); //dato_nodo = "Rn"
                 /*char* a qstring*/
-                x = actual->fila;
                 y = actual->columna;
                 QString texto_nodo = QString::fromStdString(dato_nodo);
-                tablero += "node" + QString::number(contador) + "[label=\"" + texto_nodo + "\"];#" + QString::number(contador) + "#" + QString::number(x) + "#" + QString::number(y);
-                if(eFila->siguiente != NULL || actual->derecha != NULL)
-                {
-                    tablero += "%";
-                    /*valores=node0[label="Rn"];#0#2#3%
-                     * Rn->
-                     * */
-                    contador++;
+                if(texto_nodo != "N"){
+                    QString pieza = nombre_correcto(texto_nodo);
+                    tablero += "node" + QString::number(contador) + "[label=\"" + pieza + "\"];#" + QString::number(contador) + "#" + QString::number(y);
+                    if(eColumna->siguiente != NULL || actual->abajo != NULL)
+                    {
+                        tablero += "%";
+                        /*valores=node0[label="Rn"];#0#2#3%
+                         * Rn->
+                         * */
+                        contador++;
+                    }else{
+                        tablero += "%";
+                    }
+                    actual = actual->abajo;
                 }else{
-                    tablero += "%";
+                    actual = actual->abajo;
                 }
-                actual = actual->derecha;
+
             }else{
                 break;
             }
@@ -355,9 +402,245 @@ QString Matriz::estado_matriz(){
         /*node0label[]#0%....%node10[label...]#10%fincol
          * cn->pn->cb->fincol
          * */
-        eFila = eFila->siguiente;
+        eColumna = eColumna->siguiente;
     }//fin primer while
 
+    /*nota: retorna correctas las columnas*/
     return tablero;
 }
 
+QString nombre_correcto(QString pieza){
+    if(pieza == "Rn"){
+        return "Rey n.";
+    }else if(pieza == "Dn"){
+        return "Dama n.";
+    }else if(pieza == "Tn"){
+        return "Torre n.";
+    }else if(pieza == "An"){
+        return "Alfil n.";
+    }else if(pieza == "Cn"){
+        return "Caballo n.";
+    }else if(pieza == "Pn"){
+        return "Peon n.";
+    }else if(pieza == "Rb"){
+        return "Rey b.";
+    }else if(pieza == "Db"){
+        return "Dama b.";
+    }else if(pieza == "Tb"){
+        return "Torre b.";
+    }else if(pieza == "Ab"){
+        return "Alfil b.";
+    }else if(pieza == "Cb"){
+        return "Caballo b.";
+    }else if(pieza == "Pb"){
+        return "Peon b.";
+    }
+}
+
+void Matriz::modificar(char *anterior, char *nueva, int act_x, int act_y){
+    Encabezado * eFila = eFilas->primero;
+    bool correcto = false;
+    while(eFila != NULL)
+    {
+        Nodo * actual = eFila->acceso;
+        while(actual != NULL)
+        {
+            if(actual->valor != NULL){
+                cout << actual->valor;
+
+                if(strcmp(actual->valor, anterior) == 0){
+                    int x = actual->fila;
+                    int y = actual->columna;
+                    if(act_x == x && act_y == y){
+                        actual->valor = nueva;
+                        correcto = true;
+                        break; // detiene el segundo while
+                    }else{
+                        actual = actual->derecha;
+                    }
+                }else{
+                    actual = actual->derecha;
+                }
+            }else{
+                break;
+            }
+        }//fin segundo while
+        if(correcto == true){
+            break; //detiene el primer while
+        }else{
+            eFila = eFila->siguiente;
+        }
+    }//fin primer while
+}
+
+void Matriz::eliminar(int fila, int columna, char *dato){
+    Encabezado * eColumna = eColumnas->primero;
+    Encabezado * eFila = eFilas->primero;
+    bool correcto = false;
+    cout << "Eliminando:" <<endl;
+    char* dato_nodo = (char*)malloc(5);
+    char* tmp = (char*)malloc(2);
+    while(eColumna != NULL)
+    {
+        Nodo * actual = eColumna->acceso;
+        if(strcmp(actual->valor, dato) == 0 && actual->fila == fila && actual->columna == columna){
+            /*verificamos si es el primer dato de la columna*/
+
+            if(actual->abajo != NULL && actual->derecha != NULL){
+                //1er caso: tiene nodos a la derecha y abajo
+            }else if(actual->abajo != NULL && actual->derecha == NULL){
+                //2do caso: tiene nodos hacia abajo pero no a la derecha.
+            }else if(actual->abajo == NULL && actual->derecha != NULL){
+                //3er caso: tiene nodos hacia la derecha pero no hacia abajo.
+            }else{
+                //4to caso: no tiene nodos a la derecha ni hacia abajo.
+            }
+        }else{
+            /*como no es el primero recorremos el resto de la matriz*/
+            //para ver que tiene el nodo
+            strcpy(dato_nodo, actual->valor);
+            QString texto_nodo = QString::fromStdString(dato_nodo);
+            cout<<"contenido del nodo"<<endl;
+            cout<<texto_nodo.toStdString()<<endl;
+
+            while(actual != NULL)
+            {
+                //para ver que tiene el nodo
+                strcpy(dato_nodo, actual->valor);
+                QString texto_nodo = QString::fromStdString(dato_nodo);
+
+                if(strcmp(actual->valor, dato) == 0 && actual->fila == fila && actual->columna == columna){
+                    /*encuentra el dato*/
+
+                    if(actual->abajo != NULL && actual->derecha != NULL){
+                        //1er caso: tiene nodos a la derecha y abajo.
+
+                        if(actual->columna == columna && actual->fila != fila){
+                            while(eFila->id != fila){
+                                eFila = eFila->siguiente; //se mueve la ubicacion de la fila
+                            }
+                        }
+
+                        //mov. vertical
+                        Nodo* arb = actual->arriba;
+                        Nodo* abj = actual->abajo;
+                        arb->abajo = abj;
+                        abj->arriba = arb;
+
+                        //mov. horizontal
+                        Nodo* der = actual->derecha;
+                        if(strcmp(actual->valor, eFila->acceso->valor)==0){
+                            eFila->acceso->derecha = der;
+                            der->izquierda = eFila->acceso;
+                        }else{
+                            Nodo* izq = actual->izquierda;
+                            izq->derecha = der;
+                            der->izquierda = izq;
+                        }
+                        //se elimina
+                        correcto=true;
+                        free(actual);
+                        break;
+                    }else if(actual->abajo != NULL && actual->derecha == NULL){
+                        //2do caso: tiene nodos hacia abajo pero no a la derecha.
+
+                        if(actual->columna == columna && actual->fila != fila){
+                            while(eFila->id != fila){
+                                eFila = eFila->siguiente; //se mueve la ubicacion de la fila
+                            }
+                        }
+                        //mov. vertical
+                        Nodo* arb = actual->arriba;
+                        Nodo* abj = actual->abajo;
+                        arb->abajo = abj;
+                        abj->arriba = arb;
+                        //mov. horizontal
+                        if(strcmp(actual->valor, eFila->acceso->valor)==0){
+                            eFila->acceso->derecha = NULL;
+                        }else{
+                            Nodo* izq = actual->izquierda;
+                            izq->derecha = NULL;
+                        }
+                        //se elimina
+                        correcto=true;
+                        free(actual);
+                        break;
+                    }else if(actual->abajo == NULL && actual->derecha != NULL){
+                        //3er caso: tiene nodos hacia la derecha pero no hacia abajo.
+
+                        if(actual->columna == columna && actual->fila != fila){
+                            while(eFila->id != fila){
+                                eFila = eFila->siguiente; //se mueve la ubicacion de la fila
+                            }
+                        }
+
+                        //mov. vertical
+                        Nodo* arb = actual->arriba;
+                        arb->abajo = NULL;
+
+                        //mov. horizontal
+                        Nodo* der = actual->derecha;
+                        if(strcmp(actual->valor, eFila->acceso->valor)==0){
+                            eFila->acceso->derecha = der;
+                            der->izquierda = eFila->acceso;
+                        }else{
+                            Nodo* izq = actual->izquierda;
+                            izq->derecha = der;
+                            der->izquierda = izq;
+                        }
+
+                        //se eliminia
+                        correcto=true;
+                        free(actual);
+                        break;
+                    }else if(actual->derecha == NULL && actual->abajo == NULL){
+                        //4to caso: no tiene nodos a la derecha ni hacia abajo.
+
+                        if(actual->columna == columna && actual->fila != fila){
+                            while(eFila->id != fila){
+                                eFila = eFila->siguiente; //se mueve la ubicacion de la fila
+                            }
+                        }
+
+                        //mov. vertical
+                        Nodo* arb = actual->arriba;
+                        arb->abajo = NULL;
+
+                        //mov. horizontal
+                        if(strcmp(actual->valor, eFila->acceso->valor)==0){
+                            eFila->acceso->derecha = NULL;
+                        }else{
+                            Nodo* izq = actual->izquierda;
+                            izq->derecha = NULL;
+                        }
+
+                        //se elimina
+                        correcto=true;
+                        free(actual);
+                        break;
+                    }else{
+                        cout << "falta validacion" << endl;
+                    }
+                }else{
+                    /*el dato no coincide continua hacia abajo de la columna
+                     * y se avanza el numero de fila
+                     * */
+
+                    actual = actual->abajo;
+                    eFila = eFila->siguiente;
+                }
+            }//fin segundo while
+
+        }//fin primer if
+
+        if(correcto == true){
+            /*borro el nodo detiene el primer while*/
+            break;
+        }else{
+            /*no encontro nada en una columna avanza a la siguiente*/
+            eColumna = eColumna->siguiente;
+            eFila = eFilas->primero;
+        }
+
+    }//fin primer while
+}

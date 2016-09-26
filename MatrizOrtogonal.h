@@ -48,8 +48,11 @@ struct Matriz
     bool hayficha(char * nombre);
     int ubicacion_peon(char * pieza, int x, int y);
     QString estado_matriz();
+    void eliminar(int fila, int columna, char * dato);
+    void modificar(char * anterior, char * nueva, int act_x, int act_y);
 };
 
+QString nombre_correcto(QString pieza);
 
 #endif // MATRIZORTOGONAL
 

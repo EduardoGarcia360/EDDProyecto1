@@ -3,7 +3,9 @@
 #include "QString"
 #include "string.h"
 #include "QMessageBox"
+#include "cstdlib"
 #include "iostream"
+#include "fstream"
 #include "MatrizOrtogonal.h"
 #include "listasimple.h"
 using namespace std;
@@ -30,9 +32,9 @@ QLabel* fondo2;
 /*bool para validar el turno del jugador*/
 bool jugador1 = true;
 /*para almacenar los nodos para graficar*/
-ListaEnlazada * lista_nodos = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
+//ListaEnlazada * lista_nodos = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
 ListaEnlazada * lista_numero = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
-ListaEnlazada * lista_x = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
+//ListaEnlazada * lista_x = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
 ListaEnlazada * lista_y = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -67,97 +69,97 @@ MainWindow::MainWindow(QWidget *parent) :
     fondo2 = new QLabel();
 
     /*creando tableros*/
-    for(int x=0; x<9; x++){
-        for(int y=0; y<9; y++){
+    for(int y=0; y<9; y++){
+        for(int x=0; x<9; x++){
 
             /*para tablero nivel 0*/
             tab0[x][y] = new QLabel(fondo0);
-            tab0[x][y]->setGeometry(x*32,y*30,32,30); //ancho, alto
+            tab0[x][y]->setGeometry(y*32,x*30,32,30); //ancho, alto
             tab0[x][y]->setAutoFillBackground(true);
             /*para tablero nivel 1*/
             tab1[x][y] = new QLabel(fondo1);
-            tab1[x][y]->setGeometry(x*32 ,y*30,32,30);
+            tab1[x][y]->setGeometry(y*32 ,x*30,32,30);
             tab1[x][y]->setAutoFillBackground(true);
             /*para tablero nivel 2*/
             tab2[x][y] = new QLabel(fondo2);
-            tab2[x][y]->setGeometry(x*32 ,y*30,32,30);
+            tab2[x][y]->setGeometry(y*32 ,x*30,32,30);
             tab2[x][y]->setAutoFillBackground(true);
 
             /*colocando nombre de fila y columna*/
-            if(y==0){
+            if(x==0){
                 /*colocando nombre a las columnas*/
-                if(x==1){
+                if(y==1){
                     tab0[x][y]->setText("1");
                     tab1[x][y]->setText("1");
                     tab2[x][y]->setText("1");
-                }else if(x==2){
+                }else if(y==2){
                     tab0[x][y]->setText("2");
                     tab1[x][y]->setText("2");
                     tab2[x][y]->setText("2");
-                }else if(x==3){
+                }else if(y==3){
                     tab0[x][y]->setText("3");
                     tab1[x][y]->setText("3");
                     tab2[x][y]->setText("3");
-                }else if(x==4){
+                }else if(y==4){
                     tab0[x][y]->setText("4");
                     tab1[x][y]->setText("4");
                     tab2[x][y]->setText("4");
-                }else if(x==5){
+                }else if(y==5){
                     tab0[x][y]->setText("5");
                     tab1[x][y]->setText("5");
                     tab2[x][y]->setText("5");
-                }else if(x==6){
+                }else if(y==6){
                     tab0[x][y]->setText("6");
                     tab1[x][y]->setText("6");
                     tab2[x][y]->setText("6");
-                }else if(x==7){
+                }else if(y==7){
                     tab0[x][y]->setText("7");
                     tab1[x][y]->setText("7");
                     tab2[x][y]->setText("7");
-                }else if(x==8){
+                }else if(y==8){
                     tab0[x][y]->setText("8");
                     tab1[x][y]->setText("8");
                     tab2[x][y]->setText("8");
                 }
-            }else if(x==0){
+            }else if(y==0){
                 /*colocando nombre a las filas*/
-                if(y==1){
+                if(x==1){
                     tab0[x][y]->setText("H");
                     tab1[x][y]->setText("H");
                     tab2[x][y]->setText("H");
-                }else if(y==2){
+                }else if(x==2){
                     tab0[x][y]->setText("G");
                     tab1[x][y]->setText("G");
                     tab2[x][y]->setText("G");
-                }else if(y==3){
+                }else if(x==3){
                     tab0[x][y]->setText("F");
                     tab1[x][y]->setText("F");
                     tab2[x][y]->setText("F");
-                }else if(y==4){
+                }else if(x==4){
                     tab0[x][y]->setText("E");
                     tab1[x][y]->setText("E");
                     tab2[x][y]->setText("E");
-                }else if(y==5){
+                }else if(x==5){
                     tab0[x][y]->setText("D");
                     tab1[x][y]->setText("D");
                     tab2[x][y]->setText("D");
-                }else if(y==6){
+                }else if(x==6){
                     tab0[x][y]->setText("C");
                     tab1[x][y]->setText("C");
                     tab2[x][y]->setText("C");
-                }else if(y==7){
+                }else if(x==7){
                     tab0[x][y]->setText("B");
                     tab1[x][y]->setText("B");
                     tab2[x][y]->setText("B");
-                }else if(y==8){
+                }else if(x==8){
                     tab0[x][y]->setText("A");
                     tab1[x][y]->setText("A");
                     tab2[x][y]->setText("A");
                 }
             }else{
                 /*coloreando cada casilla*/
-                if(y==1 || y==3 || y==5 || y==7){
-                    if(x==1 || x==3 || x==5 || x==7){
+                if(x==1 || x==3 || x==5 || x==7){
+                    if(y==1 || y==3 || y==5 || y==7){
                         tab0[x][y]->setPalette(blanco);
                         tab1[x][y]->setPalette(blanco);
                         tab2[x][y]->setPalette(blanco);
@@ -167,7 +169,7 @@ MainWindow::MainWindow(QWidget *parent) :
                         tab2[x][y]->setPalette(gris);
                     }
                 }else{
-                    if(x==1 || x==3 || x==5 || x==7){
+                    if(y==1 || y==3 || y==5 || y==7){
                         tab0[x][y]->setPalette(gris);
                         tab1[x][y]->setPalette(gris);
                         tab2[x][y]->setPalette(gris);
@@ -182,11 +184,11 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     /*agregando las piezas*/
-    for(int x=1; x<9; x++){
-        for(int y=1; y<9; y++){
+    for(int y=1; y<9; y++){
+        for(int x=1; x<9; x++){
             /*agregando fichas negras*/
-            if(y==1){
-                if(x==1){
+            if(x==1){
+                if(y==1){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
                     tablogic0->insertar(x,y,"Cn");
@@ -194,7 +196,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=5;
                     tabpos1[x][y]=0;
                     tabpos2[x][y]=5;
-                }else if(x==8){
+                }else if(y==8){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(caballonegro));
                     tablogic0->insertar(x,y,"Cn");
@@ -202,7 +204,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=5;
                     tabpos1[x][y]=5;
                     tabpos2[x][y]=0;
-                }else if(x==2){
+                }else if(y==2){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
                     tablogic0->insertar(x,y,"An");
@@ -210,7 +212,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=4;
                     tabpos1[x][y]=0;
                     tabpos2[x][y]=4;
-                }else if(x==7){
+                }else if(y==7){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(alfilnegro));
                     tablogic0->insertar(x,y,"An");
@@ -218,7 +220,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=4;
                     tabpos1[x][y]=4;
                     tabpos2[x][y]=0;
-                }else if(x==3){
+                }else if(y==3){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
                     tablogic0->insertar(x,y,"Tn");
@@ -226,7 +228,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=3;
                     tabpos1[x][y]=0;
                     tabpos2[x][y]=3;
-                }else if(x==6){
+                }else if(y==6){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(torrenegro));
                     tablogic0->insertar(x,y,"Tn");
@@ -234,21 +236,21 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=3;
                     tabpos1[x][y]=3;
                     tabpos2[x][y]=0;
-                }else if(x==4){
+                }else if(y==4){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(reynegro));
                     tablogic0->insertar(x,y,"Rn");
                     tabpos0[x][y]=1;
                     tabpos1[x][y]=0;
                     tabpos2[x][y]=0;
-                }else if(x==5){
+                }else if(y==5){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(damanegro));
                     tablogic0->insertar(x,y,"Dn");
                     tabpos0[x][y]=2;
                     tabpos1[x][y]=0;
                     tabpos2[x][y]=0;
                 }
-            }else if(y==2){
-                if(x==1 || x==2 || x==3){
+            }else if(x==2){
+                if(y==1 || y==2 || y==3){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
                     tablogic0->insertar(x,y,"Pn");
@@ -256,7 +258,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=6;
                     tabpos1[x][y]=0;
                     tabpos2[x][y]=6;
-                }else if(x==6 || x==7 || x==8){
+                }else if(y==6 || y==7 || y==8){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(peonnegro));
                     tablogic0->insertar(x,y,"Pn");
@@ -271,9 +273,9 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos1[x][y]=0;
                     tabpos2[x][y]=0;
                 }
-            }else if(y==7){
+            }else if(x==7){
                 /*agregando fichas blancas*/
-                if(x==1 || x==2 || x==3){
+                if(y==1 || y==2 || y==3){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
                     tablogic0->insertar(x,y,"Pb");
@@ -281,7 +283,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=12;
                     tabpos1[x][y]=12;
                     tabpos2[x][y]=0;
-                }else if(x==6 || x==7 || x==8){
+                }else if(y==6 || y==7 || y==8){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
                     tablogic0->insertar(x,y,"Pb");
@@ -289,15 +291,15 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=12;
                     tabpos1[x][y]=0;
                     tabpos2[x][y]=12;
-                }else if(x==4 || x==5){
+                }else if(y==4 || y==5){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(peonblanco));
                     tablogic0->insertar(x,y,"Pb");
                     tabpos0[x][y]=12;
                     tabpos1[x][y]=0;
                     tabpos2[x][y]=0;
                 }
-            }else if(y==8){
-                if(x==1){
+            }else if(x==8){
+                if(y==1){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
                     tablogic0->insertar(x,y,"Cb");
@@ -305,7 +307,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=11;
                     tabpos1[x][y]=11;
                     tabpos2[x][y]=0;
-                }else if(x==8){
+                }else if(y==8){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(caballoblanco));
                     tablogic0->insertar(x,y,"Cb");
@@ -313,7 +315,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=11;
                     tabpos1[x][y]=0;
                     tabpos2[x][y]=11;
-                }else if(x==2){
+                }else if(y==2){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
                     tablogic0->insertar(x,y,"Ab");
@@ -321,7 +323,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=10;
                     tabpos1[x][y]=10;
                     tabpos2[x][y]=0;
-                }else if(x==7){
+                }else if(y==7){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(alfilblanco));
                     tablogic0->insertar(x,y,"Ab");
@@ -329,7 +331,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=10;
                     tabpos1[x][y]=0;
                     tabpos2[x][y]=10;
-                }else if(x==3){
+                }else if(y==3){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
                     tab1[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
                     tablogic0->insertar(x,y,"Tb");
@@ -337,7 +339,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=9;
                     tabpos1[x][y]=9;
                     tabpos2[x][y]=0;
-                }else if(x==6){
+                }else if(y==6){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
                     tab2[x][y]->setPixmap(QPixmap::fromImage(torreblanco));
                     tablogic0->insertar(x,y,"Tb");
@@ -345,13 +347,13 @@ MainWindow::MainWindow(QWidget *parent) :
                     tabpos0[x][y]=9;
                     tabpos1[x][y]=0;
                     tabpos2[x][y]=9;
-                }else if(x==4){
+                }else if(y==4){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(reyblanco));
                     tablogic0->insertar(x,y,"Rb");
                     tabpos0[x][y]=7;
                     tabpos1[x][y]=0;
                     tabpos2[x][y]=0;
-                }else if(x==5){
+                }else if(y==5){
                     tab0[x][y]->setPixmap(QPixmap::fromImage(damablanco));
                     tablogic0->insertar(x,y,"Db");
                     tabpos0[x][y]=8;
@@ -370,7 +372,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tablero0->setWidget(fondo0);
     ui->tablero1->setWidget(fondo1);
     ui->tablero2->setWidget(fondo2);
-
+    //tablogic0->insertar(4, 5, "aqui");
+    //tablogic0->recorrerColumnas();
+    //tablogic0->recorrerFilas();
     /*--------------MODIFICAR EL LABEL----------------
          * QLabel *ejemplo = new QLabel("algo para mostrar");
          * ---para cambiar el color del label
@@ -394,7 +398,7 @@ MainWindow::MainWindow(QWidget *parent) :
          * n = nada.
          * servira para ubicar las fichas en el tablero
          * */
-    crear_grafico(0);
+    //crear_grafico_tablero(1);
 }
 
 MainWindow::~MainWindow()
@@ -458,18 +462,21 @@ void MainWindow::on_btnmover_clicked()
                         if(haypiezas0==true || haypiezas1==true || haypiezas2==true){
 
                             QString destino = arreglocoordenada.at(2); //"C4"
-                            QString qsx = destino.at(1);
-                            int destino_x = qsx.toInt();  //"4" a 4
-                            if(destino_x != 0){
+                            //QString qsx = destino.at(1);
+                            //int destino_x = qsx.toInt();  //"4" a 4
+                            int destino_x = letra_a_numero(destino.at(0)); //"C" a 6
 
-                                int destino_y = letra_a_numero(destino.at(0)); //"C" a 6
+                            if(destino_x != 0){
+                                QString qsy = destino.at(1); //"4"
+                                int destino_y = qsy.toInt();
+                                //int destino_y = letra_a_numero(destino.at(0)); //"C" a 6
                                 if(destino_y>0 && destino_y<=8){
 
                                     /*valido si la coordenada es valida paraq que algun peon pueda moverse*/
                                     int ub0 = tablogic0->ubicacion_peon(cnficha, destino_x, destino_y);
                                     int ub1 = tablogic1->ubicacion_peon(cnficha, destino_x, destino_y);
                                     int ub2 = tablogic2->ubicacion_peon(cnficha, destino_x, destino_y);
-                                    if(ub0 > 0){//if(tablogic0->moverpeon(cnficha, destino_x, destino_y)
+                                    if(ub0 > 0){
                                         /*si hay una pieza que cumpla con el movimiento en el nivel 0*/
                                         int pieza = tabpos0[destino_x][destino_y];
                                         QString coo = QString::number(ub0); //ej. 406
@@ -478,27 +485,30 @@ void MainWindow::on_btnmover_clicked()
                                         int actual_x = tmp.toInt(); //4
                                         tmp = arr_coo.at(1);
                                         int actual_y = tmp.toInt(); //6
-                                        cout << "pos actual que retorna la ortogonal" << endl;
-                                        cout << actual_x << endl;
-                                        cout << actual_y << endl;
+                                        //cout << "pos actual que retorna la ortogonal" << endl;
+                                        //cout << actual_x << endl;
+                                        //cout << actual_y << endl;
 
                                         if(pieza == 0){
                                             /*posicion libre*/
-                                            cout << "pos libre" << endl;
                                             tabpos0[actual_x][actual_y] = 0;
-                                            tablogic0->insertar(actual_x,actual_y,"N");
+                                            tablogic0->eliminar(actual_x, actual_y, "Pn");
                                             tab0[actual_x][actual_y]->setText(" ");
-
-                                            cout << "pos destino que convierte F2 a coord." << endl;
-                                            cout << destino_x << endl;
-                                            cout << destino_y << endl;
+                                            cout << "despues de eliminar" << endl;
+                                            tablogic0->recorrerColumnas();
+                                            tablogic0->recorrerFilas();
 
                                             tabpos0[destino_x][destino_y] = 6;
                                             tablogic0->insertar(destino_x,destino_y,"Pn");
                                             tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
 
+                                            cout << "despues de mover" << endl;
+                                            tablogic0->recorrerColumnas();
+                                            tablogic0->recorrerFilas();
+
                                             ui->listamovimientos->addItem(coordenada);
                                             ui->txtmovimiento->setText("");
+
                                             //jugador1=false;
                                         }else if(pieza >=7 && pieza <=12){
                                             /*hay una pieza blanca para comer en esa posicion*/
@@ -598,9 +608,9 @@ int MainWindow::letra_a_numero(QString letra){
     }
 }
 
-void MainWindow::crear_grafico(int n){
+void MainWindow::crear_grafico_tablero(int n){
     QString tablero_completo="";
-    //QStringList
+
     if(n == 0){
         tablero_completo = tablogic0->estado_matriz();
     }else if(n == 1){
@@ -608,7 +618,9 @@ void MainWindow::crear_grafico(int n){
     }else{
         tablero_completo = tablogic2->estado_matriz();
     }
-    QString nodo_por_columna="";
+    QString nodo_por_columna="", nodo_label="";
+
+
     /*primero separar por columnas*/
     QStringList columnas = tablero_completo.split("fincol");
 
@@ -627,92 +639,86 @@ void MainWindow::crear_grafico(int n){
             for(int j=0; j<separado.length(); j++){
                 if(j == 0){
                     QString nodo = separado.value(j);
-                    char* cnodo = (char*)malloc(20);
-                    char* tmp = nodo.toLatin1().data();
-                    strcpy(cnodo, tmp);
-                    lista_nodos->agregar(cnodo);
+                    nodo_label += nodo; //se almacena node0[label="peon"];
                 }else if(j == 1){
                     QString numero = separado.value(j);
-                    nodo_por_columna += numero + "#";
+                    nodo_por_columna += numero + "#"; //se almacena el numero correspondiente al nodo
+
                     char* cnumero = (char*)malloc(2);
                     char* tmp = numero.toLatin1().data();
                     strcpy(cnumero, tmp);
                     lista_numero->agregar(cnumero);
                 }else if(j == 2){
-                    QString x = separado.value(j);
-                    nodo_por_columna += x + "#";
-                    char* cx = (char*)malloc(1);
-                    char* tmp = x.toLatin1().data();
-                    strcpy(cx, tmp);
-                    lista_x->agregar(cx);
-                }else if(j == 3){
-                    QString y = separado.value(j);
-                    nodo_por_columna += y;
+                    QString y = separado.value(j); //se almacena la coordena en y
+                    //nodo_por_columna += y;
                     char* cy = (char*)malloc(1);
                     char* tmp = y.toLatin1().data();
                     strcpy(cy, tmp);
                     lista_y->agregar(cy);
                 }
             }//fin recorrer separando #
-            nodo_por_columna += "%";
         }//fin recorrer separando %
         nodo_por_columna += "fincol";
     }//fin recorrer separando fincol
     /*fin separar datos y mandarlos a sus respectivas listas*/
 
+    //cout << "-----------nodo_por_columna------------- " << endl;
+    //cout << nodo_por_columna.toStdString() << endl;
+
     /*creando los subgraph cluster*/
-    cout << "------- subgraf----------------- " << endl;
-    cout << nodo_por_columna.toStdString() << endl;
-    QStringList subgraf = nodo_por_columna.split("fincol"); //0#1#1%1#1#2%2#1#3%...
+    //cout << "------- subgraf----------------- " << endl;
+    //cout << nodo_por_columna.toStdString() << endl;
+
+    QStringList subgraf = nodo_por_columna.split("fincol");
+    /*queda:
+     * subgraf=[0#1#2#3#][4#5#6#7#][...]
+     * */
     QString subgraf_cluster = "";
     int contador_subclust =0;
 
     for(int i=0; i<subgraf.length()-1; i++){
         subgraf_cluster += "subgraph cluster"+QString::number(contador_subclust)+"{";
         QString columna =  subgraf.value(i);
-        QStringList nodos = columna.split("%");//[0#1#1][1#1#2][2#1#3][....
-        for(int j=0; j<nodos.length()-1; j++){
-            QString nodo = nodos.value(j);
-            QStringList datos_nodo = nodo.split("#");//[0][1][1]
-            QString ndn = datos_nodo.value(0);
-            int numero_nodo = ndn.toInt();
-            int numero_nodo_siguiente = numero_nodo +1;
-            subgraf_cluster += "\"node"+QString::number(numero_nodo) + "\" -> \"node" + QString::number(numero_nodo_siguiente)+"\";";
-            subgraf_cluster += "\"node"+QString::number(numero_nodo_siguiente) + "\" -> \"node" + QString::number(numero_nodo)+"\";";
-        }//fin recorrer, separando %
+
+        QStringList nodos = columna.split("#");
+        /*queda:
+         * nodos = [0][1][2][3][]
+         * */
+        for(int j=0; j<nodos.length()-2; j++){
+            QString nodo = nodos.value(j); //nodo=[0]
+
+            int numero_nodo = nodo.toInt(); //0
+            int numero_nodo_siguiente = numero_nodo +1;//1
+
+            subgraf_cluster += "\"node"+QString::number(numero_nodo) + "\" -> \"node" + QString::number(numero_nodo_siguiente)+"\";\n";
+            subgraf_cluster += "\"node"+QString::number(numero_nodo_siguiente) + "\" -> \"node" + QString::number(numero_nodo)+"\";\n";
+
+        }//fin recorrer, separando #
         subgraf_cluster += "}";
         contador_subclust++;
-    }//fin recorrer, separando fincol
-    cout << subgraf_cluster.toStdString() << endl;
+    }
+
+    //fin recorrer, separando fincol
+    //cout << "---------------- subgraf_cluster------------------" << endl;
+    //cout << subgraf_cluster.toStdString() << endl;
+
+    QString archivo = "digraph G{\nnode [shape=record, height=.1;]\n" + nodo_label + subgraf_cluster + "\n}";
+    generar_dot(archivo);
 }
 
-QString MainWindow::nombre_correcto(QString pieza){
-    if(pieza == "Rn"){
-        return "Rey n.";
-    }else if(pieza == "Dn"){
-        return "Dama n.";
-    }else if(pieza == "Tn"){
-        return "Torre n.";
-    }else if(pieza == "An"){
-        return "Alfil n.";
-    }else if(pieza == "Cn"){
-        return "Caballo n.";
-    }else if(pieza == "Pn"){
-        return "Peon n.";
-    }else if(pieza == "Rb"){
-        return "Rey b.";
-    }else if(pieza == "Db"){
-        return "Dama b.";
-    }else if(pieza == "Tb"){
-        return "Torre b.";
-    }else if(pieza == "Ab"){
-        return "Alfil b.";
-    }else if(pieza == "Cb"){
-        return "Caballo b.";
-    }else if(pieza == "Pb"){
-        return "Peon b.";
+void MainWindow::generar_dot(QString contenido){
+    ofstream escritura;
+    escritura.open("dato.dot", ios::out);
+    if(escritura.is_open()){
+        cout<<"abrio el archivo"<<endl;
+        escritura<<contenido.toStdString()<<endl;
+    }else{
+        cout<<"nell prro"<<endl;
     }
+    escritura.close();
+
 }
+
 //for(int i=0;i<arreglocoordenada.length(); i++){
     /*recorro el arreglo y agrego los item*/
     //ui->listamovimientos->addItem(arreglocoordenada.value(i));
