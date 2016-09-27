@@ -494,17 +494,17 @@ void MainWindow::on_btnmover_clicked()
                                             tabpos0[actual_x][actual_y] = 0;
                                             tablogic0->eliminar(actual_x, actual_y, "Pn");
                                             tab0[actual_x][actual_y]->setText(" ");
-                                            cout << "despues de eliminar" << endl;
-                                            tablogic0->recorrerColumnas();
-                                            tablogic0->recorrerFilas();
+                                            //cout << "despues de eliminar" << endl;
+                                            //tablogic0->recorrerColumnas();
+                                            //tablogic0->recorrerFilas();
 
                                             tabpos0[destino_x][destino_y] = 6;
                                             tablogic0->insertar(destino_x,destino_y,"Pn");
                                             tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
 
-                                            cout << "despues de mover" << endl;
-                                            tablogic0->recorrerColumnas();
-                                            tablogic0->recorrerFilas();
+                                            //cout << "despues de mover" << endl;
+                                            //tablogic0->recorrerColumnas();
+                                            //tablogic0->recorrerFilas();
 
                                             ui->listamovimientos->addItem(coordenada);
                                             ui->txtmovimiento->setText("");
