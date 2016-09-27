@@ -360,6 +360,69 @@ int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
 
 }
 
+int Matriz::ubicacion_alfil(char *pieza, int x, int y){
+    /*recorrido por columnas*/
+    Encabezado * eColumna = eColumnas->primero;
+    bool correcto=false;
+    QString coordenada;
+    while(eColumna != NULL){
+        Nodo * actual = eColumna->acceso;
+
+        while(actual != NULL){
+            if(actual->valor != NULL){
+
+                /*validaciones para alfil negro*/
+                if(strcmp(actual->valor,pieza) == 0){
+                    /*encontro la pieza*/
+                    int actual_x = actual->fila;
+                    int actual_y = actual->columna;
+
+                    //cout<<"ubicacion peon: actuales"<<endl;
+                    //cout<<actual_x<<endl;
+                    //cout<<actual_y<<endl;
+                    if(actual_x < destino_x || actual_x > destino_x){
+                        /*movimiento vertical*/
+                        if(actual_y == destino_y){
+                            coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                            correcto=true;
+                            break;
+                        }else{
+                            actual = actual->abajo;
+                        }
+                    }else if(actual_x == destino_x){
+                        /*movimiento horizontal*/
+                        coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                        correcto=true;
+                        break;
+                    }else if(actual_x == destino_x && actual_y = destino_y){
+                        /*caso especial*/
+                    }else{
+                        break;
+                    }
+                }else{
+                    /*si no la encontro continua hacia abajo de la columna*/
+                    actual = actual->abajo;
+                }
+            }else{
+                break;
+            }
+        }//fin segundo while
+
+        if(correcto == true){
+           break;
+        }else{
+            eColumna = eColumna->siguiente;
+        }
+    }//fin primer while
+
+    if(correcto == true){
+        int ncoor = coordenada.toInt(); //retorno coordenada separada por un 0 205 = (2,5)
+        return ncoor;
+    }else{
+        return 0;
+    }
+}
+
 QString Matriz::estado_matriz(){
     /*recorrido por columnas*/
     Encabezado * eColumna = eColumnas->primero;
