@@ -437,49 +437,15 @@ QString nombre_correcto(QString pieza){
     }
 }
 
-void Matriz::modificar(char *anterior, char *nueva, int act_x, int act_y){
-    Encabezado * eFila = eFilas->primero;
-    bool correcto = false;
-    while(eFila != NULL)
-    {
-        Nodo * actual = eFila->acceso;
-        while(actual != NULL)
-        {
-            if(actual->valor != NULL){
-                cout << actual->valor;
-
-                if(strcmp(actual->valor, anterior) == 0){
-                    int x = actual->fila;
-                    int y = actual->columna;
-                    if(act_x == x && act_y == y){
-                        actual->valor = nueva;
-                        correcto = true;
-                        break; // detiene el segundo while
-                    }else{
-                        actual = actual->derecha;
-                    }
-                }else{
-                    actual = actual->derecha;
-                }
-            }else{
-                break;
-            }
-        }//fin segundo while
-        if(correcto == true){
-            break; //detiene el primer while
-        }else{
-            eFila = eFila->siguiente;
-        }
-    }//fin primer while
-}
-
 void Matriz::eliminar(int fila, int columna, char *dato){
     Encabezado * eColumna = eColumnas->primero;
     Encabezado * eFila = eFilas->primero;
     bool correcto = false;
     cout << "Eliminando:" <<endl;
+    cout<<fila<<endl;
+    cout<<columna<<endl;
     char* dato_nodo = (char*)malloc(5);
-    char* tmp = (char*)malloc(2);
+
     while(eColumna != NULL)
     {
         Nodo * actual = eColumna->acceso;
@@ -508,14 +474,16 @@ void Matriz::eliminar(int fila, int columna, char *dato){
                 //para ver que tiene el nodo
                 strcpy(dato_nodo, actual->valor);
                 QString texto_nodo = QString::fromStdString(dato_nodo);
+                cout<<"contenido del nodo"<<endl;
+                cout<<texto_nodo.toStdString()<<endl;
 
                 if(strcmp(actual->valor, dato) == 0 && actual->fila == fila && actual->columna == columna){
                     /*encuentra el dato*/
 
                     if(actual->abajo != NULL && actual->derecha != NULL){
                         //1er caso: tiene nodos a la derecha y abajo.
-
-                        if(actual->columna == columna && actual->fila != fila){
+cout<<"1er caso"<<endl;
+                        if(actual->fila != eFila->acceso->fila){
                             while(eFila->id != fila){
                                 eFila = eFila->siguiente; //se mueve la ubicacion de la fila
                             }
@@ -529,10 +497,11 @@ void Matriz::eliminar(int fila, int columna, char *dato){
 
                         //mov. horizontal
                         Nodo* der = actual->derecha;
-                        if(strcmp(actual->valor, eFila->acceso->valor)==0){
+                        if(strcmp(dato, eFila->acceso->valor)==0 && eFila->acceso->fila == fila && eColumna->acceso->columna == columna){
                             eFila->acceso->derecha = der;
                             der->izquierda = eFila->acceso;
                         }else{
+                            cout<<"entro en el else"<<endl;
                             Nodo* izq = actual->izquierda;
                             izq->derecha = der;
                             der->izquierda = izq;
@@ -544,7 +513,7 @@ void Matriz::eliminar(int fila, int columna, char *dato){
                     }else if(actual->abajo != NULL && actual->derecha == NULL){
                         //2do caso: tiene nodos hacia abajo pero no a la derecha.
 
-                        if(actual->columna == columna && actual->fila != fila){
+                        if(actual->fila != eFila->acceso->fila){
                             while(eFila->id != fila){
                                 eFila = eFila->siguiente; //se mueve la ubicacion de la fila
                             }
@@ -555,9 +524,11 @@ void Matriz::eliminar(int fila, int columna, char *dato){
                         arb->abajo = abj;
                         abj->arriba = arb;
                         //mov. horizontal
-                        if(strcmp(actual->valor, eFila->acceso->valor)==0){
+                        if(strcmp(actual->valor, eFila->acceso->valor)==0 && eFila->acceso->fila == actual->fila && eColumna->acceso->columna == actual->columna){
                             eFila->acceso->derecha = NULL;
                         }else{
+                            cout<<eFila->acceso->fila<<endl;
+                            cout<<eFila->acceso->columna<<endl;
                             Nodo* izq = actual->izquierda;
                             izq->derecha = NULL;
                         }
@@ -568,7 +539,7 @@ void Matriz::eliminar(int fila, int columna, char *dato){
                     }else if(actual->abajo == NULL && actual->derecha != NULL){
                         //3er caso: tiene nodos hacia la derecha pero no hacia abajo.
 
-                        if(actual->columna == columna && actual->fila != fila){
+                        if(actual->fila != eFila->acceso->fila){
                             while(eFila->id != fila){
                                 eFila = eFila->siguiente; //se mueve la ubicacion de la fila
                             }
@@ -580,7 +551,7 @@ void Matriz::eliminar(int fila, int columna, char *dato){
 
                         //mov. horizontal
                         Nodo* der = actual->derecha;
-                        if(strcmp(actual->valor, eFila->acceso->valor)==0){
+                        if(strcmp(actual->valor, eFila->acceso->valor)==0 && eFila->acceso->fila == fila && eColumna->acceso->columna == columna){
                             eFila->acceso->derecha = der;
                             der->izquierda = eFila->acceso;
                         }else{
@@ -596,7 +567,7 @@ void Matriz::eliminar(int fila, int columna, char *dato){
                     }else if(actual->derecha == NULL && actual->abajo == NULL){
                         //4to caso: no tiene nodos a la derecha ni hacia abajo.
 
-                        if(actual->columna == columna && actual->fila != fila){
+                        if(actual->fila != eFila->acceso->fila){
                             while(eFila->id != fila){
                                 eFila = eFila->siguiente; //se mueve la ubicacion de la fila
                             }
@@ -607,7 +578,7 @@ void Matriz::eliminar(int fila, int columna, char *dato){
                         arb->abajo = NULL;
 
                         //mov. horizontal
-                        if(strcmp(actual->valor, eFila->acceso->valor)==0){
+                        if(strcmp(actual->valor, eFila->acceso->valor)==0 && eFila->acceso->fila == fila && eColumna->acceso->columna == columna){
                             eFila->acceso->derecha = NULL;
                         }else{
                             Nodo* izq = actual->izquierda;
