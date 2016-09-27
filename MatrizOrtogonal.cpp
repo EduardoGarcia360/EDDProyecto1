@@ -360,7 +360,7 @@ int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
 
 }
 
-int Matriz::ubicacion_alfil(char *pieza, int x, int y){
+int Matriz::ubicacion_alfil(char *pieza, int destino_x, int destino_y){
     /*recorrido por columnas*/
     Encabezado * eColumna = eColumnas->primero;
     bool correcto=false;
@@ -394,7 +394,7 @@ int Matriz::ubicacion_alfil(char *pieza, int x, int y){
                         coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
                         correcto=true;
                         break;
-                    }else if(actual_x == destino_x && actual_y = destino_y){
+                    }else if(actual_x == destino_x && actual_y == destino_y){
                         /*caso especial*/
                     }else{
                         break;
@@ -517,25 +517,20 @@ void Matriz::eliminar(int fila, int columna, char *dato){
 
             if(actual->abajo != NULL && actual->derecha != NULL){
                 //1er caso: tiene nodos a la derecha y abajo
-
+cout<<"1caso.1col."<<endl;
                 if(actual->fila != eFila->acceso->fila){
                     while(eFila->id != fila){
                         eFila = eFila->siguiente; //se mueve la ubicacion de la fila
                     }
                 }
-
+                strcpy(dato_nodo, actual->valor);
+                QString texto_nodo = QString::fromStdString(dato_nodo);
+                cout<<"contenido del nodo"<<endl;
+                cout<<texto_nodo.toStdString()<<endl;
                 //mov. vertical
-                if(strcmp(dato, eColumna->acceso->valor)==0 && eFila->acceso->fila == fila && eColumna->acceso->columna == columna){
-                    Nodo* arb = eColumna->acceso;
-                    Nodo* abj = actual->abajo;
-                    arb->abajo = abj;
-                    abj->arriba = eColumna->acceso;
-                }else{
-                    Nodo* arb = actual->arriba;
-                    Nodo* abj = actual->abajo;
-                    arb->abajo = abj;
-                    abj->arriba = arb;
-                }
+                eColumna->acceso = actual->abajo;
+                Nodo* abj = actual->abajo;
+                abj->arriba = eColumna->acceso;
 
                 //mov. horizontal
                 Nodo* der = actual->derecha;
@@ -552,24 +547,16 @@ void Matriz::eliminar(int fila, int columna, char *dato){
                 free(actual);
             }else if(actual->abajo != NULL && actual->derecha == NULL){
                 //2do caso: tiene nodos hacia abajo pero no a la derecha.
-
+cout<<"2caso.1col."<<endl;
                 if(actual->fila != eFila->acceso->fila){
                     while(eFila->id != fila){
                         eFila = eFila->siguiente; //se mueve la ubicacion de la fila
                     }
                 }
                 //mov. vertical
-                if(strcmp(dato, eColumna->acceso->valor)==0 && eFila->acceso->fila == fila && eColumna->acceso->columna == columna){
-                    Nodo* arb = eColumna->acceso;
-                    Nodo* abj = actual->abajo;
-                    arb->abajo = abj;
-                    abj->arriba = arb;
-                }else{
-                    Nodo* arb = actual->arriba;
-                    Nodo* abj = actual->abajo;
-                    arb->abajo = abj;
-                    abj->arriba = arb;
-                }
+                eColumna->acceso = actual->abajo;
+                Nodo* abj = actual->abajo;
+                abj->arriba = eColumna->acceso;
 
                 //mov. horizontal
                 if(strcmp(actual->valor, eFila->acceso->valor)==0 && eFila->acceso->fila == actual->fila && eColumna->acceso->columna == actual->columna){
@@ -586,7 +573,7 @@ void Matriz::eliminar(int fila, int columna, char *dato){
                 break;
             }else if(actual->abajo == NULL && actual->derecha != NULL){
                 //3er caso: tiene nodos hacia la derecha pero no hacia abajo.
-
+cout<<"3caso.1col."<<endl;
                 if(actual->fila != eFila->acceso->fila){
                     while(eFila->id != fila){
                         eFila = eFila->siguiente; //se mueve la ubicacion de la fila
@@ -594,12 +581,7 @@ void Matriz::eliminar(int fila, int columna, char *dato){
                 }
 
                 //mov. vertical
-                if(strcmp(dato, eColumna->acceso->valor)==0 && eFila->acceso->fila == fila && eColumna->acceso->columna == columna){
-                    eColumna->acceso->abajo = NULL;
-                }else{
-                    Nodo* arb = actual->arriba;
-                    arb->abajo = NULL;
-                }
+                eColumna->acceso->abajo = NULL;
 
                 //mov. horizontal
                 Nodo* der = actual->derecha;
@@ -618,7 +600,7 @@ void Matriz::eliminar(int fila, int columna, char *dato){
                 break;
             }else{
                 //4to caso: no tiene nodos a la derecha ni hacia abajo.
-
+cout<<"4caso.1col."<<endl;
                 if(actual->fila != eFila->acceso->fila){
                     while(eFila->id != fila){
                         eFila = eFila->siguiente; //se mueve la ubicacion de la fila
@@ -626,12 +608,7 @@ void Matriz::eliminar(int fila, int columna, char *dato){
                 }
 
                 //mov. vertical
-                if(strcmp(dato, eColumna->acceso->valor)==0 && eFila->acceso->fila == fila && eColumna->acceso->columna == columna){
-                    eColumna->acceso->abajo = NULL;
-                }else{
-                    Nodo* arb = actual->arriba;
-                    arb->abajo = NULL;
-                }
+                eColumna->acceso->abajo = NULL;
 
                 //mov. horizontal
                 if(strcmp(actual->valor, eFila->acceso->valor)==0 && eFila->acceso->fila == fila && eColumna->acceso->columna == columna){
@@ -648,12 +625,6 @@ void Matriz::eliminar(int fila, int columna, char *dato){
             }
         }else{
             /*como no es el primero recorremos el resto de la matriz*/
-            //para ver que tiene el nodo
-            strcpy(dato_nodo, actual->valor);
-            QString texto_nodo = QString::fromStdString(dato_nodo);
-            cout<<"contenido del nodo"<<endl;
-            cout<<texto_nodo.toStdString()<<endl;
-
             while(actual != NULL)
             {
                 //para ver que tiene el nodo
