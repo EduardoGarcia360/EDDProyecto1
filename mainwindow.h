@@ -20,7 +20,8 @@ private slots:
     int letra_a_numero(QString letra);
     void crear_grafico_tablero(int n);
     void generar_dot(QString contenido);
-
+    void jugador_negro(QStringList arreglocoordenada, QString coordenada);
+    void jugador_blanco(QStringList arreglocoordenada, QString coordenada);
 private:
     Ui::MainWindow *ui;
 };

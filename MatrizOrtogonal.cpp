@@ -256,34 +256,58 @@ int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
     Encabezado * eColumna = eColumnas->primero;
     bool correcto=false;
     QString coordenada;
-    while(eColumna != NULL){
-        Nodo * actual = eColumna->acceso;
-
-        while(actual != NULL){
-            if(actual->valor != NULL){
-
-                /*validaciones para peon negro*/
-                if(strcmp(actual->valor,pieza) == 0){
-                    /*encontro la pieza*/
-                    int actual_x = actual->fila;
-                    int actual_y = actual->columna;
-
-                    //cout<<"ubicacion peon: actuales"<<endl;
-                    //cout<<actual_x<<endl;
-                    //cout<<actual_y<<endl;
-                    if(actual_x < destino_x){
-                        /*movimiento hacia abajo*/
-                        if(destino_x == actual_x + 1){
-                            //el peon solo puede moverse una casilla
-                            if(actual_y == destino_y){
-                                //movera hacia abajo la pieza
-                                coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
-                                correcto = true;
-                                break;
+    if(strcmp(pieza,"Pn") == 0){
+        /*validaciones para peon negro*/
+        while(eColumna != NULL){
+            Nodo * actual = eColumna->acceso;
+            while(actual != NULL){
+                if(actual->valor != NULL){
+                    if(strcmp(actual->valor,pieza) == 0){
+                        /*encontro la pieza*/
+                        int actual_x = actual->fila;
+                        int actual_y = actual->columna;
+                        if(actual_x < destino_x){
+                            /*movimiento hacia abajo*/
+                            if(destino_x == actual_x + 1){
+                                //el peon solo puede moverse una casilla
+                                if(actual_y == destino_y){
+                                    //movera hacia abajo la pieza
+                                    coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                                    correcto = true;
+                                    break;
+                                }else{
+                                    //movera hacia abajo en diagonal izquierda/derecha la pieza
+                                    if(actual_x != 2){
+                                        //si esta en cualquier otra fila
+                                        if(actual_y + 1 == destino_y && actual_y + 1 < 9){
+                                            //diagonal derecha
+                                            coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                                            correcto = true;
+                                            break;
+                                        }else if(actual_y - 1 == destino_y && actual_y - 1 > 0){
+                                            //diagonal izquierda
+                                            coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                                            correcto = true;
+                                            break;
+                                        }else{
+                                            actual = actual->abajo;
+                                        }
+                                    }else{
+                                        /* regla impuesta:
+                                         * no se puede mover un peon negro en diagonal si esta en la fila inicio
+                                         * */
+                                        actual = actual->abajo;
+                                    }
+                                }
                             }else{
-                                //movera hacia abajo en diagonal izquierda/derecha la pieza
-                                if(actual_x != 2){
-                                    //si esta en cualquier otra fila
+                                actual = actual->abajo;
+                            }
+                        }else if(actual_x > destino_x){
+                            /*movimiento hacia arriba*/
+                            if(destino_x == actual_x - 1){
+                                //el peon solo puede regresar una casilla
+                                if(actual_y != destino_y){
+                                    //movera hacia arriba en diagonal izq/der la pieza
                                     if(actual_y + 1 == destino_y && actual_y + 1 < 9){
                                         //diagonal derecha
                                         coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
@@ -298,30 +322,45 @@ int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
                                         actual = actual->abajo;
                                     }
                                 }else{
-                                    /* regla impuesta:
-                                     * no se puede mover un peon negro en diagonal si esta en la fila inicio
-                                     * */
                                     actual = actual->abajo;
                                 }
+                            }else{
+                                actual = actual->abajo;
                             }
                         }else{
-                            actual = actual->abajo;
+                            break;
                         }
-                    }else if(actual_x > destino_x){
-                        /*movimiento hacia arriba*/
-                        if(destino_x == actual_x - 1){
-                            //el peon solo puede regresar una casilla
-                            if(actual_y != destino_y){
-                                //movera hacia arriba en diagonal izq/der la pieza
-                                if(actual_y + 1 == destino_y && actual_y + 1 < 9){
-                                    //diagonal derecha
+                    }else{
+                        /*si no la encontro continua hacia abajo de la columna*/
+                        actual = actual->abajo;
+                    }
+                }else{
+                    break;
+                }
+            }//fin segundo while
+
+            if(correcto == true){
+               break;
+            }else{
+                eColumna = eColumna->siguiente;
+            }
+        }//fin primer while
+    }else{
+        /*validaciones para peon blanco*/
+        while(eColumna != NULL){
+            Nodo * actual = eColumna->acceso;
+            while(actual != NULL){
+                if(actual->valor != NULL){
+                    if(strcmp(actual->valor,pieza) == 0){
+                        /*encontro la pieza*/
+                        int actual_x = actual->fila;
+                        int actual_y = actual->columna;
+                        if(actual_x < destino_x){
+                            /*movimiento hacia abajo*/
+                            if(actual_y+1==destino_y || actual_y-1==destino_y){
+                                if(actual_x+1==destino_x){
                                     coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
-                                    correcto = true;
-                                    break;
-                                }else if(actual_y - 1 == destino_y && actual_y - 1 > 0){
-                                    //diagonal izquierda
-                                    coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
-                                    correcto = true;
+                                    correcto=true;
                                     break;
                                 }else{
                                     actual = actual->abajo;
@@ -329,28 +368,52 @@ int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
                             }else{
                                 actual = actual->abajo;
                             }
+                        }else if(actual_x > destino_x){
+                            /*movimiento hacia arriba*/
+                            if(actual_x - 1 == destino_x){
+                                //solo puede subir una casilla
+                                if(actual_y == destino_y){
+                                    //en la misma columna
+                                    coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                                    correcto=true;
+                                    break;
+                                }else{
+                                    //movera en diagonal izq/der
+                                    if(actual_x != 7){
+                                        if(actual_y+1==destino_y || actual_y-1==destino_y){
+                                            coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                                            correcto=true;
+                                            break;
+                                        }else{
+                                            actual = actual->abajo;
+                                        }
+                                    }else{
+                                        //regla impuesta
+                                        actual = actual->abajo;
+                                    }
+                                }
+                            }else{
+                                actual = actual->abajo;
+                            }
                         }else{
-                            actual = actual->abajo;
+                            break;
                         }
                     }else{
-                        break;
+                        /*si no la encontro continua hacia abajo de la columna*/
+                        actual = actual->abajo;
                     }
                 }else{
-                    /*si no la encontro continua hacia abajo de la columna*/
-                    actual = actual->abajo;
+                    break;
                 }
+            }//fin segundo while
+
+            if(correcto == true){
+               break;
             }else{
-                break;
+                eColumna = eColumna->siguiente;
             }
-        }//fin segundo while
-
-        if(correcto == true){
-           break;
-        }else{
-            eColumna = eColumna->siguiente;
-        }
-    }//fin primer while
-
+        }//fin primer while
+    }
     if(correcto == true){
         int ncoor = coordenada.toInt(); //retorno coordenada separada por un 0 205 = (2,5)
         return ncoor;
@@ -428,7 +491,7 @@ QString Matriz::estado_matriz(){
     Encabezado * eColumna = eColumnas->primero;
     QString tablero = "";
     char* dato_nodo = (char*)malloc(2);
-    int contador =0, x=0, y=0;
+    int contador =0,y=0;
     while(eColumna != NULL)
     {
         Nodo * actual = eColumna->acceso;
