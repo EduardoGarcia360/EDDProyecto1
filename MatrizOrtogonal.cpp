@@ -567,9 +567,6 @@ void Matriz::eliminar(int fila, int columna, char *dato){
     Encabezado * eColumna = eColumnas->primero;
     Encabezado * eFila = eFilas->primero;
     bool correcto = false;
-    cout << "Eliminando:" <<endl;
-    cout<<fila<<endl;
-    cout<<columna<<endl;
     char* dato_nodo = (char*)malloc(5);
 
     while(eColumna != NULL)

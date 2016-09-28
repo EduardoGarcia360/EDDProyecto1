@@ -727,13 +727,31 @@ void MainWindow::jugador_negro(QStringList arreglocoordenada, QString coordenada
                                 tabpos0[destino_x][destino_y] = 6;
                                 tablogic0->insertar(destino_x,destino_y,"Pn");
                                 tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
-
+                                ui->listamovimientos->addItem("-Jug.1:");
                                 ui->listamovimientos->addItem(coordenada);
                                 ui->txtmovimiento->setText("");
 
                                 jugador1=false;
                             }else if(pieza >=7 && pieza <=12){
                                 /*hay una pieza blanca para comer en esa posicion*/
+                                tabpos0[actual_x][actual_y] = 0;
+                                tablogic0->eliminar(actual_x, actual_y, "Pn");
+                                tab0[actual_x][actual_y]->setText(" ");
+
+                                QString pieza_a_borrar = nombre_pieza(pieza);
+                                char * pab = (char*)malloc(2);
+                                char * tmp = pieza_a_borrar.toLatin1().data();
+                                strcpy(pab, tmp);
+                                tabpos0[destino_x][destino_y]=6;
+                                tablogic0->eliminar(destino_x, destino_y, pab);
+                                tab0[destino_x][destino_y]->setText(" ");
+                                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
+                                ui->listamovimientos->addItem("-Jug.1:");
+                                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                                ui->txtmovimiento->setText("");
+                                //free(pab);
+                                //free(tmp);
+                                jugador1=false;
                             }else{
                                 /*hay una pieza negra en esa posicion*/
                                 ui->txtmovimiento->setText("");
@@ -1041,7 +1059,7 @@ void MainWindow::jugador_blanco(QStringList arreglocoordenada, QString coordenad
         /*validar tablero*/
         if(tabdest==0 || tabdest==1 || tabdest==2){
             /*convercion QString a char* */
-            QString nficha = ficha+"n";
+            QString nficha = ficha+"b";
             char * cnficha = (char*)malloc(3);
             char * tmp = nficha.toLatin1().data();
             strcpy(cnficha, tmp);
@@ -1073,23 +1091,41 @@ void MainWindow::jugador_blanco(QStringList arreglocoordenada, QString coordenad
                             if(pieza == 0){
                                 /*posicion libre*/
                                 tabpos0[actual_x][actual_y] = 0;
-                                tablogic0->eliminar(actual_x, actual_y, "Pn");
+                                tablogic0->eliminar(actual_x, actual_y, "Pb");
                                 tab0[actual_x][actual_y]->setText(" ");
 
-                                tabpos0[destino_x][destino_y] = 6;
-                                tablogic0->insertar(destino_x,destino_y,"Pn");
-                                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
-
+                                tabpos0[destino_x][destino_y] = 12;
+                                tablogic0->insertar(destino_x,destino_y,"Pb");
+                                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
+                                ui->listamovimientos->addItem("-Jug.2:");
                                 ui->listamovimientos->addItem(coordenada);
                                 ui->txtmovimiento->setText("");
 
-                                jugador1=false;
-                            }else if(pieza >=7 && pieza <=12){
-                                /*hay una pieza blanca para comer en esa posicion*/
-                            }else{
-                                /*hay una pieza negra en esa posicion*/
+                                jugador1=true;
+                            }else if(pieza >=1 && pieza <=6){
+                                /*hay una pieza negra para comer en esa posicion*/
+                                tabpos0[actual_x][actual_y]=0;
+                                tablogic0->eliminar(actual_x, actual_y, "Pb");
+                                tab0[actual_x][actual_y]->setText(" ");
+
+                                QString pieza_a_borrar = nombre_pieza(pieza);
+                                char * pab = (char*)malloc(2);
+                                char * tmp = pieza_a_borrar.toLatin1().data();
+                                strcpy(pab, tmp);
+                                tabpos0[destino_x][destino_y]=12;
+                                tablogic0->eliminar(destino_x, destino_y, pab);
+                                tab0[destino_x][destino_y]->setText(" ");
+                                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
+                                ui->listamovimientos->addItem("-Jug.2:");
+                                ui->listamovimientos->addItem(coordenada);
                                 ui->txtmovimiento->setText("");
-                                QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
+                                //free(pab);
+                                //free(tmp);
+                                jugador1=true;
+                            }else{
+                                /*hay una pieza blanca en esa posicion*/
+                                ui->txtmovimiento->setText("");
+                                QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
                             }
                         }else if(ub1 >0){
                             /*si hay una pieza que cumpla con el movimiento en el nivel 1*/
@@ -1268,5 +1304,32 @@ void MainWindow::generar_dot(QString contenido){
         cout<<"nell prro"<<endl;
     }
     escritura.close();
+}
 
+QString MainWindow::nombre_pieza(int n){
+    if(n==1){
+        return "Rn";
+    }else if(n==2){
+        return "Dn";
+    }else if(n==3){
+        return "Tn";
+    }else if(n==4){
+        return "An";
+    }else if(n==5){
+        return "Cn";
+    }else if(n==6){
+        return "Pn";
+    }else if(n==7){
+        return "Rb";
+    }else if(n==8){
+        return "Db";
+    }else if(n==9){
+        return "Tb";
+    }else if(n==10){
+        return "Ab";
+    }else if(n==11){
+        return "Cb";
+    }else if(n==12){
+        return "Pb";
+    }
 }
