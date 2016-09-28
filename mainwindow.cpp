@@ -1333,3 +1333,164 @@ QString MainWindow::nombre_pieza(int n){
         return "Pb";
     }
 }
+
+bool MainWindow::validar_camino_alfil(int n, QString p, int actual_x, int actual_y, int destino_x, int destino_y, int tablero){
+    bool c=false;
+    int pi_act=0;
+    if(n==1){
+        //mov. abajo
+        for(int i=1;i<=destino_x;i++){
+            if(tablero==0){
+                pi_act = tabpos0[actual_x + i][actual_y];
+            }else if(tablero==1){
+                pi_act = tabpos1[actual_x + i][actual_y];
+            }else{
+                pi_act = tabpos2[actual_x + i][actual_y];
+            }
+
+            if(pi_act!=0){
+                //no es una posicion vacia
+                if(actual_x+i == destino_x){
+                    //es a donde se movera la pieza
+                    if(p=="An"){
+                        //para piezas negras
+                        if(pi_actual>=1 && pi_actual<=6){
+                            //hay una pieza negra en esa posicion
+                            break;
+                        }else{
+                            c=true;
+                            break;
+                        }
+                    }else{
+                        //para piezas blancas
+                        if(pi_actual>=7 && pi_actual<=12){
+                            //hay una pieza blanca en esa posicion
+                            break;
+                        }else{
+                            c=true;
+                            break;
+                        }
+                    }
+                }else{
+                    //hay una pieza en medio
+                    break;
+                }
+            }
+        }
+    }else if(n==2){
+        //mov. arriba
+        for(int i=1;i<=actual_x;i++){
+            if(tablero==0){
+                pi_act = tabpos0[actual_x-i][actual_y];
+            }else if(tablero==1){
+                pi_act = tabpos1[actual_x-i][actual_y];
+            }else{
+                pi_act = tabpos2[actual_x-i][actual_y];
+            }
+
+            if(pi_act!=0){
+                if(actual_x-i==destino_x){
+                    //es a donde se movera la pieza
+                    if(p=="An"){
+                        //para piezas negras
+                        if(pi_actual>=1 && pi_actual<=6){
+                            //hay una pieza negra en esa posicion
+                            break;
+                        }else{
+                            c=true;
+                            break;
+                        }
+                    }else{
+                        //para piezas blancas
+                        if(pi_actual>=7 && pi_actual<=12){
+                            //hay una pieza blanca en esa posicion
+                            break;
+                        }else{
+                            c=true;
+                            break;
+                        }
+                    }
+                }else{
+                    break;
+                }
+            }
+        }
+    }else if(n==3){
+        //mov. izq
+        for(int i=1;i<=destino_y;i++){
+            if(tablero==0){
+                pi_act = tabpos0[actual_x][actual_y+i];
+            }else if(tablero==1){
+                pi_act = tabpos1[actual_x][actual_y+i];
+            }else{
+                pi_act = tabpos2[actual_x][actual_y+i];
+            }
+
+            if(pi_act!=0){
+                if(actual_y+i==destino_y){
+                    //es a donde se movera
+                    if(p=="An"){
+                        //para piezas negras
+                        if(pi_actual>=1 && pi_actual<=6){
+                            //hay una pieza negra en esa posicion
+                            break;
+                        }else{
+                            c=true;
+                            break;
+                        }
+                    }else{
+                        //para piezas blancas
+                        if(pi_actual>=7 && pi_actual<=12){
+                            //hay una pieza blanca en esa posicion
+                            break;
+                        }else{
+                            c=true;
+                            break;
+                        }
+                    }
+                }else{
+                    break;
+                }
+            }
+        }
+    }else{
+        //mov. der
+        for(int i=1;i<=actual_y;i++){
+            if(tablero==0){
+                pi_act = tabpos0[destino_x][destino_y-i];
+            }else if(tablero==1){
+                pi_act = tabpos1[destino_x][destino_y-i];
+            }else{
+                pi_act = tabpos2[destino_x][destino_y-i];
+            }
+
+            if(pi_act!=0){
+                if(actual_y-i==destino_y){
+                    if(p=="An"){
+                        //para piezas negras
+                        if(pi_actual>=1 && pi_actual<=6){
+                            //hay una pieza negra en esa posicion
+                            break;
+                        }else{
+                            c=true;
+                            break;
+                        }
+                    }else{
+                        //para piezas blancas
+                        if(pi_actual>=7 && pi_actual<=12){
+                            //hay una pieza blanca en esa posicion
+                            break;
+                        }else{
+                            c=true;
+                            break;
+                        }
+                    }
+                }else{
+                    break;
+                }
+            }
+
+        }
+    }
+    return c;
+}

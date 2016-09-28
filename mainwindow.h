@@ -23,6 +23,7 @@ private slots:
     QString nombre_pieza(int n);
     void jugador_negro(QStringList arreglocoordenada, QString coordenada);
     void jugador_blanco(QStringList arreglocoordenada, QString coordenada);
+    bool validar_camino_alfil(int n, QString p, int actual_x, int actual_y, int destino_x, int destino_y, int tablero);
 private:
     Ui::MainWindow *ui;
 };
