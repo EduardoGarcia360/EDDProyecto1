@@ -6,6 +6,7 @@
 #include "cstdlib"
 #include "iostream"
 #include "fstream"
+#include "cstdlib"
 #include "MatrizOrtogonal.h"
 #include "listasimple.h"
 using namespace std;
@@ -372,9 +373,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tablero0->setWidget(fondo0);
     ui->tablero1->setWidget(fondo1);
     ui->tablero2->setWidget(fondo2);
-    //tablogic0->insertar(4, 5, "aqui");
-    //tablogic0->recorrerColumnas();
-    //tablogic0->recorrerFilas();
+    //float fx = obtenerAleatorio(1,7);
+    int dx = 1+rand()%(7-1+1);
+    //float fy = obtenerAleatorio(1,8);
+    int dy = 1+rand()%(8-1+1);
+    cout<<dx<<endl;
+    cout<<dy<<endl;
     /*--------------MODIFICAR EL LABEL----------------
          * QLabel *ejemplo = new QLabel("algo para mostrar");
          * ---para cambiar el color del label
@@ -433,26 +437,34 @@ void MainWindow::on_btnmover_clicked()
 }
 
 /*la declaracion de los nuevos metodos se hace en mainwindow.h*/
+bool MainWindow::validar_nombre_pieza(QString p){
+    if(p=="R"||p=="D"||p=="T"||p=="A"||p=="C"||p=="P"){
+        return true;
+    }else{
+        return false;
+    }
+}
 
 void MainWindow::jugador_negro(QStringList arreglocoordenada, QString coordenada){
     QString ficha = arreglocoordenada.at(0); //ficha = "p"
-    /*validando que sea una ficha correcta*/
-    if(ficha=="R"){
+    if(validar_nombre_pieza(ficha)==true){
         QString tablero_destino = arreglocoordenada.at(1);
-        int tabdest = tablero_destino.toInt();
+        int tabdest = tablero_destino.toInt(); //"1" a 1
 
         /*validar tablero, numero correcto*/
         if(tabdest==0||tabdest==1||tabdest==2){
-            /*converciono qstring a char* */
-            QString nficha = ficha+"n";
-            char* cnficha = (char*)malloc(3);
+            /*qstring a char* */
+            QString nficha = ficha+"n"; //An, Tn, Pn,...
+            char* cnficha = (char*)malloc(2);
             char* tmp = nficha.toLatin1().data();
             strcpy(cnficha, tmp);
-            /*validando si aun hay alfiles negros*/
+
+            /*validando si tiene almenos una pieza*/
             bool haypiezas0, haypiezas1, haypiezas2;
             haypiezas0 = tablogic0->hayficha(cnficha);
-            haypiezas1 = tablogic1->hayficha(cnficha);
+            haypiezas1 = tablogic1->hayficha(cnficha); //retorna false en caso de no haber ninguna
             haypiezas2 = tablogic2->hayficha(cnficha);
+
             if(haypiezas0==true||haypiezas1==true||haypiezas2==true){
                 QString destino = arreglocoordenada.at(2); //"C4"
                 int destino_x = letra_a_numero(destino.at(0)); //"C" a 6
@@ -460,19 +472,18 @@ void MainWindow::jugador_negro(QStringList arreglocoordenada, QString coordenada
                     QString qsy = destino.at(1); //"4"
                     int destino_y = qsy.toInt(); //"4" a 4
                     if(destino_y>0 && destino_y<=8){
-                        /*valido si la coordenada es valida para moverse*/
-                        int ub0 = tablogic0->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub1 = tablogic1->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub2 = tablogic2->ubicacion_peon(cnficha, destino_x, destino_y);
-                        if(ub0>0){
+                        if(ficha=="R"){
 
-                        }else if(ub1>0){
+                        }else if(ficha=="D"){
 
-                        }else if(ub2>0){
+                        }else if(ficha=="T"){
 
-                        }else{
-                            ui->txtmovimiento->setText("");
-                            QMessageBox::information(this,"Error!","Ninguna pieza puede moverse a esa posicion.");
+                        }else if(ficha=="A"){
+                            alfil_negro(cnficha, destino_x, destino_y, tabdest, coordenada);
+                        }else if(ficha=="C"){
+
+                        }else if(ficha=="P"){
+                            peon_negro(cnficha, destino_x, destino_y, tabdest, coordenada);
                         }
                     }else{
                         ui->txtmovimiento->setText("");
@@ -480,349 +491,425 @@ void MainWindow::jugador_negro(QStringList arreglocoordenada, QString coordenada
                     }
                 }else{
                     ui->txtmovimiento->setText("");
-                    QMessageBox::information(this,"Error!","Letra de fila fuera de Rango.");
+                    QMessageBox::information(this,"Error!","Letra de fila desconocida.");
                 }
             }else{
+                QString tmp = nombre_pieza_error(ficha);
                 ui->txtmovimiento->setText("");
-                QMessageBox::information(this,"Error!","Ya no tienes Alfiles.");
+                QMessageBox::information(this,"Error!","Ya no tienes: "+tmp+".");
             }
         }else{
             QMessageBox::information(this,"Error!","Num. de Tablero no Valido.");
         }
-    }else if(ficha=="D"){
-        //al perder a la dama pierde el juego
-    }else if(ficha=="T"){
-        QString tablero_destino = arreglocoordenada.at(1);
-        int tabdest = tablero_destino.toInt();
-
-        /*validar tablero, numero correcto*/
-        if(tabdest==0||tabdest==1||tabdest==2){
-            /*converciono qstring a char* */
-            QString nficha = ficha+"n";
-            char* cnficha = (char*)malloc(3);
-            char* tmp = nficha.toLatin1().data();
-            strcpy(cnficha, tmp);
-            /*validando si aun hay alfiles negros*/
-            bool haypiezas0, haypiezas1, haypiezas2;
-            haypiezas0 = tablogic0->hayficha(cnficha);
-            haypiezas1 = tablogic1->hayficha(cnficha);
-            haypiezas2 = tablogic2->hayficha(cnficha);
-            if(haypiezas0==true||haypiezas1==true||haypiezas2==true){
-                QString destino = arreglocoordenada.at(2); //"C4"
-                int destino_x = letra_a_numero(destino.at(0)); //"C" a 6
-                if(destino_x!=0){
-                    QString qsy = destino.at(1); //"4"
-                    int destino_y = qsy.toInt(); //"4" a 4
-                    if(destino_y>0 && destino_y<=8){
-                        /*valido si la coordenada es valida para moverse*/
-                        int ub0 = tablogic0->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub1 = tablogic1->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub2 = tablogic2->ubicacion_peon(cnficha, destino_x, destino_y);
-                        if(ub0>0){
-
-                        }else if(ub1>0){
-
-                        }else if(ub2>0){
-
-                        }else{
-                            ui->txtmovimiento->setText("");
-                            QMessageBox::information(this,"Error!","Ninguna pieza puede moverse a esa posicion.");
-                        }
-                    }else{
-                        ui->txtmovimiento->setText("");
-                        QMessageBox::information(this,"Error!","Numero de columna fuera de rango.");
-                    }
-                }else{
-                    ui->txtmovimiento->setText("");
-                    QMessageBox::information(this,"Error!","Letra de fila fuera de Rango.");
-                }
-            }else{
-                ui->txtmovimiento->setText("");
-                QMessageBox::information(this,"Error!","Ya no tienes Torres.");
-            }
-        }else{
-            QMessageBox::information(this,"Error!","Num. de Tablero no Valido.");
-        }
-    }else if(ficha=="A"){
-        QString tablero_destino = arreglocoordenada.at(1);
-        int tabdest = tablero_destino.toInt();
-
-        /*validar tablero, numero correcto*/
-        if(tabdest==0||tabdest==1||tabdest==2){
-            /*converciono qstring a char* */
-            QString nficha = ficha+"n";
-            char* cnficha = (char*)malloc(3);
-            char* tmp = nficha.toLatin1().data();
-            strcpy(cnficha, tmp);
-            /*validando si aun hay alfiles negros*/
-            bool haypiezas0, haypiezas1, haypiezas2;
-            haypiezas0 = tablogic0->hayficha(cnficha);
-            haypiezas1 = tablogic1->hayficha(cnficha);
-            haypiezas2 = tablogic2->hayficha(cnficha);
-            if(haypiezas0==true||haypiezas1==true||haypiezas2==true){
-                QString destino = arreglocoordenada.at(2); //"C4"
-                int destino_x = letra_a_numero(destino.at(0)); //"C" a 6
-                if(destino_x!=0){
-                    QString qsy = destino.at(1); //"4"
-                    int destino_y = qsy.toInt(); //"4" a 4
-                    if(destino_y>0 && destino_y<=8){
-                        /*valido si la coordenada es valida para moverse*/
-                        int ub0 = tablogic0->ubicacion_alfil(cnficha, destino_x, destino_y);
-                        int ub1 = tablogic1->ubicacion_alfil(cnficha, destino_x, destino_y);
-                        int ub2 = tablogic2->ubicacion_alfil(cnficha, destino_x, destino_y);
-                        if(ub0>0){
-                            /*si hay una pieza que cumpla con el movimiento en el nivel 0*/
-                            int pieza = tabpos0[destino_x][destino_y];
-                            QString coo = QString::number(ub0); //ej. "406"
-                            QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
-                            QString tmp = arr_coo.at(0);
-                            int actual_x = tmp.toInt(); //4
-                            tmp = arr_coo.at(1);
-                            int actual_y = tmp.toInt(); //6
-                            if(pieza == 0){
-                                /*posicion libre*/
-                                tabpos0[actual_x][actual_y] = 0;
-                                tablogic0->eliminar(actual_x, actual_y, "An");
-                                tab0[actual_x][actual_y]->setText(" ");
-                                //cout << "despues de eliminar" << endl;
-                                //tablogic0->recorrerColumnas();
-                                //tablogic0->recorrerFilas();
-
-                                tabpos0[destino_x][destino_y] = 4;
-                                tablogic0->insertar(destino_x,destino_y,"An");
-                                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilnegro));
-
-                                //cout << "despues de mover" << endl;
-                                //tablogic0->recorrerColumnas();
-                                //tablogic0->recorrerFilas();
-
-                                ui->listamovimientos->addItem(coordenada);
-                                ui->txtmovimiento->setText("");
-
-                                jugador1=false;
-                            }else if(pieza >=7 && pieza <=12){
-                                /*hay una pieza blanca para comer en esa posicion*/
-                            }else{
-                                /*hay una pieza negra en esa posicion*/
-                                ui->txtmovimiento->setText("");
-                                QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
-                            }
-                        }else if(ub1>0){
-
-                        }else if(ub2>0){
-
-                        }else{
-                            ui->txtmovimiento->setText("");
-                            QMessageBox::information(this,"Error!","Ninguna pieza puede moverse a esa posicion.");
-                        }
-                    }else{
-                        ui->txtmovimiento->setText("");
-                        QMessageBox::information(this,"Error!","Numero de columna fuera de rango.");
-                    }
-                }else{
-                    ui->txtmovimiento->setText("");
-                    QMessageBox::information(this,"Error!","Letra de fila fuera de Rango.");
-                }
-            }else{
-                ui->txtmovimiento->setText("");
-                QMessageBox::information(this,"Error!","Ya no tienes Alfiles.");
-            }
-        }else{
-            QMessageBox::information(this,"Error!","Num. de Tablero no Valido.");
-        }
-
-    }else if(ficha=="C"){
-        QString tablero_destino = arreglocoordenada.at(1);
-        int tabdest = tablero_destino.toInt();
-
-        /*validar tablero, numero correcto*/
-        if(tabdest==0||tabdest==1||tabdest==2){
-            /*converciono qstring a char* */
-            QString nficha = ficha+"n";
-            char* cnficha = (char*)malloc(3);
-            char* tmp = nficha.toLatin1().data();
-            strcpy(cnficha, tmp);
-            /*validando si aun hay alfiles negros*/
-            bool haypiezas0, haypiezas1, haypiezas2;
-            haypiezas0 = tablogic0->hayficha(cnficha);
-            haypiezas1 = tablogic1->hayficha(cnficha);
-            haypiezas2 = tablogic2->hayficha(cnficha);
-            if(haypiezas0==true||haypiezas1==true||haypiezas2==true){
-                QString destino = arreglocoordenada.at(2); //"C4"
-                int destino_x = letra_a_numero(destino.at(0)); //"C" a 6
-                if(destino_x!=0){
-                    QString qsy = destino.at(1); //"4"
-                    int destino_y = qsy.toInt(); //"4" a 4
-                    if(destino_y>0 && destino_y<=8){
-                        /*valido si la coordenada es valida para moverse*/
-                        int ub0 = tablogic0->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub1 = tablogic1->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub2 = tablogic2->ubicacion_peon(cnficha, destino_x, destino_y);
-                        if(ub0>0){
-
-                        }else if(ub1>0){
-
-                        }else if(ub2>0){
-
-                        }else{
-                            ui->txtmovimiento->setText("");
-                            QMessageBox::information(this,"Error!","Ninguna pieza puede moverse a esa posicion.");
-                        }
-                    }else{
-                        ui->txtmovimiento->setText("");
-                        QMessageBox::information(this,"Error!","Numero de columna fuera de rango.");
-                    }
-                }else{
-                    ui->txtmovimiento->setText("");
-                    QMessageBox::information(this,"Error!","Letra de fila fuera de Rango.");
-                }
-            }else{
-                ui->txtmovimiento->setText("");
-                QMessageBox::information(this,"Error!","Ya no tienes Caballos.");
-            }
-        }else{
-            QMessageBox::information(this,"Error!","Num. de Tablero no Valido.");
-        }
-    }else if(ficha=="P"){
-        QString tablero_destino = arreglocoordenada.at(1);
-        int tabdest = tablero_destino.toInt();
-        /*validar tablero*/
-        if(tabdest==0 || tabdest==1 || tabdest==2){
-            /*convercion QString a char* */
-            QString nficha = ficha+"n";
-            char * cnficha = (char*)malloc(3);
-            char * tmp = nficha.toLatin1().data();
-            strcpy(cnficha, tmp);
-            bool haypiezas0, haypiezas1, haypiezas2;
-            haypiezas0 = tablogic0->hayficha(cnficha);
-            haypiezas1 = tablogic1->hayficha(cnficha);
-            haypiezas2 = tablogic2->hayficha(cnficha);
-            /*validar si hay almenos una pieza en algun tablero*/
-            if(haypiezas0==true || haypiezas1==true || haypiezas2==true){
-                QString destino = arreglocoordenada.at(2); //"C4"
-                int destino_x = letra_a_numero(destino.at(0)); //"C" a 6
-                if(destino_x != 0){
-                    QString qsy = destino.at(1); //"4"
-                    int destino_y = qsy.toInt(); //"4" a 4
-                    if(destino_y>0 && destino_y<=8){
-                        /*valido si la coordenada es valida paraq que algun peon pueda moverse*/
-                        int ub0 = tablogic0->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub1 = tablogic1->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub2 = tablogic2->ubicacion_peon(cnficha, destino_x, destino_y);
-                        if(ub0 > 0){
-                            /*si hay una pieza que cumpla con el movimiento en el nivel 0*/
-                            int pieza = tabpos0[destino_x][destino_y];
-                            QString coo = QString::number(ub0); //ej. 406
-                            QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
-                            QString tmp = arr_coo.at(0);
-                            int actual_x = tmp.toInt(); //4
-                            tmp = arr_coo.at(1);
-                            int actual_y = tmp.toInt(); //6
-                            if(pieza == 0){
-                                /*posicion libre*/
-                                tabpos0[actual_x][actual_y] = 0;
-                                tablogic0->eliminar(actual_x, actual_y, "Pn");
-                                tab0[actual_x][actual_y]->setText(" ");
-
-                                tabpos0[destino_x][destino_y] = 6;
-                                tablogic0->insertar(destino_x,destino_y,"Pn");
-                                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
-                                ui->listamovimientos->addItem("-Jug.1:");
-                                ui->listamovimientos->addItem(coordenada);
-                                ui->txtmovimiento->setText("");
-
-                                jugador1=false;
-                            }else if(pieza >=7 && pieza <=12){
-                                /*hay una pieza blanca para comer en esa posicion*/
-                                tabpos0[actual_x][actual_y] = 0;
-                                tablogic0->eliminar(actual_x, actual_y, "Pn");
-                                tab0[actual_x][actual_y]->setText(" ");
-
-                                QString pieza_a_borrar = nombre_pieza(pieza);
-                                char * pab = (char*)malloc(2);
-                                char * tmp = pieza_a_borrar.toLatin1().data();
-                                strcpy(pab, tmp);
-                                tabpos0[destino_x][destino_y]=6;
-                                tablogic0->eliminar(destino_x, destino_y, pab);
-                                tab0[destino_x][destino_y]->setText(" ");
-                                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
-                                ui->listamovimientos->addItem("-Jug.1:");
-                                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                                ui->txtmovimiento->setText("");
-                                //free(pab);
-                                //free(tmp);
-                                jugador1=false;
-                            }else{
-                                /*hay una pieza negra en esa posicion*/
-                                ui->txtmovimiento->setText("");
-                                QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
-                            }
-                        }else if(ub1 >0){
-                            /*si hay una pieza que cumpla con el movimiento en el nivel 1*/
-                            int pieza = tabpos1[destino_x][destino_y];
-                            if(pieza == 0){
-                                /*posicion libre*/
-                            }else if(pieza >=7 && pieza <=12){
-                                /*hay una pieza blanca en esa posicion*/
-                            }else{
-                                /*hay una pieza negra en esa posicion*/
-                                QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
-                            }
-                        }else if(ub2 >0){
-                            /*si hay una pieza que cumpla con el movimiento en el nivel 2*/
-                            int pieza = tabpos2[destino_x][destino_y];
-                            if(pieza == 0){
-                                /*posicion libre*/
-                            }else if(pieza >=7 && pieza <=12){
-                                /*hay una pieza blanca en esa posicion*/
-                            }else{
-                                /*hay una pieza negra en esa posicion*/
-                                QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
-                            }
-                        }else{
-                            ui->txtmovimiento->setText("");
-                            QMessageBox::information(this,"Error!","Ninguna pieza puede moverse a esa posicion.");
-                        }
-                    }else{
-                        ui->txtmovimiento->setText("");
-                        QMessageBox::information(this,"Error!","Numero de columna fuera de rango.");
-                    }
-                }else{
-                    ui->txtmovimiento->setText("");
-                    QMessageBox::information(this,"Error!","Letra de fila fuera de Rango.");
-                }
-            }else{
-                ui->txtmovimiento->setText("");
-                QMessageBox::information(this,"Error!","Ya no tienes Peones.");
-            }
-        }else{
-            QMessageBox::information(this,"Error!","Num. de Tablero no Valido.");
-        }//fin validar tablero
     }else{
         ui->txtmovimiento->setText("");
-        QMessageBox::information(this,"Error!","Pieza invalida o Usa Mayuscula.");
-    }//fin validar piezas
+        QMessageBox::information(this,"Error!","Letra no coincide con ninguna ficha.");
+    }
+}
+
+float MainWindow::obtenerAleatorio(int desde, int hasta){
+   return std::floor( rand() * ( hasta - desde + 1.0 ) ) + desde;
+}
+
+void MainWindow::peon_negro(char* cnficha, int destino_x, int destino_y, int tabdest, QString coordenada){
+    //validar si el peon se puede mover a la posicion destino
+    int ub0 = tablogic0->ubicacion_peon(cnficha,destino_x,destino_y);
+    int ub1 = tablogic1->ubicacion_peon(cnficha,destino_x,destino_y); //retorna pos actual
+    int ub2 = tablogic2->ubicacion_peon(cnficha,destino_x,destino_y);
+
+    if(ub0>0 && tabdest==0){
+        QString coo = QString::number(ub0); //ej. "406"
+        QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
+        QString tmp = arr_coo.at(0);
+        int actual_x = tmp.toInt(); //4
+        tmp = arr_coo.at(1);
+        int actual_y = tmp.toInt(); //6
+
+        if(destino_x==8){
+            //fila promocion sube al nivel 1
+            tabpos0[actual_x][actual_y] = 0;
+            tablogic0->eliminar(actual_x, actual_y, "Pn");
+            tab0[actual_x][actual_y]->setText(" ");
+            bool d=false;
+            while(d!=true){
+                float fx = obtenerAleatorio(1,7);
+                int dx = (int)fx;
+                float fy = obtenerAleatorio(1,8);
+                int dy = (int)fy;
+                int random = tabpos1[dx][dy];
+                if(random==0){
+                    tabpos1[dx][dy]=6;
+                    tablogic1->insertar(dx,dy,"Pn");
+                    tab1[dx][dy]->setPixmap(QPixmap::fromImage(peonnegro));
+                    d=true;
+                }
+            }
+        }else{
+            int pieza = tabpos0[destino_x][destino_y];
+            if(pieza==0){
+                //vacio
+                tabpos0[actual_x][actual_y] = 0;
+                tablogic0->eliminar(actual_x, actual_y, "Pn");
+                tab0[actual_x][actual_y]->setText(" ");
+
+                tabpos0[destino_x][destino_y] = 6;
+                tablogic0->insertar(destino_x,destino_y,"Pn");
+                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
+
+                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem(coordenada);
+                ui->txtmovimiento->setText("");
+
+                jugador1=false;
+            }else if(pieza>=7 && pieza<=12){
+                //comer
+                tabpos0[actual_x][actual_y] = 0;
+                tablogic0->eliminar(actual_x, actual_y, "Pn");
+                tab0[actual_x][actual_y]->setText(" ");
+
+                QString pieza_a_borrar = nombre_pieza(pieza);
+                char * pab = (char*)malloc(2);
+                char * tmp = pieza_a_borrar.toLatin1().data();
+                strcpy(pab, tmp);
+
+                tabpos0[destino_x][destino_y]=6;
+                tablogic0->eliminar(destino_x, destino_y, pab);
+                tab0[destino_x][destino_y]->setText(" ");
+                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
+
+                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                ui->txtmovimiento->setText("");
+
+                jugador1=false;
+            }else{
+                //pieza mismo color
+                ui->txtmovimiento->setText("");
+                QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
+            }
+        }
+    }else if(ub1>0 && tabdest==1){
+        QString coo = QString::number(ub1); //ej. "406"
+        QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
+        QString tmp = arr_coo.at(0);
+        int actual_x = tmp.toInt(); //4
+        tmp = arr_coo.at(1);
+        int actual_y = tmp.toInt(); //6
+
+        if(destino_x==8){
+            //fila promocion sube al nivel 2
+        }else{
+            int pieza = tabpos0[destino_x][destino_y];
+            if(pieza==0){
+                //vacio
+                tabpos1[actual_x][actual_y] = 0;
+                tablogic1->eliminar(actual_x, actual_y, "Pn");
+                tab1[actual_x][actual_y]->setText(" ");
+
+                tabpos1[destino_x][destino_y] = 6;
+                tablogic1->insertar(destino_x,destino_y,"Pn");
+                tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
+
+                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem(coordenada);
+                ui->txtmovimiento->setText("");
+
+                jugador1=false;
+            }else if(pieza>=7 && pieza<=12){
+                //comer
+                tabpos1[actual_x][actual_y] = 0;
+                tablogic1->eliminar(actual_x, actual_y, "Pn");
+                tab1[actual_x][actual_y]->setText(" ");
+
+                QString pieza_a_borrar = nombre_pieza(pieza);
+                char * pab = (char*)malloc(2);
+                char * tmp = pieza_a_borrar.toLatin1().data();
+                strcpy(pab, tmp);
+
+                tabpos1[destino_x][destino_y]=6;
+                tablogic1->eliminar(destino_x, destino_y, pab);
+                tab1[destino_x][destino_y]->setText(" ");
+                tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
+
+                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                ui->txtmovimiento->setText("");
+
+                jugador1=false;
+            }else{
+                //pieza mismo color
+                ui->txtmovimiento->setText("");
+                QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
+            }
+        }
+    }else if(ub2>0 && tabdest==2){
+        QString coo = QString::number(ub2); //ej. "406"
+        QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
+        QString tmp = arr_coo.at(0);
+        int actual_x = tmp.toInt(); //4
+        tmp = arr_coo.at(1);
+        int actual_y = tmp.toInt(); //6
+
+        if(destino_x==8){
+            //fila promocion baja al nivel 0 se convierte en otra pieza
+        }else{
+            int pieza = tabpos0[destino_x][destino_y];
+            if(pieza==0){
+                //vacio
+                tabpos2[actual_x][actual_y] = 0;
+                tablogic2->eliminar(actual_x, actual_y, "Pn");
+                tab2[actual_x][actual_y]->setText(" ");
+
+                tabpos2[destino_x][destino_y] = 6;
+                tablogic2->insertar(destino_x,destino_y,"Pn");
+                tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
+
+                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem(coordenada);
+                ui->txtmovimiento->setText("");
+
+                jugador1=false;
+            }else if(pieza>=7 && pieza<=12){
+                //comer
+                tabpos2[actual_x][actual_y] = 0;
+                tablogic2->eliminar(actual_x, actual_y, "Pn");
+                tab2[actual_x][actual_y]->setText(" ");
+
+                QString pieza_a_borrar = nombre_pieza(pieza);
+                char * pab = (char*)malloc(2);
+                char * tmp = pieza_a_borrar.toLatin1().data();
+                strcpy(pab, tmp);
+
+                tabpos2[destino_x][destino_y]=6;
+                tablogic2->eliminar(destino_x, destino_y, pab);
+                tab2[destino_x][destino_y]->setText(" ");
+                tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
+
+                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                ui->txtmovimiento->setText("");
+
+                jugador1=false;
+            }else{
+                //pieza mismo color
+                ui->txtmovimiento->setText("");
+                QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
+            }
+        }
+    }else{
+        ui->txtmovimiento->setText("");
+        QMessageBox::information(this,"Error!","Ningun peon puede moverse a esa posicion.");
+    }
+}
+
+void MainWindow::peon_blanco(char *cnficha, int destino_x, int destino_y, int tabdest, QString coordenada){
+    //validar si el peon se puede mover a la posicion destino
+    int ub0 = tablogic0->ubicacion_peon(cnficha,destino_x,destino_y);
+    int ub1 = tablogic1->ubicacion_peon(cnficha,destino_x,destino_y); //retorna pos actual
+    int ub2 = tablogic2->ubicacion_peon(cnficha,destino_x,destino_y);
+
+    if(ub0>0 && tabdest==0){
+        QString coo = QString::number(ub0); //ej. "406"
+        QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
+        QString tmp = arr_coo.at(0);
+        int actual_x = tmp.toInt(); //4
+        tmp = arr_coo.at(1);
+        int actual_y = tmp.toInt(); //6
+
+        if(destino_x==1){
+            //fila promocion sube al nivel 1
+        }else{
+            int pieza = tabpos0[destino_x][destino_y];
+            if(pieza==0){
+                //vacio
+                tabpos0[actual_x][actual_y] = 0;
+                tablogic0->eliminar(actual_x, actual_y, "Pb");
+                tab0[actual_x][actual_y]->setText(" ");
+
+                tabpos0[destino_x][destino_y] = 12;
+                tablogic0->insertar(destino_x,destino_y,"Pb");
+                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
+
+                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem(coordenada);
+                ui->txtmovimiento->setText("");
+
+                jugador1=true;
+            }else if(pieza>=1 && pieza<=6){
+                //comer
+                tabpos0[actual_x][actual_y] = 0;
+                tablogic0->eliminar(actual_x, actual_y, "Pb");
+                tab0[actual_x][actual_y]->setText(" ");
+
+                QString pieza_a_borrar = nombre_pieza(pieza);
+                char * pab = (char*)malloc(2);
+                char * tmp = pieza_a_borrar.toLatin1().data();
+                strcpy(pab, tmp);
+
+                tabpos0[destino_x][destino_y]=12;
+                tablogic0->eliminar(destino_x, destino_y, pab);
+                tab0[destino_x][destino_y]->setText(" ");
+                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
+
+                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                ui->txtmovimiento->setText("");
+
+                jugador1=true;
+            }else{
+                //pieza mismo color
+                ui->txtmovimiento->setText("");
+                QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
+            }
+        }
+    }else if(ub1>0 && tabdest==1){
+        QString coo = QString::number(ub1); //ej. "406"
+        QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
+        QString tmp = arr_coo.at(0);
+        int actual_x = tmp.toInt(); //4
+        tmp = arr_coo.at(1);
+        int actual_y = tmp.toInt(); //6
+
+        if(destino_x==1){
+            //fila promocion sube al nivel 2
+        }else{
+            int pieza = tabpos0[destino_x][destino_y];
+            if(pieza==0){
+                //vacio
+                tabpos1[actual_x][actual_y] = 0;
+                tablogic1->eliminar(actual_x, actual_y, "Pb");
+                tab1[actual_x][actual_y]->setText(" ");
+
+                tabpos1[destino_x][destino_y] = 12;
+                tablogic1->insertar(destino_x,destino_y,"Pb");
+                tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
+
+                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem(coordenada);
+                ui->txtmovimiento->setText("");
+
+                jugador1=true;
+            }else if(pieza>=1 && pieza<=6){
+                //comer
+                tabpos1[actual_x][actual_y] = 0;
+                tablogic1->eliminar(actual_x, actual_y, "Pb");
+                tab1[actual_x][actual_y]->setText(" ");
+
+                QString pieza_a_borrar = nombre_pieza(pieza);
+                char * pab = (char*)malloc(2);
+                char * tmp = pieza_a_borrar.toLatin1().data();
+                strcpy(pab, tmp);
+
+                tabpos1[destino_x][destino_y]=12;
+                tablogic1->eliminar(destino_x, destino_y, pab);
+                tab1[destino_x][destino_y]->setText(" ");
+                tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
+
+                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                ui->txtmovimiento->setText("");
+
+                jugador1=true;
+            }else{
+                //pieza mismo color
+                ui->txtmovimiento->setText("");
+                QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
+            }
+        }
+    }else if(ub2>0 && tabdest==2){
+        QString coo = QString::number(ub2); //ej. "406"
+        QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
+        QString tmp = arr_coo.at(0);
+        int actual_x = tmp.toInt(); //4
+        tmp = arr_coo.at(1);
+        int actual_y = tmp.toInt(); //6
+
+        if(destino_x==1){
+            //fila promocion baja al nivel 0 se convierte en otra pieza
+        }else{
+            int pieza = tabpos0[destino_x][destino_y];
+            if(pieza==0){
+                //vacio
+                tabpos2[actual_x][actual_y] = 0;
+                tablogic2->eliminar(actual_x, actual_y, "Pb");
+                tab2[actual_x][actual_y]->setText(" ");
+
+                tabpos2[destino_x][destino_y] = 12;
+                tablogic2->insertar(destino_x,destino_y,"Pb");
+                tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
+
+                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem(coordenada);
+                ui->txtmovimiento->setText("");
+
+                jugador1=true;
+            }else if(pieza>=1 && pieza<=6){
+                //comer
+                tabpos2[actual_x][actual_y] = 0;
+                tablogic2->eliminar(actual_x, actual_y, "Pb");
+                tab2[actual_x][actual_y]->setText(" ");
+
+                QString pieza_a_borrar = nombre_pieza(pieza);
+                char * pab = (char*)malloc(2);
+                char * tmp = pieza_a_borrar.toLatin1().data();
+                strcpy(pab, tmp);
+
+                tabpos2[destino_x][destino_y]=12;
+                tablogic2->eliminar(destino_x, destino_y, pab);
+                tab2[destino_x][destino_y]->setText(" ");
+                tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
+
+                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                ui->txtmovimiento->setText("");
+
+                jugador1=true;
+            }else{
+                //pieza mismo color
+                ui->txtmovimiento->setText("");
+                QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
+            }
+        }
+    }else{
+        ui->txtmovimiento->setText("");
+        QMessageBox::information(this,"Error!","Ningun peon puede moverse a esa posicion.");
+    }
+}
+
+QString MainWindow::nombre_pieza_error(QString p){
+    if(p=="R"){
+        return "Rey";
+    }else if(p=="T"){
+        return "Torre";
+    }else if(p=="A"){
+        return "Alfil";
+    }else if(p=="C"){
+        return "Caballo";
+    }else if(p=="P"){
+        return "Peon";
+    }
 }
 
 void MainWindow::jugador_blanco(QStringList arreglocoordenada, QString coordenada){
     QString ficha = arreglocoordenada.at(0); //ficha = "p"
-    /*validando que sea una ficha correcta*/
-    if(ficha=="R"){
+    if(validar_nombre_pieza(ficha)==true){
         QString tablero_destino = arreglocoordenada.at(1);
-        int tabdest = tablero_destino.toInt();
+        int tabdest = tablero_destino.toInt(); //"1" a 1
 
         /*validar tablero, numero correcto*/
         if(tabdest==0||tabdest==1||tabdest==2){
-            /*converciono qstring a char* */
-            QString nficha = ficha+"n";
-            char* cnficha = (char*)malloc(3);
+            /*qstring a char* */
+            QString nficha = ficha+"b"; //Ab, Tb, Pb,...
+            char* cnficha = (char*)malloc(2);
             char* tmp = nficha.toLatin1().data();
             strcpy(cnficha, tmp);
-            /*validando si aun hay alfiles negros*/
+
+            /*validando si tiene almenos una pieza*/
             bool haypiezas0, haypiezas1, haypiezas2;
             haypiezas0 = tablogic0->hayficha(cnficha);
-            haypiezas1 = tablogic1->hayficha(cnficha);
+            haypiezas1 = tablogic1->hayficha(cnficha); //retorna false en caso de no haber ninguna
             haypiezas2 = tablogic2->hayficha(cnficha);
+
             if(haypiezas0==true||haypiezas1==true||haypiezas2==true){
                 QString destino = arreglocoordenada.at(2); //"C4"
                 int destino_x = letra_a_numero(destino.at(0)); //"C" a 6
@@ -830,19 +917,18 @@ void MainWindow::jugador_blanco(QStringList arreglocoordenada, QString coordenad
                     QString qsy = destino.at(1); //"4"
                     int destino_y = qsy.toInt(); //"4" a 4
                     if(destino_y>0 && destino_y<=8){
-                        /*valido si la coordenada es valida para moverse*/
-                        int ub0 = tablogic0->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub1 = tablogic1->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub2 = tablogic2->ubicacion_peon(cnficha, destino_x, destino_y);
-                        if(ub0>0){
+                        if(ficha=="R"){
 
-                        }else if(ub1>0){
+                        }else if(ficha=="D"){
 
-                        }else if(ub2>0){
+                        }else if(ficha=="T"){
 
-                        }else{
-                            ui->txtmovimiento->setText("");
-                            QMessageBox::information(this,"Error!","Ninguna pieza puede moverse a esa posicion.");
+                        }else if(ficha=="A"){
+                            alfil_blanco(cnficha, destino_x, destino_y, tabdest, coordenada);
+                        }else if(ficha=="C"){
+
+                        }else if(ficha=="P"){
+                            peon_blanco(cnficha, destino_x, destino_y, tabdest, coordenada);
                         }
                     }else{
                         ui->txtmovimiento->setText("");
@@ -850,328 +936,28 @@ void MainWindow::jugador_blanco(QStringList arreglocoordenada, QString coordenad
                     }
                 }else{
                     ui->txtmovimiento->setText("");
-                    QMessageBox::information(this,"Error!","Letra de fila fuera de Rango.");
+                    QMessageBox::information(this,"Error!","Letra de fila desconocida.");
                 }
             }else{
+                QString tmp = nombre_pieza_error(ficha);
                 ui->txtmovimiento->setText("");
-                QMessageBox::information(this,"Error!","Ya no tienes Alfiles.");
+                QMessageBox::information(this,"Error!","Ya no tienes: "+tmp+".");
             }
         }else{
             QMessageBox::information(this,"Error!","Num. de Tablero no Valido.");
         }
-    }else if(ficha=="D"){
-        //al perder a la dama pierde el juego
-    }else if(ficha=="T"){
-        QString tablero_destino = arreglocoordenada.at(1);
-        int tabdest = tablero_destino.toInt();
-
-        /*validar tablero, numero correcto*/
-        if(tabdest==0||tabdest==1||tabdest==2){
-            /*converciono qstring a char* */
-            QString nficha = ficha+"n";
-            char* cnficha = (char*)malloc(3);
-            char* tmp = nficha.toLatin1().data();
-            strcpy(cnficha, tmp);
-            /*validando si aun hay alfiles negros*/
-            bool haypiezas0, haypiezas1, haypiezas2;
-            haypiezas0 = tablogic0->hayficha(cnficha);
-            haypiezas1 = tablogic1->hayficha(cnficha);
-            haypiezas2 = tablogic2->hayficha(cnficha);
-            if(haypiezas0==true||haypiezas1==true||haypiezas2==true){
-                QString destino = arreglocoordenada.at(2); //"C4"
-                int destino_x = letra_a_numero(destino.at(0)); //"C" a 6
-                if(destino_x!=0){
-                    QString qsy = destino.at(1); //"4"
-                    int destino_y = qsy.toInt(); //"4" a 4
-                    if(destino_y>0 && destino_y<=8){
-                        /*valido si la coordenada es valida para moverse*/
-                        int ub0 = tablogic0->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub1 = tablogic1->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub2 = tablogic2->ubicacion_peon(cnficha, destino_x, destino_y);
-                        if(ub0>0){
-
-                        }else if(ub1>0){
-
-                        }else if(ub2>0){
-
-                        }else{
-                            ui->txtmovimiento->setText("");
-                            QMessageBox::information(this,"Error!","Ninguna pieza puede moverse a esa posicion.");
-                        }
-                    }else{
-                        ui->txtmovimiento->setText("");
-                        QMessageBox::information(this,"Error!","Numero de columna fuera de rango.");
-                    }
-                }else{
-                    ui->txtmovimiento->setText("");
-                    QMessageBox::information(this,"Error!","Letra de fila fuera de Rango.");
-                }
-            }else{
-                ui->txtmovimiento->setText("");
-                QMessageBox::information(this,"Error!","Ya no tienes Torres.");
-            }
-        }else{
-            QMessageBox::information(this,"Error!","Num. de Tablero no Valido.");
-        }
-    }else if(ficha=="A"){
-        QString tablero_destino = arreglocoordenada.at(1);
-        int tabdest = tablero_destino.toInt();
-
-        /*validar tablero, numero correcto*/
-        if(tabdest==0||tabdest==1||tabdest==2){
-            /*converciono qstring a char* */
-            QString nficha = ficha+"n";
-            char* cnficha = (char*)malloc(3);
-            char* tmp = nficha.toLatin1().data();
-            strcpy(cnficha, tmp);
-            /*validando si aun hay alfiles negros*/
-            bool haypiezas0, haypiezas1, haypiezas2;
-            haypiezas0 = tablogic0->hayficha(cnficha);
-            haypiezas1 = tablogic1->hayficha(cnficha);
-            haypiezas2 = tablogic2->hayficha(cnficha);
-            if(haypiezas0==true||haypiezas1==true||haypiezas2==true){
-                QString destino = arreglocoordenada.at(2); //"C4"
-                int destino_x = letra_a_numero(destino.at(0)); //"C" a 6
-                if(destino_x!=0){
-                    QString qsy = destino.at(1); //"4"
-                    int destino_y = qsy.toInt(); //"4" a 4
-                    if(destino_y>0 && destino_y<=8){
-                        /*valido si la coordenada es valida para moverse*/
-                        int ub0 = tablogic0->ubicacion_alfil(cnficha, destino_x, destino_y);
-                        int ub1 = tablogic1->ubicacion_alfil(cnficha, destino_x, destino_y);
-                        int ub2 = tablogic2->ubicacion_alfil(cnficha, destino_x, destino_y);
-                        if(ub0>0){
-                            /*si hay una pieza que cumpla con el movimiento en el nivel 0*/
-                            int pieza = tabpos0[destino_x][destino_y];
-                            QString coo = QString::number(ub0); //ej. "406"
-                            QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
-                            QString tmp = arr_coo.at(0);
-                            int actual_x = tmp.toInt(); //4
-                            tmp = arr_coo.at(1);
-                            int actual_y = tmp.toInt(); //6
-                            if(pieza == 0){
-                                /*posicion libre*/
-                                tabpos0[actual_x][actual_y] = 0;
-                                tablogic0->eliminar(actual_x, actual_y, "An");
-                                tab0[actual_x][actual_y]->setText(" ");
-                                //cout << "despues de eliminar" << endl;
-                                //tablogic0->recorrerColumnas();
-                                //tablogic0->recorrerFilas();
-
-                                tabpos0[destino_x][destino_y] = 4;
-                                tablogic0->insertar(destino_x,destino_y,"An");
-                                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilnegro));
-
-                                //cout << "despues de mover" << endl;
-                                //tablogic0->recorrerColumnas();
-                                //tablogic0->recorrerFilas();
-
-                                ui->listamovimientos->addItem(coordenada);
-                                ui->txtmovimiento->setText("");
-
-                                jugador1=false;
-                            }else if(pieza >=7 && pieza <=12){
-                                /*hay una pieza blanca para comer en esa posicion*/
-                            }else{
-                                /*hay una pieza negra en esa posicion*/
-                                ui->txtmovimiento->setText("");
-                                QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
-                            }
-                        }else if(ub1>0){
-
-                        }else if(ub2>0){
-
-                        }else{
-                            ui->txtmovimiento->setText("");
-                            QMessageBox::information(this,"Error!","Ninguna pieza puede moverse a esa posicion.");
-                        }
-                    }else{
-                        ui->txtmovimiento->setText("");
-                        QMessageBox::information(this,"Error!","Numero de columna fuera de rango.");
-                    }
-                }else{
-                    ui->txtmovimiento->setText("");
-                    QMessageBox::information(this,"Error!","Letra de fila fuera de Rango.");
-                }
-            }else{
-                ui->txtmovimiento->setText("");
-                QMessageBox::information(this,"Error!","Ya no tienes Alfiles.");
-            }
-        }else{
-            QMessageBox::information(this,"Error!","Num. de Tablero no Valido.");
-        }
-
-    }else if(ficha=="C"){
-        QString tablero_destino = arreglocoordenada.at(1);
-        int tabdest = tablero_destino.toInt();
-
-        /*validar tablero, numero correcto*/
-        if(tabdest==0||tabdest==1||tabdest==2){
-            /*converciono qstring a char* */
-            QString nficha = ficha+"n";
-            char* cnficha = (char*)malloc(3);
-            char* tmp = nficha.toLatin1().data();
-            strcpy(cnficha, tmp);
-            /*validando si aun hay alfiles negros*/
-            bool haypiezas0, haypiezas1, haypiezas2;
-            haypiezas0 = tablogic0->hayficha(cnficha);
-            haypiezas1 = tablogic1->hayficha(cnficha);
-            haypiezas2 = tablogic2->hayficha(cnficha);
-            if(haypiezas0==true||haypiezas1==true||haypiezas2==true){
-                QString destino = arreglocoordenada.at(2); //"C4"
-                int destino_x = letra_a_numero(destino.at(0)); //"C" a 6
-                if(destino_x!=0){
-                    QString qsy = destino.at(1); //"4"
-                    int destino_y = qsy.toInt(); //"4" a 4
-                    if(destino_y>0 && destino_y<=8){
-                        /*valido si la coordenada es valida para moverse*/
-                        int ub0 = tablogic0->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub1 = tablogic1->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub2 = tablogic2->ubicacion_peon(cnficha, destino_x, destino_y);
-                        if(ub0>0){
-
-                        }else if(ub1>0){
-
-                        }else if(ub2>0){
-
-                        }else{
-                            ui->txtmovimiento->setText("");
-                            QMessageBox::information(this,"Error!","Ninguna pieza puede moverse a esa posicion.");
-                        }
-                    }else{
-                        ui->txtmovimiento->setText("");
-                        QMessageBox::information(this,"Error!","Numero de columna fuera de rango.");
-                    }
-                }else{
-                    ui->txtmovimiento->setText("");
-                    QMessageBox::information(this,"Error!","Letra de fila fuera de Rango.");
-                }
-            }else{
-                ui->txtmovimiento->setText("");
-                QMessageBox::information(this,"Error!","Ya no tienes Caballos.");
-            }
-        }else{
-            QMessageBox::information(this,"Error!","Num. de Tablero no Valido.");
-        }
-    }else if(ficha=="P"){
-        QString tablero_destino = arreglocoordenada.at(1);
-        int tabdest = tablero_destino.toInt();
-        /*validar tablero*/
-        if(tabdest==0 || tabdest==1 || tabdest==2){
-            /*convercion QString a char* */
-            QString nficha = ficha+"b";
-            char * cnficha = (char*)malloc(3);
-            char * tmp = nficha.toLatin1().data();
-            strcpy(cnficha, tmp);
-            bool haypiezas0, haypiezas1, haypiezas2;
-            haypiezas0 = tablogic0->hayficha(cnficha);
-            haypiezas1 = tablogic1->hayficha(cnficha);
-            haypiezas2 = tablogic2->hayficha(cnficha);
-            /*validar si hay almenos una pieza en algun tablero*/
-            if(haypiezas0==true || haypiezas1==true || haypiezas2==true){
-                QString destino = arreglocoordenada.at(2); //"C4"
-                int destino_x = letra_a_numero(destino.at(0)); //"C" a 6
-                if(destino_x != 0){
-                    QString qsy = destino.at(1); //"4"
-                    int destino_y = qsy.toInt(); //"4" a 4
-                    if(destino_y>0 && destino_y<=8){
-                        /*valido si la coordenada es valida paraq que algun peon pueda moverse*/
-                        int ub0 = tablogic0->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub1 = tablogic1->ubicacion_peon(cnficha, destino_x, destino_y);
-                        int ub2 = tablogic2->ubicacion_peon(cnficha, destino_x, destino_y);
-                        if(ub0 > 0){
-                            /*si hay una pieza que cumpla con el movimiento en el nivel 0*/
-                            int pieza = tabpos0[destino_x][destino_y];
-                            QString coo = QString::number(ub0); //ej. 406
-                            QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
-                            QString tmp = arr_coo.at(0);
-                            int actual_x = tmp.toInt(); //4
-                            tmp = arr_coo.at(1);
-                            int actual_y = tmp.toInt(); //6
-                            if(pieza == 0){
-                                /*posicion libre*/
-                                tabpos0[actual_x][actual_y] = 0;
-                                tablogic0->eliminar(actual_x, actual_y, "Pb");
-                                tab0[actual_x][actual_y]->setText(" ");
-
-                                tabpos0[destino_x][destino_y] = 12;
-                                tablogic0->insertar(destino_x,destino_y,"Pb");
-                                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
-                                ui->listamovimientos->addItem("-Jug.2:");
-                                ui->listamovimientos->addItem(coordenada);
-                                ui->txtmovimiento->setText("");
-
-                                jugador1=true;
-                            }else if(pieza >=1 && pieza <=6){
-                                /*hay una pieza negra para comer en esa posicion*/
-                                tabpos0[actual_x][actual_y]=0;
-                                tablogic0->eliminar(actual_x, actual_y, "Pb");
-                                tab0[actual_x][actual_y]->setText(" ");
-
-                                QString pieza_a_borrar = nombre_pieza(pieza);
-                                char * pab = (char*)malloc(2);
-                                char * tmp = pieza_a_borrar.toLatin1().data();
-                                strcpy(pab, tmp);
-                                tabpos0[destino_x][destino_y]=12;
-                                tablogic0->eliminar(destino_x, destino_y, pab);
-                                tab0[destino_x][destino_y]->setText(" ");
-                                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
-                                ui->listamovimientos->addItem("-Jug.2:");
-                                ui->listamovimientos->addItem(coordenada);
-                                ui->txtmovimiento->setText("");
-                                //free(pab);
-                                //free(tmp);
-                                jugador1=true;
-                            }else{
-                                /*hay una pieza blanca en esa posicion*/
-                                ui->txtmovimiento->setText("");
-                                QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
-                            }
-                        }else if(ub1 >0){
-                            /*si hay una pieza que cumpla con el movimiento en el nivel 1*/
-                            int pieza = tabpos1[destino_x][destino_y];
-                            if(pieza == 0){
-                                /*posicion libre*/
-                            }else if(pieza >=7 && pieza <=12){
-                                /*hay una pieza blanca en esa posicion*/
-                            }else{
-                                /*hay una pieza negra en esa posicion*/
-                                QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
-                            }
-                        }else if(ub2 >0){
-                            /*si hay una pieza que cumpla con el movimiento en el nivel 2*/
-                            int pieza = tabpos2[destino_x][destino_y];
-                            if(pieza == 0){
-                                /*posicion libre*/
-                            }else if(pieza >=7 && pieza <=12){
-                                /*hay una pieza blanca en esa posicion*/
-                            }else{
-                                /*hay una pieza negra en esa posicion*/
-                                QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
-                            }
-                        }else{
-                            ui->txtmovimiento->setText("");
-                            QMessageBox::information(this,"Error!","Ninguna pieza puede moverse a esa posicion.");
-                        }
-                    }else{
-                        ui->txtmovimiento->setText("");
-                        QMessageBox::information(this,"Error!","Numero de columna fuera de rango.");
-                    }
-                }else{
-                    ui->txtmovimiento->setText("");
-                    QMessageBox::information(this,"Error!","Letra de fila fuera de Rango.");
-                }
-            }else{
-                ui->txtmovimiento->setText("");
-                QMessageBox::information(this,"Error!","Ya no tienes Peones.");
-            }
-        }else{
-            QMessageBox::information(this,"Error!","Num. de Tablero no Valido.");
-        }//fin validar tablero
     }else{
         ui->txtmovimiento->setText("");
-        QMessageBox::information(this,"Error!","Pieza invalida o Usa Mayuscula.");
-    }//fin validar piezas
+        QMessageBox::information(this,"Error!","Letra no coincide con ninguna ficha.");
+    }
+}
+
+void MainWindow::alfil_negro(char* cnficha, int destino_x, int destino_y, int tabdest, QString coordenada){
+
+}
+
+void MainWindow::alfil_blanco(char* cnficha, int destino_x, int destino_y, int tabdest, QString coordenada){
+
 }
 
 int MainWindow::letra_a_numero(QString letra){
@@ -1354,7 +1140,7 @@ bool MainWindow::validar_camino_alfil(int n, QString p, int actual_x, int actual
                     //es a donde se movera la pieza
                     if(p=="An"){
                         //para piezas negras
-                        if(pi_actual>=1 && pi_actual<=6){
+                        if(pi_act>=1 && pi_act<=6){
                             //hay una pieza negra en esa posicion
                             break;
                         }else{
@@ -1363,7 +1149,7 @@ bool MainWindow::validar_camino_alfil(int n, QString p, int actual_x, int actual
                         }
                     }else{
                         //para piezas blancas
-                        if(pi_actual>=7 && pi_actual<=12){
+                        if(pi_act>=7 && pi_act<=12){
                             //hay una pieza blanca en esa posicion
                             break;
                         }else{
@@ -1393,7 +1179,7 @@ bool MainWindow::validar_camino_alfil(int n, QString p, int actual_x, int actual
                     //es a donde se movera la pieza
                     if(p=="An"){
                         //para piezas negras
-                        if(pi_actual>=1 && pi_actual<=6){
+                        if(pi_act>=1 && pi_act<=6){
                             //hay una pieza negra en esa posicion
                             break;
                         }else{
@@ -1402,7 +1188,7 @@ bool MainWindow::validar_camino_alfil(int n, QString p, int actual_x, int actual
                         }
                     }else{
                         //para piezas blancas
-                        if(pi_actual>=7 && pi_actual<=12){
+                        if(pi_act>=7 && pi_act<=12){
                             //hay una pieza blanca en esa posicion
                             break;
                         }else{
@@ -1431,7 +1217,7 @@ bool MainWindow::validar_camino_alfil(int n, QString p, int actual_x, int actual
                     //es a donde se movera
                     if(p=="An"){
                         //para piezas negras
-                        if(pi_actual>=1 && pi_actual<=6){
+                        if(pi_act>=1 && pi_act<=6){
                             //hay una pieza negra en esa posicion
                             break;
                         }else{
@@ -1440,7 +1226,7 @@ bool MainWindow::validar_camino_alfil(int n, QString p, int actual_x, int actual
                         }
                     }else{
                         //para piezas blancas
-                        if(pi_actual>=7 && pi_actual<=12){
+                        if(pi_act>=7 && pi_act<=12){
                             //hay una pieza blanca en esa posicion
                             break;
                         }else{
@@ -1468,7 +1254,7 @@ bool MainWindow::validar_camino_alfil(int n, QString p, int actual_x, int actual
                 if(actual_y-i==destino_y){
                     if(p=="An"){
                         //para piezas negras
-                        if(pi_actual>=1 && pi_actual<=6){
+                        if(pi_act>=1 && pi_act<=6){
                             //hay una pieza negra en esa posicion
                             break;
                         }else{
@@ -1477,7 +1263,7 @@ bool MainWindow::validar_camino_alfil(int n, QString p, int actual_x, int actual
                         }
                     }else{
                         //para piezas blancas
-                        if(pi_actual>=7 && pi_actual<=12){
+                        if(pi_act>=7 && pi_act<=12){
                             //hay una pieza blanca en esa posicion
                             break;
                         }else{
