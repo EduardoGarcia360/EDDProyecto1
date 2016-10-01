@@ -26,7 +26,7 @@ private slots:
     void jugador_negro(QStringList arreglocoordenada, QString coordenada);
     void jugador_blanco(QStringList arreglocoordenada, QString coordenada);
     bool validar_nombre_pieza(QString p);
-    bool validar_camino_alfil(int n, QString p, int actual_x, int actual_y, int destino_x, int destino_y, int tablero);
+    bool validar_camino_alfil(QString p, int actual_x, int actual_y, int destino_x, int destino_y, int tablero);
 
     void alfil_negro(char* cnficha, int destino_x, int destino_y, int tabdest, QString coordenada);
     void alfil_blanco(char* cnficha, int destino_x, int destino_y, int tabdest, QString coordenada);

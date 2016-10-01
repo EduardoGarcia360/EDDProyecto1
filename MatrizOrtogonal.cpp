@@ -440,9 +440,6 @@ int Matriz::ubicacion_alfil(char *pieza, int destino_x, int destino_y){
                     int actual_x = actual->fila;
                     int actual_y = actual->columna;
 
-                    //cout<<"ubicacion peon: actuales"<<endl;
-                    //cout<<actual_x<<endl;
-                    //cout<<actual_y<<endl;
                     if(actual_x < destino_x || actual_x > destino_x){
                         /*movimiento vertical*/
                         if(actual_y == destino_y){
@@ -592,7 +589,7 @@ cout<<"1caso.1col."<<endl;
                 Nodo* abj = actual->abajo;
                 abj->arriba = eColumna->acceso;
 
-                //mov. horizontal
+                //mov. horizontal---------------------puede ser el ultimo
                 Nodo* der = actual->derecha;
                 if(strcmp(dato, eFila->acceso->valor)==0 && eFila->acceso->fila == fila && eColumna->acceso->columna == columna){
                     eFila->acceso->derecha = der;
