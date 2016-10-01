@@ -1480,7 +1480,7 @@ bool MainWindow::validar_camino_alfil(QString p, int actual_x, int actual_y, int
     bool c=false;
     int pi_act=0;
     if(actual_x<destino_x){
-        //mov. abajo
+        //mov. abajo------------------modificar sigue de largo, que pasa si llega a la pos correcta y no hay nada
         for(int i=1;i<=destino_x;i++){
             if(tablero==0){
                 pi_act = tabpos0[actual_x + i][actual_y];
@@ -1515,6 +1515,11 @@ bool MainWindow::validar_camino_alfil(QString p, int actual_x, int actual_y, int
                     }
                 }else{
                     //hay una pieza en medio
+                    break;
+                }
+            }else{
+                if(actual_x+i==destino_x){
+                    c=true;
                     break;
                 }
             }
@@ -1555,6 +1560,11 @@ bool MainWindow::validar_camino_alfil(QString p, int actual_x, int actual_y, int
                 }else{
                     break;
                 }
+            }else{
+                if(actual_x-i==destino_x){
+                    c=true;
+                    break;
+                }
             }
         }
     }else if(actual_y>destino_y){
@@ -1591,6 +1601,11 @@ bool MainWindow::validar_camino_alfil(QString p, int actual_x, int actual_y, int
                         }
                     }
                 }else{
+                    break;
+                }
+            }else{
+                if(actual_y-i==destino_y){
+                    c=true;
                     break;
                 }
             }
@@ -1630,8 +1645,12 @@ bool MainWindow::validar_camino_alfil(QString p, int actual_x, int actual_y, int
                 }else{
                     break;
                 }
+            }else{
+                if(actual_y+i==destino_y){
+                    c=true;
+                    break;
+                }
             }
-
         }
     }
     return c;
