@@ -48,6 +48,7 @@ struct Matriz
     bool hayficha(char * nombre);
     int ubicacion_peon(char * pieza, int x, int y);
     int ubicacion_alfil(char * pieza, int x, int y);
+    int ubicacion_caballo(char * pieza, int x, int y);
     QString estado_matriz();
     void eliminar(int fila, int columna, char * dato);
 };

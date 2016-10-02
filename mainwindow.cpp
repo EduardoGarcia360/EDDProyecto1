@@ -481,7 +481,7 @@ void MainWindow::jugador_negro(QStringList arreglocoordenada, QString coordenada
                         }else if(ficha=="A"){
                             alfil_negro(cnficha, destino_x, destino_y, tabdest, coordenada);
                         }else if(ficha=="C"){
-
+                            caballo_negro(cnficha, destino_x, destino_y, tabdest, coordenada);
                         }else if(ficha=="P"){
                             peon_negro(cnficha, destino_x, destino_y, tabdest, coordenada);
                         }
@@ -926,7 +926,7 @@ void MainWindow::jugador_blanco(QStringList arreglocoordenada, QString coordenad
                         }else if(ficha=="A"){
                             alfil_blanco(cnficha, destino_x, destino_y, tabdest, coordenada);
                         }else if(ficha=="C"){
-
+                            caballo_blanco(cnficha, destino_x, destino_y, tabdest, coordenada);
                         }else if(ficha=="P"){
                             peon_blanco(cnficha, destino_x, destino_y, tabdest, coordenada);
                         }
@@ -1316,6 +1316,14 @@ void MainWindow::alfil_blanco(char* cnficha, int destino_x, int destino_y, int t
     }
 }
 
+void MainWindow::caballo_negro(char *cnficha, int destino_x, int destino_y, int tabdest, QString coordenada){
+
+}
+
+void MainWindow::caballo_blanco(char *cnficha, int destino_x, int destino_y, int tabdest, QString coordenada){
+
+}
+
 int MainWindow::letra_a_numero(QString letra){
     if(letra == "A"){
         return 8;
@@ -1654,4 +1662,9 @@ bool MainWindow::validar_camino_alfil(QString p, int actual_x, int actual_y, int
         }
     }
     return c;
+}
+
+bool MainWindow::validar_camino_caballo(QString p, int actual_x, int actual_y, int destino_x, int destino_y, int tablero){
+    bool c=false;
+    int pi_actual=0;
 }
