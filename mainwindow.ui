@@ -18,13 +18,13 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
+      <y>0</y>
       <width>1011</width>
       <height>631</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -387,6 +387,162 @@
      <attribute name="title">
       <string>Reportes</string>
      </attribute>
+     <widget class="QLabel" name="label_13">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>141</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Estado del Tablero</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbtnlvl0">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>50</y>
+        <width>91</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Nivel 0</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbtnlvl1">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>70</y>
+        <width>81</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Nivel 1</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbtnlvl2">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>100</y>
+        <width>81</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Nivel 2</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_14">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>190</y>
+        <width>101</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Linealizacion</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbtnfilaslin">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>220</y>
+        <width>117</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>por Filas</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbtncolumnaslin">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>250</y>
+        <width>121</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>por Columnas</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbtnlvl0lin">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>210</y>
+        <width>81</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Nivel 0</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbtnlvl1lin">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>240</y>
+        <width>81</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Nivel 1</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbtnlvl2lin">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>270</y>
+        <width>81</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Nivel 2</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnestado">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>140</y>
+        <width>111</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Graficar Estado</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnlinealizacion">
+      <property name="geometry">
+       <rect>
+        <x>58</x>
+        <y>310</y>
+        <width>121</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Graficar Linealiz.</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>

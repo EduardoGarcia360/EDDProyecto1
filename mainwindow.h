@@ -35,6 +35,10 @@ private slots:
     void peon_blanco(char* cnficha, int destino_x, int destino_y, int tabdest, QString coordenada);
     void caballo_negro(char* cnficha, int destino_x, int destino_y, int tabdest, QString coordenada);
     void caballo_blanco(char* cnficha, int destino_x, int destino_y, int tabdest, QString coordenada);
+    void on_btnestado_clicked();
+
+    void on_btnlinealizacion_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

@@ -14,6 +14,7 @@ using namespace std;
 /*fichas*/
 QImage peonnegro, alfilnegro, caballonegro, torrenegro, damanegro, reynegro;
 QImage peonblanco, alfilblanco, caballoblanco, torreblanco, damablanco, reyblanco;
+QImage grafica;
 /*matriz de label para los tableros*/
 QLabel* tab0[9][9];
 QLabel* tab1[9][9];
@@ -37,13 +38,24 @@ bool jugador1 = true;
 ListaEnlazada * lista_numero = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
 //ListaEnlazada * lista_x = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
 ListaEnlazada * lista_y = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
+//
+QButtonGroup* estado_tablero = new QButtonGroup;
+QButtonGroup* lin_tablero = new QButtonGroup;
+QButtonGroup* lin_filcol = new QButtonGroup;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    estado_tablero->addButton(ui->rbtnlvl0);
+    estado_tablero->addButton(ui->rbtnlvl1);
+    estado_tablero->addButton(ui->rbtnlvl2);
+    lin_tablero->addButton(ui->rbtnlvl0lin);
+    lin_tablero->addButton(ui->rbtnlvl1lin);
+    lin_tablero->addButton(ui->rbtnlvl2lin);
+    lin_filcol->addButton(ui->rbtnfilaslin);
+    lin_filcol->addButton(ui->rbtncolumnaslin);
     /*imagenes de las fichas negras*/
     peonnegro.load("/home/eduardo/Descargas/peonnegro.png");
     alfilnegro.load("/home/eduardo/Descargas/alfilnegro.png");
@@ -1770,7 +1782,7 @@ void MainWindow::crear_grafico_tablero(int n){
 
 void MainWindow::generar_dot(QString contenido){
     ofstream escritura;
-    escritura.open("dato.dot", ios::out);
+    escritura.open("/home/eduardo/Descargas/dato.dot", ios::out);
     if(escritura.is_open()){
         cout<<"abrio el archivo"<<endl;
         escritura<<contenido.toStdString()<<endl;
@@ -1778,6 +1790,7 @@ void MainWindow::generar_dot(QString contenido){
         cout<<"nell prro"<<endl;
     }
     escritura.close();
+    system("dot -Tpng /home/eduardo/Descargas/dato.dot -o /home/eduardo/datosalida.png");
 }
 
 QString MainWindow::nombre_pieza(int n){
@@ -2727,4 +2740,34 @@ bool MainWindow::validar_camino_caballo(QString p, int actual_x, int actual_y, i
         }
     }
     return c;
+}
+
+void MainWindow::on_btnestado_clicked()
+{
+    if(ui->rbtnlvl0->isCheckable()){
+        crear_grafico_tablero(0);
+    }else if(ui->rbtnlvl1->isCheckable()){
+        crear_grafico_tablero(1);
+    }else if(ui->rbtnlvl2->isCheckable()){
+        crear_grafico_tablero(2);
+    }else{
+        QMessageBox::information(this,"Error!","Debes seleccionar un nivel.");
+    }
+}
+
+void MainWindow::on_btnlinealizacion_clicked()
+{
+    if(ui->rbtnlvl0lin->isCheckable() && ui->rbtnfilaslin->isCheckable()){
+
+    }else if(ui->rbtnlvl0lin->isCheckable() && ui->rbtncolumnaslin->isCheckable()){
+
+    }else if(ui->rbtnlvl1lin->isCheckable() && ui->rbtnfilaslin->isCheckable()){
+
+    }else if(ui->rbtnlvl1lin->isCheckable() && ui->rbtncolumnaslin->isCheckable()){
+
+    }if(ui->rbtnlvl2lin->isCheckable() && ui->rbtnfilaslin->isCheckable()){
+
+    }else if(ui->rbtnlvl2lin->isCheckable() && ui->rbtncolumnaslin->isCheckable()){
+
+    }
 }
