@@ -1317,11 +1317,335 @@ void MainWindow::alfil_blanco(char* cnficha, int destino_x, int destino_y, int t
 }
 
 void MainWindow::caballo_negro(char *cnficha, int destino_x, int destino_y, int tabdest, QString coordenada){
+    int ub0 = tablogic0->ubicacion_caballo(cnficha,destino_x,destino_y);
+    int ub1 = tablogic1->ubicacion_caballo(cnficha,destino_x,destino_y); //retorna pos actual 502
+    int ub2 = tablogic2->ubicacion_caballo(cnficha,destino_x,destino_y);
+    if(ub0>0 && tabdest==0){
+        QString coo = QString::number(ub0); //ej. "406"
+        QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
+        QString tmp = arr_coo.at(0);
+        int actual_x = tmp.toInt(); //4
+        tmp = arr_coo.at(1);
+        int actual_y = tmp.toInt(); //6
+        bool puede = validar_camino_caballo("Cn",actual_x,actual_y,destino_x,destino_y,0);
+        if(puede==true){
+            int pieza = tabpos0[destino_x][destino_y];
+            if(pieza==0){
+                tabpos0[actual_x][actual_y] = 0;
+                tablogic0->eliminar(actual_x, actual_y, "Cn");
+                tab0[actual_x][actual_y]->setText(" ");
 
+                tabpos0[destino_x][destino_y] = 5;
+                tablogic0->insertar(destino_x,destino_y,"Cn");
+                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
+
+                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem(coordenada);
+                ui->txtmovimiento->setText("");
+
+                jugador1=false;
+            }else if(pieza>=7 && pieza<=12){
+                tabpos0[actual_x][actual_y] = 0;
+                tablogic0->eliminar(actual_x, actual_y, "Cn");
+                tab0[actual_x][actual_y]->setText(" ");
+
+                QString pieza_a_borrar = nombre_pieza(pieza);
+                char * pab = (char*)malloc(2);
+                char * tmp = pieza_a_borrar.toLatin1().data();
+                strcpy(pab, tmp);
+
+                tabpos0[destino_x][destino_y]=5;
+                tablogic0->eliminar(destino_x, destino_y, pab);
+                tab0[destino_x][destino_y]->setText(" ");
+                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
+
+                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                ui->txtmovimiento->setText("");
+
+                jugador1=false;
+            }else{
+                ui->txtmovimiento->setText("");
+                QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
+            }
+        }else{
+            ui->txtmovimiento->setText("");
+            QMessageBox::information(this,"Mov. no valido","Hay una pieza antes de la posicion destino.");
+        }
+    }else if(ub1>0 && tabdest==1){
+        QString coo = QString::number(ub0); //ej. "406"
+        QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
+        QString tmp = arr_coo.at(0);
+        int actual_x = tmp.toInt(); //4
+        tmp = arr_coo.at(1);
+        int actual_y = tmp.toInt(); //6
+        bool puede = validar_camino_caballo("Cn",actual_x,actual_y,destino_x,destino_y,1);
+        if(puede==true){
+            int pieza = tabpos1[destino_x][destino_y];
+            if(pieza==0){
+                tabpos1[actual_x][actual_y] = 0;
+                tablogic1->eliminar(actual_x, actual_y, "Cn");
+                tab1[actual_x][actual_y]->setText(" ");
+
+                tabpos1[destino_x][destino_y] = 5;
+                tablogic1->insertar(destino_x,destino_y,"Cn");
+                tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
+
+                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem(coordenada);
+                ui->txtmovimiento->setText("");
+
+                jugador1=false;
+            }else if(pieza>=7 && pieza<=12){
+                tabpos1[actual_x][actual_y] = 0;
+                tablogic1->eliminar(actual_x, actual_y, "Cn");
+                tab1[actual_x][actual_y]->setText(" ");
+
+                QString pieza_a_borrar = nombre_pieza(pieza);
+                char * pab = (char*)malloc(2);
+                char * tmp = pieza_a_borrar.toLatin1().data();
+                strcpy(pab, tmp);
+
+                tabpos1[destino_x][destino_y]=5;
+                tablogic1->eliminar(destino_x, destino_y, pab);
+                tab1[destino_x][destino_y]->setText(" ");
+                tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
+
+                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                ui->txtmovimiento->setText("");
+
+                jugador1=false;
+            }else{
+                ui->txtmovimiento->setText("");
+                QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
+            }
+        }else{
+            ui->txtmovimiento->setText("");
+            QMessageBox::information(this,"Mov. no valido","Hay una pieza antes de la posicion destino.");
+        }
+    }else if(ub2>0 && tabdest==2){
+        QString coo = QString::number(ub0); //ej. "406"
+        QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
+        QString tmp = arr_coo.at(0);
+        int actual_x = tmp.toInt(); //4
+        tmp = arr_coo.at(1);
+        int actual_y = tmp.toInt(); //6
+        bool puede = validar_camino_caballo("Cn",actual_x,actual_y,destino_x,destino_y,2);
+        if(puede==true){
+            int pieza = tabpos2[destino_x][destino_y];
+            if(pieza==0){
+                tabpos2[actual_x][actual_y] = 0;
+                tablogic2->eliminar(actual_x, actual_y, "Cn");
+                tab2[actual_x][actual_y]->setText(" ");
+
+                tabpos2[destino_x][destino_y] = 5;
+                tablogic2->insertar(destino_x,destino_y,"Cn");
+                tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
+
+                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem(coordenada);
+                ui->txtmovimiento->setText("");
+
+                jugador1=false;
+            }else if(pieza>=7 && pieza<=12){
+                tabpos2[actual_x][actual_y] = 0;
+                tablogic2->eliminar(actual_x, actual_y, "Cn");
+                tab2[actual_x][actual_y]->setText(" ");
+
+                QString pieza_a_borrar = nombre_pieza(pieza);
+                char * pab = (char*)malloc(2);
+                char * tmp = pieza_a_borrar.toLatin1().data();
+                strcpy(pab, tmp);
+
+                tabpos2[destino_x][destino_y]=5;
+                tablogic2->eliminar(destino_x, destino_y, pab);
+                tab2[destino_x][destino_y]->setText(" ");
+                tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
+
+                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                ui->txtmovimiento->setText("");
+
+                jugador1=false;
+            }else{
+                ui->txtmovimiento->setText("");
+                QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
+            }
+        }else{
+            ui->txtmovimiento->setText("");
+            QMessageBox::information(this,"Mov. no valido","Hay una pieza antes de la posicion destino.");
+        }
+    }else{
+        ui->txtmovimiento->setText("");
+        QMessageBox::information(this,"Error!","Ningun caballo puede moverse a esa posicion.");
+    }
 }
 
 void MainWindow::caballo_blanco(char *cnficha, int destino_x, int destino_y, int tabdest, QString coordenada){
+    int ub0 = tablogic0->ubicacion_caballo(cnficha,destino_x,destino_y);
+    int ub1 = tablogic1->ubicacion_caballo(cnficha,destino_x,destino_y); //retorna pos actual 502
+    int ub2 = tablogic2->ubicacion_caballo(cnficha,destino_x,destino_y);
+    if(ub0>0 && tabdest==0){
+        QString coo = QString::number(ub0); //ej. "406"
+        QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
+        QString tmp = arr_coo.at(0);
+        int actual_x = tmp.toInt(); //4
+        tmp = arr_coo.at(1);
+        int actual_y = tmp.toInt(); //6
+        bool puede = validar_camino_caballo("Cb",actual_x,actual_y,destino_x,destino_y,0);
+        if(puede==true){
+            int pieza = tabpos0[destino_x][destino_y];
+            if(pieza==0){
+                tabpos0[actual_x][actual_y] = 0;
+                tablogic0->eliminar(actual_x, actual_y, "Cb");
+                tab0[actual_x][actual_y]->setText(" ");
 
+                tabpos0[destino_x][destino_y] = 11;
+                tablogic0->insertar(destino_x,destino_y,"Cb");
+                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
+
+                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem(coordenada);
+                ui->txtmovimiento->setText("");
+
+                jugador1=true;
+            }else if(pieza>=1 && pieza<=6){
+                tabpos0[actual_x][actual_y] = 0;
+                tablogic0->eliminar(actual_x, actual_y, "Cb");
+                tab0[actual_x][actual_y]->setText(" ");
+
+                QString pieza_a_borrar = nombre_pieza(pieza);
+                char * pab = (char*)malloc(2);
+                char * tmp = pieza_a_borrar.toLatin1().data();
+                strcpy(pab, tmp);
+
+                tabpos0[destino_x][destino_y]=11;
+                tablogic0->eliminar(destino_x, destino_y, pab);
+                tab0[destino_x][destino_y]->setText(" ");
+                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
+
+                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                ui->txtmovimiento->setText("");
+
+                jugador1=true;
+            }else{
+                ui->txtmovimiento->setText("");
+                QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
+            }
+        }else{
+            ui->txtmovimiento->setText("");
+            QMessageBox::information(this,"Mov. no valido","Hay una pieza antes de la posicion destino.");
+        }
+    }else if(ub1>0 && tabdest==1){
+        QString coo = QString::number(ub0); //ej. "406"
+        QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
+        QString tmp = arr_coo.at(0);
+        int actual_x = tmp.toInt(); //4
+        tmp = arr_coo.at(1);
+        int actual_y = tmp.toInt(); //6
+        bool puede = validar_camino_caballo("Cb",actual_x,actual_y,destino_x,destino_y,1);
+        if(puede==true){
+            int pieza = tabpos1[destino_x][destino_y];
+            if(pieza==0){
+                tabpos1[actual_x][actual_y] = 0;
+                tablogic1->eliminar(actual_x, actual_y, "Cb");
+                tab1[actual_x][actual_y]->setText(" ");
+
+                tabpos1[destino_x][destino_y] = 11;
+                tablogic1->insertar(destino_x,destino_y,"Cb");
+                tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
+
+                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem(coordenada);
+                ui->txtmovimiento->setText("");
+
+                jugador1=true;
+            }else if(pieza>=1 && pieza<=6){
+                tabpos1[actual_x][actual_y] = 0;
+                tablogic1->eliminar(actual_x, actual_y, "Cb");
+                tab1[actual_x][actual_y]->setText(" ");
+
+                QString pieza_a_borrar = nombre_pieza(pieza);
+                char * pab = (char*)malloc(2);
+                char * tmp = pieza_a_borrar.toLatin1().data();
+                strcpy(pab, tmp);
+
+                tabpos1[destino_x][destino_y]=11;
+                tablogic1->eliminar(destino_x, destino_y, pab);
+                tab1[destino_x][destino_y]->setText(" ");
+                tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
+
+                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                ui->txtmovimiento->setText("");
+
+                jugador1=true;
+            }else{
+                ui->txtmovimiento->setText("");
+                QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
+            }
+        }else{
+            ui->txtmovimiento->setText("");
+            QMessageBox::information(this,"Mov. no valido","Hay una pieza antes de la posicion destino.");
+        }
+    }else if(ub2>0 && tabdest==2){
+        QString coo = QString::number(ub0); //ej. "406"
+        QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
+        QString tmp = arr_coo.at(0);
+        int actual_x = tmp.toInt(); //4
+        tmp = arr_coo.at(1);
+        int actual_y = tmp.toInt(); //6
+        bool puede = validar_camino_caballo("Cb",actual_x,actual_y,destino_x,destino_y,2);
+        if(puede==true){
+            int pieza = tabpos2[destino_x][destino_y];
+            if(pieza==0){
+                tabpos2[actual_x][actual_y] = 0;
+                tablogic2->eliminar(actual_x, actual_y, "Cb");
+                tab2[actual_x][actual_y]->setText(" ");
+
+                tabpos2[destino_x][destino_y] = 11;
+                tablogic2->insertar(destino_x,destino_y,"Cb");
+                tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
+
+                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem(coordenada);
+                ui->txtmovimiento->setText("");
+
+                jugador1=true;
+            }else if(pieza>=1 && pieza<=6){
+                tabpos2[actual_x][actual_y] = 0;
+                tablogic2->eliminar(actual_x, actual_y, "Cb");
+                tab2[actual_x][actual_y]->setText(" ");
+
+                QString pieza_a_borrar = nombre_pieza(pieza);
+                char * pab = (char*)malloc(2);
+                char * tmp = pieza_a_borrar.toLatin1().data();
+                strcpy(pab, tmp);
+
+                tabpos2[destino_x][destino_y]=11;
+                tablogic2->eliminar(destino_x, destino_y, pab);
+                tab2[destino_x][destino_y]->setText(" ");
+                tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
+
+                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                ui->txtmovimiento->setText("");
+
+                jugador1=true;
+            }else{
+                ui->txtmovimiento->setText("");
+                QMessageBox::information(this,"Mov. no valido","Hay una pieza blanco ubicada en la coordenada destino.");
+            }
+        }else{
+            ui->txtmovimiento->setText("");
+            QMessageBox::information(this,"Mov. no valido","Hay una pieza antes de la posicion destino.");
+        }
+    }else{
+        ui->txtmovimiento->setText("");
+        QMessageBox::information(this,"Error!","Ningun caballo puede moverse a esa posicion.");
+    }
 }
 
 int MainWindow::letra_a_numero(QString letra){
