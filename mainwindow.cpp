@@ -1488,7 +1488,7 @@ bool MainWindow::validar_camino_alfil(QString p, int actual_x, int actual_y, int
     bool c=false;
     int pi_act=0;
     if(actual_x<destino_x){
-        //mov. abajo------------------modificar sigue de largo, que pasa si llega a la pos correcta y no hay nada
+        //mov. abajo
         for(int i=1;i<=destino_x;i++){
             if(tablero==0){
                 pi_act = tabpos0[actual_x + i][actual_y];
@@ -1667,4 +1667,390 @@ bool MainWindow::validar_camino_alfil(QString p, int actual_x, int actual_y, int
 bool MainWindow::validar_camino_caballo(QString p, int actual_x, int actual_y, int destino_x, int destino_y, int tablero){
     bool c=false;
     int pi_actual=0;
+    if(actual_x<destino_x){
+        //hacia abajo
+        if(actual_y>destino_y){
+            //izquierda
+            if(actual_x+1==destino_x && actual_y-2==destino_y){
+                bool detener=false;
+                int caso=0;
+                while(detener==false){
+                    if(caso==0){
+                        for(int i=1;i<=destino_y;i++){
+                            if(tablero==0){
+                                pi_actual=tabpos0[actual_x][actual_y-i];
+                            }else if(tablero==1){
+                                pi_actual=tabpos1[actual_x][actual_y-i];
+                            }else{
+                                pi_actual=tabpos2[actual_x][actual_y-i];
+                            }
+
+                            if(pi_actual!=0){
+                                //encontro algo
+                                caso=1;
+                                break;
+                            }else{
+                                //igual a cero
+                                if(actual_y-i==destino_y){
+                                    //columna destino
+                                    if(tablero==0){
+                                        pi_actual=tabpos0[actual_x+1][actual_y-i];
+                                    }else if(tablero==1){
+                                        pi_actual=tabpos1[actual_x+1][actual_y-i];
+                                    }else{
+                                        pi_actual=tabpos2[actual_x+1][actual_y-i];
+                                    }
+                                    //baja a la casilla destino
+                                    if(p=="Cn"){
+                                        if(pi_actual>=1 && pi_actual<=6){
+                                            detener=true;//hay una pieza negra en esa posicion
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;//hay una pieza blanca o vacia en esa posicion
+                                            break;
+                                        }
+                                    }else{
+                                        if(pi_actual>=7 && pi_actual<=12){
+                                            detener=true;//hay una pieza blanca en esa posicion
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;//hay una pieza blanca o vacia en esa posicion
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }else{//------------------------------CASO 1--------------------
+                        for(int i=0;i<=destino_y;i++){
+                            if(tablero==0){
+                                pi_actual=tabpos0[actual_x+1][actual_y-i];
+                            }else if(tablero==1){
+                                pi_actual=tabpos1[actual_x+1][actual_y-i];
+                            }else{
+                                pi_actual=tabpos2[actual_x+1][actual_y-i];
+                            }
+
+                            if(pi_actual!=0){
+                                //encontro algo
+                                detener=true;
+                                break;
+                            }else{
+                                //igual a cero
+                                if(actual_y-i==destino_y){
+                                    //columna destino
+                                    if(p=="Cn"){
+                                        if(pi_actual>=1 && pi_actual<=6){
+                                            detener=true;//hay una pieza negra en esa posicion
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;//hay una pieza blanca o vacia en esa posicion
+                                            break;
+                                        }
+                                    }else{
+                                        if(pi_actual>=7 && pi_actual<=12){
+                                            detener=true;//hay una pieza blanca en esa posicion
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;//hay una pieza blanca o vacia en esa posicion
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }else if(actual_x+2==destino_x && actual_y-1==destino_y){
+                bool detener=false;
+                int caso=0;
+                while(detener==false){
+                    if(caso==0){
+                        for(int i=1;i<=destino_x;i++){
+                            if(tablero==0){
+                                pi_actual=tabpos0[actual_x+i][actual_y];
+                            }else if(tablero==1){
+                                pi_actual=tabpos1[actual_x+i][actual_y];
+                            }else{
+                                pi_actual=tabpos2[actual_x+i][actual_y];
+                            }
+                            if(pi_actual!=0){
+                                caso=1;
+                                break;
+                            }else{
+                                if(actual_x+i==destino_x){
+                                    if(tablero==0){
+                                        pi_actual=tabpos0[actual_x+i][actual_y-1];
+                                    }else if(tablero==1){
+                                        pi_actual=tabpos1[actual_x+i][actual_y-1];
+                                    }else{
+                                        pi_actual=tabpos2[actual_x+i][actual_y-1];
+                                    }
+                                    if(p=="Cn"){
+                                        if(pi_actual>=1&&pi_actual<=6){
+                                            detener=true;
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;
+                                            break;
+                                        }
+                                    }else{
+                                        if(pi_actual>=7&&pi_actual<=12){
+                                            detener=true;
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }else{//----------------------------CASO 1------------------
+                        for(int i=0;i<=destino_x;i++){
+                            if(tablero==0){
+                                pi_actual=tabpos0[actual_x+i][actual_y-1];
+                            }else if(tablero==1){
+                                pi_actual=tabpos1[actual_x+i][actual_y-1];
+                            }else{
+                                pi_actual=tabpos2[actual_x+i][actual_y-1];
+                            }
+                            if(pi_actual!=0){
+                                detener=true;
+                                break;
+                            }else{
+                                if(actual_x+i==destino_x){
+                                    if(p=="Cn"){
+                                        if(pi_actual>=1&&pi_actual<=6){
+                                            detener=true;
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;
+                                            break;
+                                        }
+                                    }else{
+                                        if(pi_actual>=7&&pi_actual<=12){
+                                            detener=true;
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }else if(actual_y<destino_y){
+            //derecha
+            if(actual_x+1==destino_x && actual_y+2==destino_y){
+                bool detener=false;
+                int caso=0;
+                while(detener==false){
+                    if(caso==0){
+                        for(int i=1;i<=destino_y;i++){
+                            if(tablero==0){
+                                pi_actual=tabpos0[actual_x][actual_y+i];
+                            }else if(tablero==1){
+                                pi_actual=tabpos1[actual_x][actual_y+i];
+                            }else{
+                                pi_actual=tabpos2[actual_x][actual_y+i];
+                            }
+
+                            if(pi_actual!=0){
+                                //encontro algo
+                                caso=1;
+                                break;
+                            }else{
+                                //igual a cero
+                                if(actual_y+i==destino_y){
+                                    //columna destino
+                                    if(tablero==0){
+                                        pi_actual=tabpos0[actual_x+1][actual_y+i];
+                                    }else if(tablero==1){
+                                        pi_actual=tabpos1[actual_x+1][actual_y+i];
+                                    }else{
+                                        pi_actual=tabpos2[actual_x+1][actual_y+i];
+                                    }
+                                    //baja a la casilla destino
+                                    if(p=="Cn"){
+                                        if(pi_actual>=1 && pi_actual<=6){
+                                            detener=true;//hay una pieza negra en esa posicion
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;//hay una pieza blanca o vacia en esa posicion
+                                            break;
+                                        }
+                                    }else{
+                                        if(pi_actual>=7 && pi_actual<=12){
+                                            detener=true;//hay una pieza blanca en esa posicion
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;//hay una pieza blanca o vacia en esa posicion
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }else{//------------------------------CASO 1--------------------
+                        for(int i=0;i<=destino_y;i++){
+                            if(tablero==0){
+                                pi_actual=tabpos0[actual_x+1][actual_y+i];
+                            }else if(tablero==1){
+                                pi_actual=tabpos1[actual_x+1][actual_y+i];
+                            }else{
+                                pi_actual=tabpos2[actual_x+1][actual_y+i];
+                            }
+
+                            if(pi_actual!=0){
+                                //encontro algo
+                                detener=true;
+                                break;
+                            }else{
+                                //igual a cero
+                                if(actual_y+i==destino_y){
+                                    //columna destino
+                                    if(p=="Cn"){
+                                        if(pi_actual>=1 && pi_actual<=6){
+                                            detener=true;//hay una pieza negra en esa posicion
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;//hay una pieza blanca o vacia en esa posicion
+                                            break;
+                                        }
+                                    }else{
+                                        if(pi_actual>=7 && pi_actual<=12){
+                                            detener=true;//hay una pieza blanca en esa posicion
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;//hay una pieza blanca o vacia en esa posicion
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }else if(actual_x+2==destino_x && actual_y+1==destino_y){
+                bool detener=false;
+                int caso=0;
+                while(detener==false){
+                    if(caso==0){
+                        for(int i=1;i<=destino_x;i++){
+                            if(tablero==0){
+                                pi_actual=tabpos0[actual_x+i][actual_y];
+                            }else if(tablero==1){
+                                pi_actual=tabpos1[actual_x+i][actual_y];
+                            }else{
+                                pi_actual=tabpos2[actual_x+i][actual_y];
+                            }
+                            if(pi_actual!=0){
+                                caso=1;
+                                break;
+                            }else{
+                                if(actual_x+i==destino_x){
+                                    if(tablero==0){
+                                        pi_actual=tabpos0[actual_x+i][actual_y+1];
+                                    }else if(tablero==1){
+                                        pi_actual=tabpos1[actual_x+i][actual_y+1];
+                                    }else{
+                                        pi_actual=tabpos2[actual_x+i][actual_y+1];
+                                    }
+                                    if(p=="Cn"){
+                                        if(pi_actual>=1&&pi_actual<=6){
+                                            detener=true;
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;
+                                            break;
+                                        }
+                                    }else{
+                                        if(pi_actual>=7&&pi_actual<=12){
+                                            detener=true;
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }else{//----------------------------CASO 1------------------
+                        for(int i=0;i<=destino_x;i++){
+                            if(tablero==0){
+                                pi_actual=tabpos0[actual_x+i][actual_y+1];
+                            }else if(tablero==1){
+                                pi_actual=tabpos1[actual_x+i][actual_y+1];
+                            }else{
+                                pi_actual=tabpos2[actual_x+i][actual_y+1];
+                            }
+                            if(pi_actual!=0){
+                                detener=true;
+                                break;
+                            }else{
+                                if(actual_x+i==destino_x){
+                                    if(p=="Cn"){
+                                        if(pi_actual>=1&&pi_actual<=6){
+                                            detener=true;
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;
+                                            break;
+                                        }
+                                    }else{
+                                        if(pi_actual>=7&&pi_actual<=12){
+                                            detener=true;
+                                            break;
+                                        }else{
+                                            detener=true;
+                                            c=true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }else if(actual_x>destino_x){
+        //hacia arriba
+        if(actual_y>destino_y){
+            /*izquierda*/
+            if(actual_x-1==destino_x && actual_y-2==destino_y){
+
+            }else if(actual_x-2==destino_x && actual_y-1==destino_y){
+
+            }
+        }else if(actual_y<destino_y){
+            /*derecha*/
+            if(actual_x-1==destino_x && actual_y+2==destino_y){
+
+            }else if(actual_x-2==destino_x && actual_y+1==destino_y){
+
+            }
+        }
+    }
+    return c;
 }
