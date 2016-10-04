@@ -420,7 +420,6 @@ int Matriz::ubicacion_peon(char *pieza, int destino_x, int destino_y){
     }else{
         return 0;
     }
-
 }
 
 int Matriz::ubicacion_alfil(char *pieza, int destino_x, int destino_y){
@@ -557,6 +556,107 @@ int Matriz::ubicacion_caballo(char *pieza, int destino_x, int destino_y){
                                 break;
                             }else{
                                 actual = actual->abajo;
+                            }
+                        }else{
+                            actual = actual->abajo;
+                        }
+                    }else{
+                        actual = actual->abajo;
+                    }
+                }else{
+                    /*si no la encontro continua hacia abajo de la columna*/
+                    actual = actual->abajo;
+                }
+            }else{
+                break;
+            }
+        }//fin segundo while
+
+        if(correcto == true){
+           break;
+        }else{
+            eColumna = eColumna->siguiente;
+        }
+    }//fin primer while
+
+    if(correcto == true){
+        int ncoor = coordenada.toInt(); //retorno coordenada separada por un 0 205 = (2,5)
+        return ncoor;
+    }else{
+        return 0;
+    }
+}
+
+int Matriz::ubicacion_torre(char *pieza, int destino_x, int destino_y){
+    Encabezado * eColumna = eColumnas->primero;
+    bool correcto=false;
+    QString coordenada;
+    while(eColumna != NULL){
+        Nodo * actual = eColumna->acceso;
+
+        while(actual != NULL){
+            if(actual->valor != NULL){
+
+                /*validaciones para alfil negro*/
+                if(strcmp(actual->valor,pieza) == 0){
+                    /*encontro la pieza*/
+                    int actual_x = actual->fila;
+                    int actual_y = actual->columna;
+
+                    if(actual_x < destino_x){
+                        /*hacia abajo*/
+                        if(actual_y < destino_y){
+                            //hacia derecha
+                            int tmp = destino_y - actual_y;
+                            for(int i=1;i<=tmp;i++){
+                                int y = actual_y + i;
+                                int x = actual_x + i;
+                                if(destino_x == x && destino_y == y){
+                                    coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                                    correcto=true;
+                                    break;
+                                }
+                            }
+                        }else if(actual_y > destino_y){
+                            //hacia izquierda
+                            int tmp = actual_y - destino_y;
+                            for(int i=1;i<=tmp;i++){
+                                int y = actual_y - i;
+                                int x = actual_x + i;
+                                if(destino_x == x && destino_y == y){
+                                    coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                                    correcto=true;
+                                    break;
+                                }
+                            }
+                        }else{
+                            actual = actual->abajo;
+                        }
+                    }else if(actual_x > destino_x){
+                        /*hacia arriba*/
+                        if(actual_y < destino_y){
+                            //hacia derecha
+                            int tmp = destino_y - actual_y;
+                            for(int i=1;i<=tmp;i++){
+                                int y = actual_y + i;
+                                int x = actual_x - i;
+                                if(destino_x == x && destino_y == y){
+                                    coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                                    correcto=true;
+                                    break;
+                                }
+                            }
+                        }else if(actual_y > destino_y){
+                            //hacia izquierda
+                            int tmp = actual_y - destino_y;
+                            for(int i=1;i<=tmp;i++){
+                                int y = actual_y - i;
+                                int x = actual_x - i;
+                                if(destino_x == x && destino_y == y){
+                                    coordenada = QString::number(actual_x) + "0" + QString::number(actual_y);
+                                    correcto=true;
+                                    break;
+                                }
                             }
                         }else{
                             actual = actual->abajo;
