@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -269,6 +269,9 @@
       </property>
      </widget>
      <widget class="QLineEdit" name="txtmovimiento">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>120</x>
@@ -282,6 +285,9 @@
       </property>
      </widget>
      <widget class="QPushButton" name="btnmover">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>90</x>
@@ -318,6 +324,9 @@
       </property>
       <property name="text">
        <string>Normal</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
      <widget class="QRadioButton" name="rbtncontratiempo">
@@ -382,6 +391,26 @@
        <string>Movimientos</string>
       </property>
      </widget>
+     <widget class="QLineEdit" name="txtjugador1">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>160</y>
+        <width>113</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtjugador2">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>190</y>
+        <width>113</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -411,6 +440,9 @@
       </property>
       <property name="text">
        <string>Nivel 0</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
      <widget class="QRadioButton" name="rbtnlvl1">
@@ -464,6 +496,9 @@
       <property name="text">
        <string>por Filas</string>
       </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
      </widget>
      <widget class="QRadioButton" name="rbtncolumnaslin">
       <property name="geometry">
@@ -489,6 +524,9 @@
       </property>
       <property name="text">
        <string>Nivel 0</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QRadioButton" name="rbtnlvl1lin">

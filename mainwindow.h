@@ -19,7 +19,10 @@ private slots:
     void on_btnmover_clicked();
     int letra_a_numero(QString letra);
     void crear_grafico_tablero(int n);
+    void crear_grafico_columna(int n);
+    void crear_grafico_fila(int n);
     void generar_dot(QString contenido);
+    void cronometro(int minutos);
     float obtenerAleatorio(int desde, int hasta);
     QString nombre_pieza(int n);
     QString nombre_pieza_error(QString p);
@@ -40,6 +43,8 @@ private slots:
     void torre_blanco(char* cnficha, int destino_x, int destino_y, int tabdest, QString coordenada);
     void on_btnestado_clicked();
     void on_btnlinealizacion_clicked();
+
+    void on_btniniciar_clicked();
 
 private:
     Ui::MainWindow *ui;

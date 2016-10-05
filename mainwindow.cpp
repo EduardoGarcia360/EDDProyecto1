@@ -9,6 +9,7 @@
 #include "cstdlib"
 #include "MatrizOrtogonal.h"
 #include "listasimple.h"
+#include "QThread"
 using namespace std;
 
 /*fichas*/
@@ -33,6 +34,7 @@ QLabel* fondo1;
 QLabel* fondo2;
 /*bool para validar el turno del jugador*/
 bool jugador1 = true;
+QString jug1, jug2;
 /*para almacenar los nodos para graficar*/
 //ListaEnlazada * lista_nodos = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
 ListaEnlazada * lista_numero = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
@@ -42,6 +44,7 @@ ListaEnlazada * lista_y = (ListaEnlazada*)malloc(sizeof(ListaEnlazada));
 QButtonGroup* estado_tablero = new QButtonGroup;
 QButtonGroup* lin_tablero = new QButtonGroup;
 QButtonGroup* lin_filcol = new QButtonGroup;
+QButtonGroup* config = new QButtonGroup;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -56,6 +59,8 @@ MainWindow::MainWindow(QWidget *parent) :
     lin_tablero->addButton(ui->rbtnlvl2lin);
     lin_filcol->addButton(ui->rbtnfilaslin);
     lin_filcol->addButton(ui->rbtncolumnaslin);
+    config->addButton(ui->rbtncontratiempo);
+    config->addButton(ui->rbtnnormal);
     /*imagenes de las fichas negras*/
     peonnegro.load("/home/eduardo/Descargas/peonnegro.png");
     alfilnegro.load("/home/eduardo/Descargas/alfilnegro.png");
@@ -385,12 +390,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tablero0->setWidget(fondo0);
     ui->tablero1->setWidget(fondo1);
     ui->tablero2->setWidget(fondo2);
-    //float fx = obtenerAleatorio(1,7);
-    int dx = 1+rand()%(7-1+1);
-    //float fy = obtenerAleatorio(1,8);
-    int dy = 1+rand()%(8-1+1);
-    cout<<dx<<endl;
-    cout<<dy<<endl;
+    //tablogic1->estado_columnas();
     /*--------------MODIFICAR EL LABEL----------------
          * QLabel *ejemplo = new QLabel("algo para mostrar");
          * ---para cambiar el color del label
@@ -415,6 +415,7 @@ MainWindow::MainWindow(QWidget *parent) :
          * servira para ubicar las fichas en el tablero
          * */
     //crear_grafico_tablero(1);
+    //crear_grafico_columna(0);
 }
 
 MainWindow::~MainWindow()
@@ -536,26 +537,15 @@ void MainWindow::peon_negro(char* cnficha, int destino_x, int destino_y, int tab
         int actual_x = tmp.toInt(); //4
         tmp = arr_coo.at(1);
         int actual_y = tmp.toInt(); //6
-
-        if(destino_x==8){
+        int p = tabpos0[destino_x][destino_y];
+        if(destino_x==8 && p!=8){
             //fila promocion sube al nivel 1
             tabpos0[actual_x][actual_y] = 0;
             tablogic0->eliminar(actual_x, actual_y, "Pn");
             tab0[actual_x][actual_y]->setText(" ");
-            bool d=false;
-            while(d!=true){
-                float fx = obtenerAleatorio(1,7);
-                int dx = (int)fx;
-                float fy = obtenerAleatorio(1,8);
-                int dy = (int)fy;
-                int random = tabpos1[dx][dy];
-                if(random==0){
-                    tabpos1[dx][dy]=6;
-                    tablogic1->insertar(dx,dy,"Pn");
-                    tab1[dx][dy]->setPixmap(QPixmap::fromImage(peonnegro));
-                    d=true;
-                }
-            }
+            tabpos1[1][1]=6;
+            tablogic1->insertar(1,1,"Pn");
+            tab1[1][1]->setPixmap(QPixmap::fromImage(peonnegro));
         }else{
             int pieza = tabpos0[destino_x][destino_y];
             if(pieza==0){
@@ -568,32 +558,48 @@ void MainWindow::peon_negro(char* cnficha, int destino_x, int destino_y, int tab
                 tablogic0->insertar(destino_x,destino_y,"Pn");
                 tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem("-"+jug1);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=false;
+                ui->lblturnoactual->setText(jug2);
             }else if(pieza>=7 && pieza<=12){
-                //comer
-                tabpos0[actual_x][actual_y] = 0;
-                tablogic0->eliminar(actual_x, actual_y, "Pn");
-                tab0[actual_x][actual_y]->setText(" ");
+                if(pieza==8){
+                    ui->btnmover->setEnabled(false);
+                    ui->txtmovimiento->setEnabled(false);
+                    ui->btniniciar->setEnabled(true);
+                    ui->txtjugador1->setEnabled(true);
+                    ui->txtjugador2->setEnabled(true);
+                    ui->txtjugador1->setText("");
+                    ui->txtjugador2->setText("");
+                    ui->txtcontratiempo->setEnabled(false);
+                    jugador1=true;
+                    QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                }else{
+                    tabpos0[actual_x][actual_y] = 0;
+                    tablogic0->eliminar(actual_x, actual_y, "Pn");
+                    tab0[actual_x][actual_y]->setText(" ");
 
-                QString pieza_a_borrar = nombre_pieza(pieza);
-                char * pab = (char*)malloc(2);
-                char * tmp = pieza_a_borrar.toLatin1().data();
-                strcpy(pab, tmp);
+                    QString pieza_a_borrar = nombre_pieza(pieza);
+                    char * pab = (char*)malloc(2);
+                    char * tmp = pieza_a_borrar.toLatin1().data();
+                    strcpy(pab, tmp);
 
-                tabpos0[destino_x][destino_y]=6;
-                tablogic0->eliminar(destino_x, destino_y, pab);
-                tab0[destino_x][destino_y]->setText(" ");
-                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
+                    tabpos0[destino_x][destino_y]=6;
+                    tablogic0->eliminar(destino_x, destino_y, pab);
+                    tablogic0->insertar(destino_x,destino_y,"Pn");
+                    tab0[destino_x][destino_y]->setText(" ");
+                    tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
-                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                ui->txtmovimiento->setText("");
+                    ui->listamovimientos->addItem("-"+jug1);
+                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                    ui->txtmovimiento->setText("");
 
-                jugador1=false;
+                    jugador1=false;
+                    ui->lblturnoactual->setText(jug2);
+                }
+
             }else{
                 //pieza mismo color
                 ui->txtmovimiento->setText("");
@@ -607,9 +613,15 @@ void MainWindow::peon_negro(char* cnficha, int destino_x, int destino_y, int tab
         int actual_x = tmp.toInt(); //4
         tmp = arr_coo.at(1);
         int actual_y = tmp.toInt(); //6
-
-        if(destino_x==8){
+        int p = tabpos0[destino_x][destino_y];
+        if(destino_x==8 && p!=8){
             //fila promocion sube al nivel 2
+            tabpos1[actual_x][actual_y] = 0;
+            tablogic1->eliminar(actual_x, actual_y, "Pn");
+            tab1[actual_x][actual_y]->setText(" ");
+            tabpos2[1][8]=6;
+            tablogic2->insertar(1,8,"Pn");
+            tab2[1][8]->setPixmap(QPixmap::fromImage(peonnegro));
         }else{
             int pieza = tabpos0[destino_x][destino_y];
             if(pieza==0){
@@ -622,32 +634,48 @@ void MainWindow::peon_negro(char* cnficha, int destino_x, int destino_y, int tab
                 tablogic1->insertar(destino_x,destino_y,"Pn");
                 tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem("-"+jug1);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=false;
+                ui->lblturnoactual->setText(jug2);
             }else if(pieza>=7 && pieza<=12){
-                //comer
-                tabpos1[actual_x][actual_y] = 0;
-                tablogic1->eliminar(actual_x, actual_y, "Pn");
-                tab1[actual_x][actual_y]->setText(" ");
+                if(pieza==8){
+                    ui->btnmover->setEnabled(false);
+                    ui->txtmovimiento->setEnabled(false);
+                    ui->btniniciar->setEnabled(true);
+                    ui->txtjugador1->setEnabled(true);
+                    ui->txtjugador2->setEnabled(true);
+                    ui->txtjugador1->setText("");
+                    ui->txtjugador2->setText("");
+                    ui->txtcontratiempo->setEnabled(false);
+                    jugador1=true;
+                    QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                }else{
+                    tabpos1[actual_x][actual_y] = 0;
+                    tablogic1->eliminar(actual_x, actual_y, "Pn");
+                    tab1[actual_x][actual_y]->setText(" ");
 
-                QString pieza_a_borrar = nombre_pieza(pieza);
-                char * pab = (char*)malloc(2);
-                char * tmp = pieza_a_borrar.toLatin1().data();
-                strcpy(pab, tmp);
+                    QString pieza_a_borrar = nombre_pieza(pieza);
+                    char * pab = (char*)malloc(2);
+                    char * tmp = pieza_a_borrar.toLatin1().data();
+                    strcpy(pab, tmp);
 
-                tabpos1[destino_x][destino_y]=6;
-                tablogic1->eliminar(destino_x, destino_y, pab);
-                tab1[destino_x][destino_y]->setText(" ");
-                tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
+                    tabpos1[destino_x][destino_y]=6;
+                    tablogic1->eliminar(destino_x, destino_y, pab);
+                    tablogic1->insertar(destino_x,destino_y,"Pn");
+                    tab1[destino_x][destino_y]->setText(" ");
+                    tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
-                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                ui->txtmovimiento->setText("");
+                    ui->listamovimientos->addItem("-"+jug1);
+                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                    ui->txtmovimiento->setText("");
 
-                jugador1=false;
+                    jugador1=false;
+                    ui->lblturnoactual->setText(jug2);
+                }
+
             }else{
                 //pieza mismo color
                 ui->txtmovimiento->setText("");
@@ -664,6 +692,12 @@ void MainWindow::peon_negro(char* cnficha, int destino_x, int destino_y, int tab
 
         if(destino_x==8){
             //fila promocion baja al nivel 0 se convierte en otra pieza
+            tabpos2[actual_x][actual_y] = 0;
+            tablogic2->eliminar(actual_x, actual_y, "Pn");
+            tab2[actual_x][actual_y]->setText(" ");
+            tabpos2[8][8]=6;
+            tablogic2->insertar(8,8,"Pn");
+            tab2[8][8]->setPixmap(QPixmap::fromImage(peonnegro));
         }else{
             int pieza = tabpos0[destino_x][destino_y];
             if(pieza==0){
@@ -676,32 +710,48 @@ void MainWindow::peon_negro(char* cnficha, int destino_x, int destino_y, int tab
                 tablogic2->insertar(destino_x,destino_y,"Pn");
                 tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem("-"+jug1);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=false;
+                ui->lblturnoactual->setText(jug2);
             }else if(pieza>=7 && pieza<=12){
-                //comer
-                tabpos2[actual_x][actual_y] = 0;
-                tablogic2->eliminar(actual_x, actual_y, "Pn");
-                tab2[actual_x][actual_y]->setText(" ");
+                if(pieza==8){
+                    ui->btnmover->setEnabled(false);
+                    ui->txtmovimiento->setEnabled(false);
+                    ui->btniniciar->setEnabled(true);
+                    ui->txtjugador1->setEnabled(true);
+                    ui->txtjugador2->setEnabled(true);
+                    ui->txtjugador1->setText("");
+                    ui->txtjugador2->setText("");
+                    ui->txtcontratiempo->setEnabled(false);
+                    jugador1=true;
+                    QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                }else{
+                    tabpos2[actual_x][actual_y] = 0;
+                    tablogic2->eliminar(actual_x, actual_y, "Pn");
+                    tab2[actual_x][actual_y]->setText(" ");
 
-                QString pieza_a_borrar = nombre_pieza(pieza);
-                char * pab = (char*)malloc(2);
-                char * tmp = pieza_a_borrar.toLatin1().data();
-                strcpy(pab, tmp);
+                    QString pieza_a_borrar = nombre_pieza(pieza);
+                    char * pab = (char*)malloc(2);
+                    char * tmp = pieza_a_borrar.toLatin1().data();
+                    strcpy(pab, tmp);
 
-                tabpos2[destino_x][destino_y]=6;
-                tablogic2->eliminar(destino_x, destino_y, pab);
-                tab2[destino_x][destino_y]->setText(" ");
-                tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
+                    tabpos2[destino_x][destino_y]=6;
+                    tablogic2->eliminar(destino_x, destino_y, pab);
+                    tablogic2->insertar(destino_x,destino_y,"Pn");
+                    tab2[destino_x][destino_y]->setText(" ");
+                    tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonnegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
-                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                ui->txtmovimiento->setText("");
+                    ui->listamovimientos->addItem("-"+jug1);
+                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                    ui->txtmovimiento->setText("");
 
-                jugador1=false;
+                    jugador1=false;
+                    ui->lblturnoactual->setText(jug2);
+                }
+
             }else{
                 //pieza mismo color
                 ui->txtmovimiento->setText("");
@@ -727,9 +777,15 @@ void MainWindow::peon_blanco(char *cnficha, int destino_x, int destino_y, int ta
         int actual_x = tmp.toInt(); //4
         tmp = arr_coo.at(1);
         int actual_y = tmp.toInt(); //6
-
-        if(destino_x==1){
+        int p = tabpos0[destino_x][destino_y];
+        if(destino_x==1 && p!=2){
             //fila promocion sube al nivel 1
+            tabpos0[actual_x][actual_y] = 0;
+            tablogic0->eliminar(actual_x, actual_y, "Pb");
+            tab0[actual_x][actual_y]->setText(" ");
+            tabpos1[8][8]=12;
+            tablogic1->insertar(8,8,"Pb");
+            tab1[8][8]->setPixmap(QPixmap::fromImage(peonblanco));
         }else{
             int pieza = tabpos0[destino_x][destino_y];
             if(pieza==0){
@@ -742,32 +798,48 @@ void MainWindow::peon_blanco(char *cnficha, int destino_x, int destino_y, int ta
                 tablogic0->insertar(destino_x,destino_y,"Pb");
                 tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem("-"+jug2);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=true;
+                ui->lblturnoactual->setText(jug1);
             }else if(pieza>=1 && pieza<=6){
-                //comer
-                tabpos0[actual_x][actual_y] = 0;
-                tablogic0->eliminar(actual_x, actual_y, "Pb");
-                tab0[actual_x][actual_y]->setText(" ");
+                if(pieza==2){
+                    ui->btnmover->setEnabled(false);
+                    ui->txtmovimiento->setEnabled(false);
+                    ui->btniniciar->setEnabled(true);
+                    ui->txtjugador1->setEnabled(true);
+                    ui->txtjugador2->setEnabled(true);
+                    ui->txtjugador1->setText("");
+                    ui->txtjugador2->setText("");
+                    ui->txtcontratiempo->setEnabled(false);
+                    jugador1=true;
+                    QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                }else{
+                    tabpos0[actual_x][actual_y] = 0;
+                    tablogic0->eliminar(actual_x, actual_y, "Pb");
+                    tab0[actual_x][actual_y]->setText(" ");
 
-                QString pieza_a_borrar = nombre_pieza(pieza);
-                char * pab = (char*)malloc(2);
-                char * tmp = pieza_a_borrar.toLatin1().data();
-                strcpy(pab, tmp);
+                    QString pieza_a_borrar = nombre_pieza(pieza);
+                    char * pab = (char*)malloc(2);
+                    char * tmp = pieza_a_borrar.toLatin1().data();
+                    strcpy(pab, tmp);
 
-                tabpos0[destino_x][destino_y]=12;
-                tablogic0->eliminar(destino_x, destino_y, pab);
-                tab0[destino_x][destino_y]->setText(" ");
-                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
+                    tabpos0[destino_x][destino_y]=12;
+                    tablogic0->eliminar(destino_x, destino_y, pab);
+                    tablogic0->insertar(destino_x, destino_y, "Pb");
+                    tab0[destino_x][destino_y]->setText(" ");
+                    tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
-                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                ui->txtmovimiento->setText("");
+                    ui->listamovimientos->addItem("-"+jug2);
+                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                    ui->txtmovimiento->setText("");
 
-                jugador1=true;
+                    jugador1=true;
+                    ui->lblturnoactual->setText(jug1);
+                }
+
             }else{
                 //pieza mismo color
                 ui->txtmovimiento->setText("");
@@ -781,9 +853,15 @@ void MainWindow::peon_blanco(char *cnficha, int destino_x, int destino_y, int ta
         int actual_x = tmp.toInt(); //4
         tmp = arr_coo.at(1);
         int actual_y = tmp.toInt(); //6
-
-        if(destino_x==1){
-            //fila promocion sube al nivel 2
+        int p = tabpos0[destino_x][destino_y];
+        if(destino_x==1 && p!=2){
+            //fila promocion sube al nivel 1
+            tabpos1[actual_x][actual_y] = 0;
+            tablogic1->eliminar(actual_x, actual_y, "Pb");
+            tab1[actual_x][actual_y]->setText(" ");
+            tabpos2[8][1]=12;
+            tablogic2->insertar(8,1,"Pb");
+            tab2[8][1]->setPixmap(QPixmap::fromImage(peonblanco));
         }else{
             int pieza = tabpos0[destino_x][destino_y];
             if(pieza==0){
@@ -796,32 +874,48 @@ void MainWindow::peon_blanco(char *cnficha, int destino_x, int destino_y, int ta
                 tablogic1->insertar(destino_x,destino_y,"Pb");
                 tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem("-"+jug2);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=true;
+                ui->lblturnoactual->setText(jug1);
             }else if(pieza>=1 && pieza<=6){
-                //comer
-                tabpos1[actual_x][actual_y] = 0;
-                tablogic1->eliminar(actual_x, actual_y, "Pb");
-                tab1[actual_x][actual_y]->setText(" ");
+                if(pieza==2){
+                    ui->btnmover->setEnabled(false);
+                    ui->txtmovimiento->setEnabled(false);
+                    ui->btniniciar->setEnabled(true);
+                    ui->txtjugador1->setEnabled(true);
+                    ui->txtjugador2->setEnabled(true);
+                    ui->txtjugador1->setText("");
+                    ui->txtjugador2->setText("");
+                    ui->txtcontratiempo->setEnabled(false);
+                    jugador1=true;
+                    QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                }else{
+                    tabpos1[actual_x][actual_y] = 0;
+                    tablogic1->eliminar(actual_x, actual_y, "Pb");
+                    tab1[actual_x][actual_y]->setText(" ");
 
-                QString pieza_a_borrar = nombre_pieza(pieza);
-                char * pab = (char*)malloc(2);
-                char * tmp = pieza_a_borrar.toLatin1().data();
-                strcpy(pab, tmp);
+                    QString pieza_a_borrar = nombre_pieza(pieza);
+                    char * pab = (char*)malloc(2);
+                    char * tmp = pieza_a_borrar.toLatin1().data();
+                    strcpy(pab, tmp);
 
-                tabpos1[destino_x][destino_y]=12;
-                tablogic1->eliminar(destino_x, destino_y, pab);
-                tab1[destino_x][destino_y]->setText(" ");
-                tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
+                    tabpos1[destino_x][destino_y]=12;
+                    tablogic1->eliminar(destino_x, destino_y, pab);
+                    tablogic1->insertar(destino_x, destino_y, "Pb");
+                    tab1[destino_x][destino_y]->setText(" ");
+                    tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
-                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                ui->txtmovimiento->setText("");
+                    ui->listamovimientos->addItem("-"+jug2);
+                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                    ui->txtmovimiento->setText("");
 
-                jugador1=true;
+                    jugador1=true;
+                    ui->lblturnoactual->setText(jug1);
+                }
+
             }else{
                 //pieza mismo color
                 ui->txtmovimiento->setText("");
@@ -835,9 +929,15 @@ void MainWindow::peon_blanco(char *cnficha, int destino_x, int destino_y, int ta
         int actual_x = tmp.toInt(); //4
         tmp = arr_coo.at(1);
         int actual_y = tmp.toInt(); //6
-
-        if(destino_x==1){
-            //fila promocion baja al nivel 0 se convierte en otra pieza
+        int p = tabpos0[destino_x][destino_y];
+        if(destino_x==1 && p!=2){
+            //fila promocion sube al nivel 1
+            tabpos2[actual_x][actual_y] = 0;
+            tablogic2->eliminar(actual_x, actual_y, "Pb");
+            tab2[actual_x][actual_y]->setText(" ");
+            tabpos0[5][8]=12;
+            tablogic0->insertar(5,8,"Pb");
+            tab0[5][8]->setPixmap(QPixmap::fromImage(peonblanco));
         }else{
             int pieza = tabpos0[destino_x][destino_y];
             if(pieza==0){
@@ -850,32 +950,48 @@ void MainWindow::peon_blanco(char *cnficha, int destino_x, int destino_y, int ta
                 tablogic2->insertar(destino_x,destino_y,"Pb");
                 tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem("-"+jug2);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=true;
+                ui->lblturnoactual->setText(jug1);
             }else if(pieza>=1 && pieza<=6){
-                //comer
-                tabpos2[actual_x][actual_y] = 0;
-                tablogic2->eliminar(actual_x, actual_y, "Pb");
-                tab2[actual_x][actual_y]->setText(" ");
+                if(pieza==2){
+                    ui->btnmover->setEnabled(false);
+                    ui->txtmovimiento->setEnabled(false);
+                    ui->btniniciar->setEnabled(true);
+                    ui->txtjugador1->setEnabled(true);
+                    ui->txtjugador2->setEnabled(true);
+                    ui->txtjugador1->setText("");
+                    ui->txtjugador2->setText("");
+                    ui->txtcontratiempo->setEnabled(false);
+                    jugador1=true;
+                    QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                }else{
+                    tabpos2[actual_x][actual_y] = 0;
+                    tablogic2->eliminar(actual_x, actual_y, "Pb");
+                    tab2[actual_x][actual_y]->setText(" ");
 
-                QString pieza_a_borrar = nombre_pieza(pieza);
-                char * pab = (char*)malloc(2);
-                char * tmp = pieza_a_borrar.toLatin1().data();
-                strcpy(pab, tmp);
+                    QString pieza_a_borrar = nombre_pieza(pieza);
+                    char * pab = (char*)malloc(2);
+                    char * tmp = pieza_a_borrar.toLatin1().data();
+                    strcpy(pab, tmp);
 
-                tabpos2[destino_x][destino_y]=12;
-                tablogic2->eliminar(destino_x, destino_y, pab);
-                tab2[destino_x][destino_y]->setText(" ");
-                tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
+                    tabpos2[destino_x][destino_y]=12;
+                    tablogic2->eliminar(destino_x, destino_y, pab);
+                    tablogic2->insertar(destino_x, destino_y, "Pb");
+                    tab2[destino_x][destino_y]->setText(" ");
+                    tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(peonblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
-                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                ui->txtmovimiento->setText("");
+                    ui->listamovimientos->addItem("-"+jug2);
+                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                    ui->txtmovimiento->setText("");
 
-                jugador1=true;
+                    jugador1=true;
+                    ui->lblturnoactual->setText(jug1);
+                }
+
             }else{
                 //pieza mismo color
                 ui->txtmovimiento->setText("");
@@ -992,31 +1108,48 @@ void MainWindow::alfil_negro(char* cnficha, int destino_x, int destino_y, int ta
                     tablogic0->insertar(destino_x,destino_y,"An");
                     tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilnegro));
 
-                    ui->listamovimientos->addItem("-Jugador1:");
+                    ui->listamovimientos->addItem("-"+jug1);
                     ui->listamovimientos->addItem(coordenada);
                     ui->txtmovimiento->setText("");
 
                     jugador1=false;
+                    ui->lblturnoactual->setText(jug2);
                 }else if(pieza>=7 && pieza<=12){
-                    tabpos0[actual_x][actual_y] = 0;
-                    tablogic0->eliminar(actual_x, actual_y, "An");
-                    tab0[actual_x][actual_y]->setText(" ");
+                    if(pieza==8){
+                        ui->btnmover->setEnabled(false);
+                        ui->txtmovimiento->setEnabled(false);
+                        ui->btniniciar->setEnabled(true);
+                        ui->txtjugador1->setEnabled(true);
+                        ui->txtjugador2->setEnabled(true);
+                        ui->txtjugador1->setText("");
+                        ui->txtjugador2->setText("");
+                        ui->txtcontratiempo->setEnabled(false);
+                        jugador1=true;
+                        QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                    }else{
+                        tabpos0[actual_x][actual_y] = 0;
+                        tablogic0->eliminar(actual_x, actual_y, "An");
+                        tab0[actual_x][actual_y]->setText(" ");
 
-                    QString pieza_a_borrar = nombre_pieza(pieza);
-                    char * pab = (char*)malloc(2);
-                    char * tmp = pieza_a_borrar.toLatin1().data();
-                    strcpy(pab, tmp);
+                        QString pieza_a_borrar = nombre_pieza(pieza);
+                        char * pab = (char*)malloc(2);
+                        char * tmp = pieza_a_borrar.toLatin1().data();
+                        strcpy(pab, tmp);
 
-                    tabpos0[destino_x][destino_y]=4;
-                    tablogic0->eliminar(destino_x, destino_y, pab);
-                    tab0[destino_x][destino_y]->setText(" ");
-                    tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilnegro));
+                        tabpos0[destino_x][destino_y]=4;
+                        tablogic0->eliminar(destino_x, destino_y, pab);
+                        tablogic0->insertar(destino_x, destino_y, "An");
+                        tab0[destino_x][destino_y]->setText(" ");
+                        tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilnegro));
 
-                    ui->listamovimientos->addItem("-Jugador1:");
-                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                    ui->txtmovimiento->setText("");
+                        ui->listamovimientos->addItem("-"+jug1);
+                        ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                        ui->txtmovimiento->setText("");
 
-                    jugador1=false;
+                        jugador1=false;
+                        ui->lblturnoactual->setText(jug2);
+                    }
+
                 }else{
                     ui->txtmovimiento->setText("");
                     QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
@@ -1049,31 +1182,48 @@ void MainWindow::alfil_negro(char* cnficha, int destino_x, int destino_y, int ta
                     tablogic1->insertar(destino_x,destino_y,"An");
                     tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilnegro));
 
-                    ui->listamovimientos->addItem("-Jugador1:");
+                    ui->listamovimientos->addItem("-"+jug1);
                     ui->listamovimientos->addItem(coordenada);
                     ui->txtmovimiento->setText("");
 
                     jugador1=false;
+                    ui->lblturnoactual->setText(jug2);
                 }else if(pieza>=7 && pieza<=12){
-                    tabpos1[actual_x][actual_y] = 0;
-                    tablogic1->eliminar(actual_x, actual_y, "An");
-                    tab1[actual_x][actual_y]->setText(" ");
+                    if(pieza==8){
+                        ui->btnmover->setEnabled(false);
+                        ui->txtmovimiento->setEnabled(false);
+                        ui->btniniciar->setEnabled(true);
+                        ui->txtjugador1->setEnabled(true);
+                        ui->txtjugador2->setEnabled(true);
+                        ui->txtjugador1->setText("");
+                        ui->txtjugador2->setText("");
+                        ui->txtcontratiempo->setEnabled(false);
+                        jugador1=true;
+                        QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                    }else{
+                        tabpos1[actual_x][actual_y] = 0;
+                        tablogic1->eliminar(actual_x, actual_y, "An");
+                        tab1[actual_x][actual_y]->setText(" ");
 
-                    QString pieza_a_borrar = nombre_pieza(pieza);
-                    char * pab = (char*)malloc(2);
-                    char * tmp = pieza_a_borrar.toLatin1().data();
-                    strcpy(pab, tmp);
+                        QString pieza_a_borrar = nombre_pieza(pieza);
+                        char * pab = (char*)malloc(2);
+                        char * tmp = pieza_a_borrar.toLatin1().data();
+                        strcpy(pab, tmp);
 
-                    tabpos1[destino_x][destino_y]=4;
-                    tablogic1->eliminar(destino_x, destino_y, pab);
-                    tab1[destino_x][destino_y]->setText(" ");
-                    tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilnegro));
+                        tabpos1[destino_x][destino_y]=4;
+                        tablogic1->eliminar(destino_x, destino_y, pab);
+                        tablogic1->insertar(destino_x, destino_y, "An");
+                        tab1[destino_x][destino_y]->setText(" ");
+                        tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilnegro));
 
-                    ui->listamovimientos->addItem("-Jugador1:");
-                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                    ui->txtmovimiento->setText("");
+                        ui->listamovimientos->addItem("-"+jug1);
+                        ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                        ui->txtmovimiento->setText("");
 
-                    jugador1=false;
+                        jugador1=false;
+                        ui->lblturnoactual->setText(jug2);
+                    }
+
                 }else{
                     ui->txtmovimiento->setText("");
                     QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
@@ -1106,31 +1256,48 @@ void MainWindow::alfil_negro(char* cnficha, int destino_x, int destino_y, int ta
                     tablogic2->insertar(destino_x,destino_y,"An");
                     tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilnegro));
 
-                    ui->listamovimientos->addItem("-Jugador1:");
+                    ui->listamovimientos->addItem("-"+jug1);
                     ui->listamovimientos->addItem(coordenada);
                     ui->txtmovimiento->setText("");
 
                     jugador1=false;
+                    ui->lblturnoactual->setText(jug2);
                 }else if(pieza>=7 && pieza<=12){
-                    tabpos2[actual_x][actual_y] = 0;
-                    tablogic2->eliminar(actual_x, actual_y, "An");
-                    tab2[actual_x][actual_y]->setText(" ");
+                    if(pieza==8){
+                        ui->btnmover->setEnabled(false);
+                        ui->txtmovimiento->setEnabled(false);
+                        ui->btniniciar->setEnabled(true);
+                        ui->txtjugador1->setEnabled(true);
+                        ui->txtjugador2->setEnabled(true);
+                        ui->txtjugador1->setText("");
+                        ui->txtjugador2->setText("");
+                        ui->txtcontratiempo->setEnabled(false);
+                        jugador1=true;
+                        QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                    }else{
+                        tabpos2[actual_x][actual_y] = 0;
+                        tablogic2->eliminar(actual_x, actual_y, "An");
+                        tab2[actual_x][actual_y]->setText(" ");
 
-                    QString pieza_a_borrar = nombre_pieza(pieza);
-                    char * pab = (char*)malloc(2);
-                    char * tmp = pieza_a_borrar.toLatin1().data();
-                    strcpy(pab, tmp);
+                        QString pieza_a_borrar = nombre_pieza(pieza);
+                        char * pab = (char*)malloc(2);
+                        char * tmp = pieza_a_borrar.toLatin1().data();
+                        strcpy(pab, tmp);
 
-                    tabpos2[destino_x][destino_y]=4;
-                    tablogic2->eliminar(destino_x, destino_y, pab);
-                    tab2[destino_x][destino_y]->setText(" ");
-                    tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilnegro));
+                        tabpos2[destino_x][destino_y]=4;
+                        tablogic2->eliminar(destino_x, destino_y, pab);
+                        tablogic2->insertar(destino_x, destino_y, "An");
+                        tab2[destino_x][destino_y]->setText(" ");
+                        tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilnegro));
 
-                    ui->listamovimientos->addItem("-Jugador1:");
-                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                    ui->txtmovimiento->setText("");
+                        ui->listamovimientos->addItem("-"+jug1);
+                        ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                        ui->txtmovimiento->setText("");
 
-                    jugador1=false;
+                        jugador1=false;
+                        ui->lblturnoactual->setText(jug2);
+                    }
+
                 }else{
                     ui->txtmovimiento->setText("");
                     QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
@@ -1174,31 +1341,48 @@ void MainWindow::alfil_blanco(char* cnficha, int destino_x, int destino_y, int t
                     tablogic0->insertar(destino_x,destino_y,"Ab");
                     tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilblanco));
 
-                    ui->listamovimientos->addItem("-Jugador2:");
+                    ui->listamovimientos->addItem("-"+jug2);
                     ui->listamovimientos->addItem(coordenada);
                     ui->txtmovimiento->setText("");
 
                     jugador1=true;
+                    ui->lblturnoactual->setText(jug1);
                 }else if(pieza>=1 && pieza<=6){
-                    tabpos0[actual_x][actual_y] = 0;
-                    tablogic0->eliminar(actual_x, actual_y, "Ab");
-                    tab0[actual_x][actual_y]->setText(" ");
+                    if(pieza==2){
+                        ui->btnmover->setEnabled(false);
+                        ui->txtmovimiento->setEnabled(false);
+                        ui->btniniciar->setEnabled(true);
+                        ui->txtjugador1->setEnabled(true);
+                        ui->txtjugador2->setEnabled(true);
+                        ui->txtjugador1->setText("");
+                        ui->txtjugador2->setText("");
+                        ui->txtcontratiempo->setEnabled(false);
+                        jugador1=true;
+                        QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                    }else{
+                        tabpos0[actual_x][actual_y] = 0;
+                        tablogic0->eliminar(actual_x, actual_y, "Ab");
+                        tab0[actual_x][actual_y]->setText(" ");
 
-                    QString pieza_a_borrar = nombre_pieza(pieza);
-                    char * pab = (char*)malloc(2);
-                    char * tmp = pieza_a_borrar.toLatin1().data();
-                    strcpy(pab, tmp);
+                        QString pieza_a_borrar = nombre_pieza(pieza);
+                        char * pab = (char*)malloc(2);
+                        char * tmp = pieza_a_borrar.toLatin1().data();
+                        strcpy(pab, tmp);
 
-                    tabpos0[destino_x][destino_y]=10;
-                    tablogic0->eliminar(destino_x, destino_y, pab);
-                    tab0[destino_x][destino_y]->setText(" ");
-                    tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilblanco));
+                        tabpos0[destino_x][destino_y]=10;
+                        tablogic0->eliminar(destino_x, destino_y, pab);
+                        tablogic0->insertar(destino_x, destino_y, "Ab");
+                        tab0[destino_x][destino_y]->setText(" ");
+                        tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilblanco));
 
-                    ui->listamovimientos->addItem("-Jugador2:");
-                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                    ui->txtmovimiento->setText("");
+                        ui->listamovimientos->addItem("-"+jug2);
+                        ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                        ui->txtmovimiento->setText("");
 
-                    jugador1=true;
+                        jugador1=true;
+                        ui->lblturnoactual->setText(jug1);
+                    }
+
                 }else{
                     ui->txtmovimiento->setText("");
                     QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
@@ -1231,31 +1415,48 @@ void MainWindow::alfil_blanco(char* cnficha, int destino_x, int destino_y, int t
                     tablogic1->insertar(destino_x,destino_y,"Ab");
                     tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilblanco));
 
-                    ui->listamovimientos->addItem("-Jugador2:");
+                    ui->listamovimientos->addItem("-"+jug2);
                     ui->listamovimientos->addItem(coordenada);
                     ui->txtmovimiento->setText("");
 
                     jugador1=true;
-                }else if(pieza>=7 && pieza<=12){
-                    tabpos1[actual_x][actual_y] = 0;
-                    tablogic1->eliminar(actual_x, actual_y, "Ab");
-                    tab1[actual_x][actual_y]->setText(" ");
+                    ui->lblturnoactual->setText(jug1);
+                }else if(pieza>=1 && pieza<=6){
+                    if(pieza==2){
+                        ui->btnmover->setEnabled(false);
+                        ui->txtmovimiento->setEnabled(false);
+                        ui->btniniciar->setEnabled(true);
+                        ui->txtjugador1->setEnabled(true);
+                        ui->txtjugador2->setEnabled(true);
+                        ui->txtjugador1->setText("");
+                        ui->txtjugador2->setText("");
+                        ui->txtcontratiempo->setEnabled(false);
+                        jugador1=true;
+                        QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                    }else{
+                        tabpos1[actual_x][actual_y] = 0;
+                        tablogic1->eliminar(actual_x, actual_y, "Ab");
+                        tab1[actual_x][actual_y]->setText(" ");
 
-                    QString pieza_a_borrar = nombre_pieza(pieza);
-                    char * pab = (char*)malloc(2);
-                    char * tmp = pieza_a_borrar.toLatin1().data();
-                    strcpy(pab, tmp);
+                        QString pieza_a_borrar = nombre_pieza(pieza);
+                        char * pab = (char*)malloc(2);
+                        char * tmp = pieza_a_borrar.toLatin1().data();
+                        strcpy(pab, tmp);
 
-                    tabpos1[destino_x][destino_y]=10;
-                    tablogic1->eliminar(destino_x, destino_y, pab);
-                    tab1[destino_x][destino_y]->setText(" ");
-                    tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilblanco));
+                        tabpos1[destino_x][destino_y]=10;
+                        tablogic1->eliminar(destino_x, destino_y, pab);
+                        tablogic1->insertar(destino_x, destino_y, "Ab");
+                        tab1[destino_x][destino_y]->setText(" ");
+                        tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilblanco));
 
-                    ui->listamovimientos->addItem("-Jugador2:");
-                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                    ui->txtmovimiento->setText("");
+                        ui->listamovimientos->addItem("-"+jug2);
+                        ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                        ui->txtmovimiento->setText("");
 
-                    jugador1=true;
+                        jugador1=true;
+                        ui->lblturnoactual->setText(jug1);
+                    }
+
                 }else{
                     ui->txtmovimiento->setText("");
                     QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
@@ -1288,31 +1489,48 @@ void MainWindow::alfil_blanco(char* cnficha, int destino_x, int destino_y, int t
                     tablogic2->insertar(destino_x,destino_y,"Ab");
                     tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilblanco));
 
-                    ui->listamovimientos->addItem("-Jugador2:");
+                    ui->listamovimientos->addItem("-"+jug2);
                     ui->listamovimientos->addItem(coordenada);
                     ui->txtmovimiento->setText("");
 
                     jugador1=true;
-                }else if(pieza>=7 && pieza<=12){
-                    tabpos2[actual_x][actual_y] = 0;
-                    tablogic2->eliminar(actual_x, actual_y, "Ab");
-                    tab2[actual_x][actual_y]->setText(" ");
+                    ui->lblturnoactual->setText(jug1);
+                }else if(pieza>=1 && pieza<=6){
+                    if(pieza==2){
+                        ui->btnmover->setEnabled(false);
+                        ui->txtmovimiento->setEnabled(false);
+                        ui->btniniciar->setEnabled(true);
+                        ui->txtjugador1->setEnabled(true);
+                        ui->txtjugador2->setEnabled(true);
+                        ui->txtjugador1->setText("");
+                        ui->txtjugador2->setText("");
+                        ui->txtcontratiempo->setEnabled(false);
+                        jugador1=true;
+                        QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                    }else{
+                        tabpos2[actual_x][actual_y] = 0;
+                        tablogic2->eliminar(actual_x, actual_y, "Ab");
+                        tab2[actual_x][actual_y]->setText(" ");
 
-                    QString pieza_a_borrar = nombre_pieza(pieza);
-                    char * pab = (char*)malloc(2);
-                    char * tmp = pieza_a_borrar.toLatin1().data();
-                    strcpy(pab, tmp);
+                        QString pieza_a_borrar = nombre_pieza(pieza);
+                        char * pab = (char*)malloc(2);
+                        char * tmp = pieza_a_borrar.toLatin1().data();
+                        strcpy(pab, tmp);
 
-                    tabpos2[destino_x][destino_y]=10;
-                    tablogic2->eliminar(destino_x, destino_y, pab);
-                    tab2[destino_x][destino_y]->setText(" ");
-                    tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilblanco));
+                        tabpos2[destino_x][destino_y]=10;
+                        tablogic2->eliminar(destino_x, destino_y, pab);
+                        tablogic2->insertar(destino_x, destino_y, "Ab");
+                        tab2[destino_x][destino_y]->setText(" ");
+                        tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(alfilblanco));
 
-                    ui->listamovimientos->addItem("-Jugador2:");
-                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                    ui->txtmovimiento->setText("");
+                        ui->listamovimientos->addItem("-"+jug2);
+                        ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                        ui->txtmovimiento->setText("");
 
-                    jugador1=true;
+                        jugador1=true;
+                        ui->lblturnoactual->setText(jug1);
+                    }
+
                 }else{
                     ui->txtmovimiento->setText("");
                     QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
@@ -1351,31 +1569,48 @@ void MainWindow::caballo_negro(char *cnficha, int destino_x, int destino_y, int 
                 tablogic0->insertar(destino_x,destino_y,"Cn");
                 tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem("-"+jug1);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=false;
+                ui->lblturnoactual->setText(jug2);
             }else if(pieza>=7 && pieza<=12){
-                tabpos0[actual_x][actual_y] = 0;
-                tablogic0->eliminar(actual_x, actual_y, "Cn");
-                tab0[actual_x][actual_y]->setText(" ");
+                if(pieza==8){
+                    ui->btnmover->setEnabled(false);
+                    ui->txtmovimiento->setEnabled(false);
+                    ui->btniniciar->setEnabled(true);
+                    ui->txtjugador1->setEnabled(true);
+                    ui->txtjugador2->setEnabled(true);
+                    ui->txtjugador1->setText("");
+                    ui->txtjugador2->setText("");
+                    ui->txtcontratiempo->setEnabled(false);
+                    jugador1=true;
+                    QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                }else{
+                    tabpos0[actual_x][actual_y] = 0;
+                    tablogic0->eliminar(actual_x, actual_y, "Cn");
+                    tab0[actual_x][actual_y]->setText(" ");
 
-                QString pieza_a_borrar = nombre_pieza(pieza);
-                char * pab = (char*)malloc(2);
-                char * tmp = pieza_a_borrar.toLatin1().data();
-                strcpy(pab, tmp);
+                    QString pieza_a_borrar = nombre_pieza(pieza);
+                    char * pab = (char*)malloc(2);
+                    char * tmp = pieza_a_borrar.toLatin1().data();
+                    strcpy(pab, tmp);
 
-                tabpos0[destino_x][destino_y]=5;
-                tablogic0->eliminar(destino_x, destino_y, pab);
-                tab0[destino_x][destino_y]->setText(" ");
-                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
+                    tabpos0[destino_x][destino_y]=5;
+                    tablogic0->eliminar(destino_x, destino_y, pab);
+                    tablogic0->insertar(destino_x, destino_y, "Cn");
+                    tab0[destino_x][destino_y]->setText(" ");
+                    tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
-                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                ui->txtmovimiento->setText("");
+                    ui->listamovimientos->addItem("-"+jug1);
+                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                    ui->txtmovimiento->setText("");
 
-                jugador1=false;
+                    jugador1=false;
+                    ui->lblturnoactual->setText(jug2);
+                }
+
             }else{
                 ui->txtmovimiento->setText("");
                 QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
@@ -1385,7 +1620,7 @@ void MainWindow::caballo_negro(char *cnficha, int destino_x, int destino_y, int 
             QMessageBox::information(this,"Mov. no valido","Hay una pieza antes de la posicion destino.");
         }
     }else if(ub1>0 && tabdest==1){
-        QString coo = QString::number(ub0); //ej. "406"
+        QString coo = QString::number(ub1); //ej. "406"
         QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
         QString tmp = arr_coo.at(0);
         int actual_x = tmp.toInt(); //4
@@ -1403,31 +1638,48 @@ void MainWindow::caballo_negro(char *cnficha, int destino_x, int destino_y, int 
                 tablogic1->insertar(destino_x,destino_y,"Cn");
                 tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem("-"+jug1);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=false;
+                ui->lblturnoactual->setText(jug2);
             }else if(pieza>=7 && pieza<=12){
-                tabpos1[actual_x][actual_y] = 0;
-                tablogic1->eliminar(actual_x, actual_y, "Cn");
-                tab1[actual_x][actual_y]->setText(" ");
+                if(pieza==8){
+                    ui->btnmover->setEnabled(false);
+                    ui->txtmovimiento->setEnabled(false);
+                    ui->btniniciar->setEnabled(true);
+                    ui->txtjugador1->setEnabled(true);
+                    ui->txtjugador2->setEnabled(true);
+                    ui->txtjugador1->setText("");
+                    ui->txtjugador2->setText("");
+                    ui->txtcontratiempo->setEnabled(false);
+                    jugador1=true;
+                    QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                }else{
+                    tabpos1[actual_x][actual_y] = 0;
+                    tablogic1->eliminar(actual_x, actual_y, "Cn");
+                    tab1[actual_x][actual_y]->setText(" ");
 
-                QString pieza_a_borrar = nombre_pieza(pieza);
-                char * pab = (char*)malloc(2);
-                char * tmp = pieza_a_borrar.toLatin1().data();
-                strcpy(pab, tmp);
+                    QString pieza_a_borrar = nombre_pieza(pieza);
+                    char * pab = (char*)malloc(2);
+                    char * tmp = pieza_a_borrar.toLatin1().data();
+                    strcpy(pab, tmp);
 
-                tabpos1[destino_x][destino_y]=5;
-                tablogic1->eliminar(destino_x, destino_y, pab);
-                tab1[destino_x][destino_y]->setText(" ");
-                tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
+                    tabpos1[destino_x][destino_y]=5;
+                    tablogic1->eliminar(destino_x, destino_y, pab);
+                    tablogic1->insertar(destino_x, destino_y, "Cn");
+                    tab1[destino_x][destino_y]->setText(" ");
+                    tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
-                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                ui->txtmovimiento->setText("");
+                    ui->listamovimientos->addItem("-"+jug1);
+                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                    ui->txtmovimiento->setText("");
 
-                jugador1=false;
+                    jugador1=false;
+                    ui->lblturnoactual->setText(jug2);
+                }
+
             }else{
                 ui->txtmovimiento->setText("");
                 QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
@@ -1437,7 +1689,7 @@ void MainWindow::caballo_negro(char *cnficha, int destino_x, int destino_y, int 
             QMessageBox::information(this,"Mov. no valido","Hay una pieza antes de la posicion destino.");
         }
     }else if(ub2>0 && tabdest==2){
-        QString coo = QString::number(ub0); //ej. "406"
+        QString coo = QString::number(ub2); //ej. "406"
         QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
         QString tmp = arr_coo.at(0);
         int actual_x = tmp.toInt(); //4
@@ -1455,31 +1707,48 @@ void MainWindow::caballo_negro(char *cnficha, int destino_x, int destino_y, int 
                 tablogic2->insertar(destino_x,destino_y,"Cn");
                 tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem("-"+jug1);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=false;
+                ui->lblturnoactual->setText(jug2);
             }else if(pieza>=7 && pieza<=12){
-                tabpos2[actual_x][actual_y] = 0;
-                tablogic2->eliminar(actual_x, actual_y, "Cn");
-                tab2[actual_x][actual_y]->setText(" ");
+                if(pieza==8){
+                    ui->btnmover->setEnabled(false);
+                    ui->txtmovimiento->setEnabled(false);
+                    ui->btniniciar->setEnabled(true);
+                    ui->txtjugador1->setEnabled(true);
+                    ui->txtjugador2->setEnabled(true);
+                    ui->txtjugador1->setText("");
+                    ui->txtjugador2->setText("");
+                    ui->txtcontratiempo->setEnabled(false);
+                    jugador1=true;
+                    QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                }else{
+                    tabpos2[actual_x][actual_y] = 0;
+                    tablogic2->eliminar(actual_x, actual_y, "Cn");
+                    tab2[actual_x][actual_y]->setText(" ");
 
-                QString pieza_a_borrar = nombre_pieza(pieza);
-                char * pab = (char*)malloc(2);
-                char * tmp = pieza_a_borrar.toLatin1().data();
-                strcpy(pab, tmp);
+                    QString pieza_a_borrar = nombre_pieza(pieza);
+                    char * pab = (char*)malloc(2);
+                    char * tmp = pieza_a_borrar.toLatin1().data();
+                    strcpy(pab, tmp);
 
-                tabpos2[destino_x][destino_y]=5;
-                tablogic2->eliminar(destino_x, destino_y, pab);
-                tab2[destino_x][destino_y]->setText(" ");
-                tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
+                    tabpos2[destino_x][destino_y]=5;
+                    tablogic2->eliminar(destino_x, destino_y, pab);
+                    tablogic2->insertar(destino_x, destino_y, "Cn");
+                    tab2[destino_x][destino_y]->setText(" ");
+                    tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballonegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
-                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                ui->txtmovimiento->setText("");
+                    ui->listamovimientos->addItem("-"+jug1);
+                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                    ui->txtmovimiento->setText("");
 
-                jugador1=false;
+                    jugador1=false;
+                    ui->lblturnoactual->setText(jug2);
+                }
+
             }else{
                 ui->txtmovimiento->setText("");
                 QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
@@ -1517,31 +1786,48 @@ void MainWindow::caballo_blanco(char *cnficha, int destino_x, int destino_y, int
                 tablogic0->insertar(destino_x,destino_y,"Cb");
                 tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem("-"+jug2);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=true;
+                ui->lblturnoactual->setText(jug1);
             }else if(pieza>=1 && pieza<=6){
-                tabpos0[actual_x][actual_y] = 0;
-                tablogic0->eliminar(actual_x, actual_y, "Cb");
-                tab0[actual_x][actual_y]->setText(" ");
+                if(pieza==2){
+                    ui->btnmover->setEnabled(false);
+                    ui->txtmovimiento->setEnabled(false);
+                    ui->btniniciar->setEnabled(true);
+                    ui->txtjugador1->setEnabled(true);
+                    ui->txtjugador2->setEnabled(true);
+                    ui->txtjugador1->setText("");
+                    ui->txtjugador2->setText("");
+                    ui->txtcontratiempo->setEnabled(false);
+                    jugador1=true;
+                    QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                }else{
+                    tabpos0[actual_x][actual_y] = 0;
+                    tablogic0->eliminar(actual_x, actual_y, "Cb");
+                    tab0[actual_x][actual_y]->setText(" ");
 
-                QString pieza_a_borrar = nombre_pieza(pieza);
-                char * pab = (char*)malloc(2);
-                char * tmp = pieza_a_borrar.toLatin1().data();
-                strcpy(pab, tmp);
+                    QString pieza_a_borrar = nombre_pieza(pieza);
+                    char * pab = (char*)malloc(2);
+                    char * tmp = pieza_a_borrar.toLatin1().data();
+                    strcpy(pab, tmp);
 
-                tabpos0[destino_x][destino_y]=11;
-                tablogic0->eliminar(destino_x, destino_y, pab);
-                tab0[destino_x][destino_y]->setText(" ");
-                tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
+                    tabpos0[destino_x][destino_y]=11;
+                    tablogic0->eliminar(destino_x, destino_y, pab);
+                    tablogic0->insertar(destino_x, destino_y, "Cb");
+                    tab0[destino_x][destino_y]->setText(" ");
+                    tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
-                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                ui->txtmovimiento->setText("");
+                    ui->listamovimientos->addItem("-"+jug2);
+                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                    ui->txtmovimiento->setText("");
 
-                jugador1=true;
+                    jugador1=true;
+                    ui->lblturnoactual->setText(jug1);
+                }
+
             }else{
                 ui->txtmovimiento->setText("");
                 QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
@@ -1551,7 +1837,7 @@ void MainWindow::caballo_blanco(char *cnficha, int destino_x, int destino_y, int
             QMessageBox::information(this,"Mov. no valido","Hay una pieza antes de la posicion destino.");
         }
     }else if(ub1>0 && tabdest==1){
-        QString coo = QString::number(ub0); //ej. "406"
+        QString coo = QString::number(ub1); //ej. "406"
         QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
         QString tmp = arr_coo.at(0);
         int actual_x = tmp.toInt(); //4
@@ -1569,31 +1855,48 @@ void MainWindow::caballo_blanco(char *cnficha, int destino_x, int destino_y, int
                 tablogic1->insertar(destino_x,destino_y,"Cb");
                 tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem("-"+jug2);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=true;
+                ui->lblturnoactual->setText(jug1);
             }else if(pieza>=1 && pieza<=6){
-                tabpos1[actual_x][actual_y] = 0;
-                tablogic1->eliminar(actual_x, actual_y, "Cb");
-                tab1[actual_x][actual_y]->setText(" ");
+                if(pieza==2){
+                    ui->btnmover->setEnabled(false);
+                    ui->txtmovimiento->setEnabled(false);
+                    ui->btniniciar->setEnabled(true);
+                    ui->txtjugador1->setEnabled(true);
+                    ui->txtjugador2->setEnabled(true);
+                    ui->txtjugador1->setText("");
+                    ui->txtjugador2->setText("");
+                    ui->txtcontratiempo->setEnabled(false);
+                    jugador1=true;
+                    QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                }else{
+                    tabpos1[actual_x][actual_y] = 0;
+                    tablogic1->eliminar(actual_x, actual_y, "Cb");
+                    tab1[actual_x][actual_y]->setText(" ");
 
-                QString pieza_a_borrar = nombre_pieza(pieza);
-                char * pab = (char*)malloc(2);
-                char * tmp = pieza_a_borrar.toLatin1().data();
-                strcpy(pab, tmp);
+                    QString pieza_a_borrar = nombre_pieza(pieza);
+                    char * pab = (char*)malloc(2);
+                    char * tmp = pieza_a_borrar.toLatin1().data();
+                    strcpy(pab, tmp);
 
-                tabpos1[destino_x][destino_y]=11;
-                tablogic1->eliminar(destino_x, destino_y, pab);
-                tab1[destino_x][destino_y]->setText(" ");
-                tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
+                    tabpos1[destino_x][destino_y]=11;
+                    tablogic1->eliminar(destino_x, destino_y, pab);
+                    tablogic1->insertar(destino_x, destino_y, "Cb");
+                    tab1[destino_x][destino_y]->setText(" ");
+                    tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
-                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                ui->txtmovimiento->setText("");
+                    ui->listamovimientos->addItem("-"+jug2);
+                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                    ui->txtmovimiento->setText("");
 
-                jugador1=true;
+                    jugador1=true;
+                    ui->lblturnoactual->setText(jug1);
+                }
+
             }else{
                 ui->txtmovimiento->setText("");
                 QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
@@ -1603,7 +1906,7 @@ void MainWindow::caballo_blanco(char *cnficha, int destino_x, int destino_y, int
             QMessageBox::information(this,"Mov. no valido","Hay una pieza antes de la posicion destino.");
         }
     }else if(ub2>0 && tabdest==2){
-        QString coo = QString::number(ub0); //ej. "406"
+        QString coo = QString::number(ub2); //ej. "406"
         QStringList arr_coo = coo.split("0"); //ej. [4][6] -> [x][y]
         QString tmp = arr_coo.at(0);
         int actual_x = tmp.toInt(); //4
@@ -1621,31 +1924,48 @@ void MainWindow::caballo_blanco(char *cnficha, int destino_x, int destino_y, int
                 tablogic2->insertar(destino_x,destino_y,"Cb");
                 tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem("-"+jug2);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=true;
+                ui->lblturnoactual->setText(jug1);
             }else if(pieza>=1 && pieza<=6){
-                tabpos2[actual_x][actual_y] = 0;
-                tablogic2->eliminar(actual_x, actual_y, "Cb");
-                tab2[actual_x][actual_y]->setText(" ");
+                if(pieza==2){
+                    ui->btnmover->setEnabled(false);
+                    ui->txtmovimiento->setEnabled(false);
+                    ui->btniniciar->setEnabled(true);
+                    ui->txtjugador1->setEnabled(true);
+                    ui->txtjugador2->setEnabled(true);
+                    ui->txtjugador1->setText("");
+                    ui->txtjugador2->setText("");
+                    ui->txtcontratiempo->setEnabled(false);
+                    jugador1=true;
+                    QMessageBox::information(this,"Fin del Juego.","Dama del contrincante capturada.");
+                }else{
+                    tabpos2[actual_x][actual_y] = 0;
+                    tablogic2->eliminar(actual_x, actual_y, "Cb");
+                    tab2[actual_x][actual_y]->setText(" ");
 
-                QString pieza_a_borrar = nombre_pieza(pieza);
-                char * pab = (char*)malloc(2);
-                char * tmp = pieza_a_borrar.toLatin1().data();
-                strcpy(pab, tmp);
+                    QString pieza_a_borrar = nombre_pieza(pieza);
+                    char * pab = (char*)malloc(2);
+                    char * tmp = pieza_a_borrar.toLatin1().data();
+                    strcpy(pab, tmp);
 
-                tabpos2[destino_x][destino_y]=11;
-                tablogic2->eliminar(destino_x, destino_y, pab);
-                tab2[destino_x][destino_y]->setText(" ");
-                tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
+                    tabpos2[destino_x][destino_y]=11;
+                    tablogic2->eliminar(destino_x, destino_y, pab);
+                    tablogic2->insertar(destino_x, destino_y, "Cb");
+                    tab2[destino_x][destino_y]->setText(" ");
+                    tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(caballoblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
-                ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
-                ui->txtmovimiento->setText("");
+                    ui->listamovimientos->addItem("-"+jug2);
+                    ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
+                    ui->txtmovimiento->setText("");
 
-                jugador1=true;
+                    jugador1=true;
+                    ui->lblturnoactual->setText(jug1);
+                }
+
             }else{
                 ui->txtmovimiento->setText("");
                 QMessageBox::information(this,"Mov. no valido","Hay una pieza blanco ubicada en la coordenada destino.");
@@ -1671,7 +1991,7 @@ void MainWindow::torre_negro(char *cnficha, int destino_x, int destino_y, int ta
         int actual_x = tmp.toInt(); //4
         tmp = arr_coo.at(1);
         int actual_y = tmp.toInt(); //6
-        bool puede = validar_camino_torre("Tn",actual_x,actual_y,destino_x,destino_y,tabdest);
+        bool puede = validar_camino_torre("Tn",actual_x,actual_y,destino_x,destino_y,0);
         if(puede==true){
             int pieza = tabpos0[destino_x][destino_y];
             if(pieza==0){
@@ -1683,11 +2003,12 @@ void MainWindow::torre_negro(char *cnficha, int destino_x, int destino_y, int ta
                 tablogic0->insertar(destino_x,destino_y,"Tn");
                 tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(torrenegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem("-"+jug1);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=false;
+                ui->lblturnoactual->setText(jug2);
             }else if(pieza>=7 && pieza<=12){
                 tabpos0[actual_x][actual_y] = 0;
                 tablogic0->eliminar(actual_x, actual_y, "Tn");
@@ -1700,14 +2021,16 @@ void MainWindow::torre_negro(char *cnficha, int destino_x, int destino_y, int ta
 
                 tabpos0[destino_x][destino_y]=3;
                 tablogic0->eliminar(destino_x, destino_y, pab);
+                tablogic0->insertar(destino_x, destino_y, "Tn");
                 tab0[destino_x][destino_y]->setText(" ");
                 tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(torrenegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem("-"+jug1);
                 ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
                 ui->txtmovimiento->setText("");
 
                 jugador1=false;
+                ui->lblturnoactual->setText(jug2);
             }else{
                 ui->txtmovimiento->setText("");
                 QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
@@ -1723,7 +2046,7 @@ void MainWindow::torre_negro(char *cnficha, int destino_x, int destino_y, int ta
         int actual_x = tmp.toInt(); //4
         tmp = arr_coo.at(1);
         int actual_y = tmp.toInt(); //6
-        bool puede = validar_camino_torre("Tn",actual_x,actual_y,destino_x,destino_y,tabdest);
+        bool puede = validar_camino_torre("Tn",actual_x,actual_y,destino_x,destino_y,1);
         if(puede==true){
             int pieza = tabpos1[destino_x][destino_y];
             if(pieza==0){
@@ -1735,11 +2058,12 @@ void MainWindow::torre_negro(char *cnficha, int destino_x, int destino_y, int ta
                 tablogic1->insertar(destino_x,destino_y,"Tn");
                 tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(torrenegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem("-"+jug1);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=false;
+                ui->lblturnoactual->setText(jug2);
             }else if(pieza>=7 && pieza<=12){
                 tabpos1[actual_x][actual_y] = 0;
                 tablogic1->eliminar(actual_x, actual_y, "Tn");
@@ -1752,14 +2076,16 @@ void MainWindow::torre_negro(char *cnficha, int destino_x, int destino_y, int ta
 
                 tabpos1[destino_x][destino_y]=3;
                 tablogic1->eliminar(destino_x, destino_y, pab);
+                tablogic1->insertar(destino_x, destino_y, "Tn");
                 tab1[destino_x][destino_y]->setText(" ");
                 tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(torrenegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem("-"+jug1);
                 ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
                 ui->txtmovimiento->setText("");
 
                 jugador1=false;
+                ui->lblturnoactual->setText(jug2);
             }else{
                 ui->txtmovimiento->setText("");
                 QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
@@ -1775,7 +2101,7 @@ void MainWindow::torre_negro(char *cnficha, int destino_x, int destino_y, int ta
         int actual_x = tmp.toInt(); //4
         tmp = arr_coo.at(1);
         int actual_y = tmp.toInt(); //6
-        bool puede = validar_camino_torre("Tn",actual_x,actual_y,destino_x,destino_y,tabdest);
+        bool puede = validar_camino_torre("Tn",actual_x,actual_y,destino_x,destino_y,2);
         if(puede==true){
             int pieza = tabpos2[destino_x][destino_y];
             if(pieza==0){
@@ -1787,11 +2113,12 @@ void MainWindow::torre_negro(char *cnficha, int destino_x, int destino_y, int ta
                 tablogic2->insertar(destino_x,destino_y,"Tn");
                 tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(torrenegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem("-"+jug1);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=false;
+                ui->lblturnoactual->setText(jug2);
             }else if(pieza>=7 && pieza<=12){
                 tabpos2[actual_x][actual_y] = 0;
                 tablogic2->eliminar(actual_x, actual_y, "Tn");
@@ -1804,14 +2131,16 @@ void MainWindow::torre_negro(char *cnficha, int destino_x, int destino_y, int ta
 
                 tabpos2[destino_x][destino_y]=3;
                 tablogic2->eliminar(destino_x, destino_y, pab);
+                tablogic2->insertar(destino_x, destino_y, "Tn");
                 tab2[destino_x][destino_y]->setText(" ");
                 tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(torrenegro));
 
-                ui->listamovimientos->addItem("-Jugador1:");
+                ui->listamovimientos->addItem("-"+jug1);
                 ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
                 ui->txtmovimiento->setText("");
 
                 jugador1=false;
+                ui->lblturnoactual->setText(jug2);
             }else{
                 ui->txtmovimiento->setText("");
                 QMessageBox::information(this,"Mov. no valido","Hay una pieza negra ubicada en la coordenada destino.");
@@ -1837,7 +2166,7 @@ void MainWindow::torre_blanco(char *cnficha, int destino_x, int destino_y, int t
         int actual_x = tmp.toInt(); //4
         tmp = arr_coo.at(1);
         int actual_y = tmp.toInt(); //6
-        bool puede = validar_camino_torre("Tb",actual_x,actual_y,destino_x,destino_y,tabdest);
+        bool puede = validar_camino_torre("Tb",actual_x,actual_y,destino_x,destino_y,0);
         if(puede==true){
             int pieza = tabpos0[destino_x][destino_y];
             if(pieza==0){
@@ -1849,11 +2178,12 @@ void MainWindow::torre_blanco(char *cnficha, int destino_x, int destino_y, int t
                 tablogic0->insertar(destino_x,destino_y,"Tb");
                 tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(torreblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem("-"+jug2);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=true;
+                ui->lblturnoactual->setText(jug1);
             }else if(pieza>=1 && pieza<=6){
                 tabpos0[actual_x][actual_y] = 0;
                 tablogic0->eliminar(actual_x, actual_y, "Tb");
@@ -1866,14 +2196,16 @@ void MainWindow::torre_blanco(char *cnficha, int destino_x, int destino_y, int t
 
                 tabpos0[destino_x][destino_y]=9;
                 tablogic0->eliminar(destino_x, destino_y, pab);
+                tablogic0->insertar(destino_x, destino_y, "Tb");
                 tab0[destino_x][destino_y]->setText(" ");
                 tab0[destino_x][destino_y]->setPixmap(QPixmap::fromImage(torreblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem("-"+jug2);
                 ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
                 ui->txtmovimiento->setText("");
 
                 jugador1=true;
+                ui->lblturnoactual->setText(jug1);
             }else{
                 ui->txtmovimiento->setText("");
                 QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
@@ -1889,7 +2221,7 @@ void MainWindow::torre_blanco(char *cnficha, int destino_x, int destino_y, int t
         int actual_x = tmp.toInt(); //4
         tmp = arr_coo.at(1);
         int actual_y = tmp.toInt(); //6
-        bool puede = validar_camino_torre("Tb",actual_x,actual_y,destino_x,destino_y,tabdest);
+        bool puede = validar_camino_torre("Tb",actual_x,actual_y,destino_x,destino_y,1);
         if(puede==true){
             int pieza = tabpos1[destino_x][destino_y];
             if(pieza==0){
@@ -1901,11 +2233,12 @@ void MainWindow::torre_blanco(char *cnficha, int destino_x, int destino_y, int t
                 tablogic1->insertar(destino_x,destino_y,"Tb");
                 tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(torreblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem("-"+jug2);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=true;
+                ui->lblturnoactual->setText(jug1);
             }else if(pieza>=1 && pieza<=6){
                 tabpos1[actual_x][actual_y] = 0;
                 tablogic1->eliminar(actual_x, actual_y, "Tb");
@@ -1918,14 +2251,16 @@ void MainWindow::torre_blanco(char *cnficha, int destino_x, int destino_y, int t
 
                 tabpos1[destino_x][destino_y]=9;
                 tablogic1->eliminar(destino_x, destino_y, pab);
+                tablogic1->insertar(destino_x, destino_y, "Tb");
                 tab1[destino_x][destino_y]->setText(" ");
                 tab1[destino_x][destino_y]->setPixmap(QPixmap::fromImage(torreblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem("-"+jug2);
                 ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
                 ui->txtmovimiento->setText("");
 
                 jugador1=true;
+                ui->lblturnoactual->setText(jug1);
             }else{
                 ui->txtmovimiento->setText("");
                 QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
@@ -1941,7 +2276,7 @@ void MainWindow::torre_blanco(char *cnficha, int destino_x, int destino_y, int t
         int actual_x = tmp.toInt(); //4
         tmp = arr_coo.at(1);
         int actual_y = tmp.toInt(); //6
-        bool puede = validar_camino_torre("Tb",actual_x,actual_y,destino_x,destino_y,tabdest);
+        bool puede = validar_camino_torre("Tb",actual_x,actual_y,destino_x,destino_y,2);
         if(puede==true){
             int pieza = tabpos2[destino_x][destino_y];
             if(pieza==0){
@@ -1953,11 +2288,12 @@ void MainWindow::torre_blanco(char *cnficha, int destino_x, int destino_y, int t
                 tablogic2->insertar(destino_x,destino_y,"Tb");
                 tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(torreblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem("-"+jug2);
                 ui->listamovimientos->addItem(coordenada);
                 ui->txtmovimiento->setText("");
 
                 jugador1=true;
+                ui->lblturnoactual->setText(jug1);
             }else if(pieza>=1 && pieza<=6){
                 tabpos2[actual_x][actual_y] = 0;
                 tablogic2->eliminar(actual_x, actual_y, "Tb");
@@ -1970,14 +2306,16 @@ void MainWindow::torre_blanco(char *cnficha, int destino_x, int destino_y, int t
 
                 tabpos2[destino_x][destino_y]=9;
                 tablogic2->eliminar(destino_x, destino_y, pab);
+                tablogic2->insertar(destino_x, destino_y, "Tb");
                 tab2[destino_x][destino_y]->setText(" ");
                 tab2[destino_x][destino_y]->setPixmap(QPixmap::fromImage(torreblanco));
 
-                ui->listamovimientos->addItem("-Jugador2:");
+                ui->listamovimientos->addItem("-"+jug2);
                 ui->listamovimientos->addItem(coordenada+" comio: " + pieza_a_borrar);
                 ui->txtmovimiento->setText("");
 
                 jugador1=true;
+                ui->lblturnoactual->setText(jug1);
             }else{
                 ui->txtmovimiento->setText("");
                 QMessageBox::information(this,"Mov. no valido","Hay una pieza blanca ubicada en la coordenada destino.");
@@ -2026,7 +2364,6 @@ void MainWindow::crear_grafico_tablero(int n){
     }
     QString nodo_por_columna="", nodo_label="";
 
-
     /*primero separar por columnas*/
     QStringList columnas = tablero_completo.split("fincol");
 
@@ -2065,15 +2402,7 @@ void MainWindow::crear_grafico_tablero(int n){
             }//fin recorrer separando #
         }//fin recorrer separando %
         nodo_por_columna += "fincol";
-    }//fin recorrer separando fincol
-    /*fin separar datos y mandarlos a sus respectivas listas*/
-
-    //cout << "-----------nodo_por_columna------------- " << endl;
-    //cout << nodo_por_columna.toStdString() << endl;
-
-    /*creando los subgraph cluster*/
-    //cout << "------- subgraf----------------- " << endl;
-    //cout << nodo_por_columna.toStdString() << endl;
+    }
 
     QStringList subgraf = nodo_por_columna.split("fincol");
     /*queda:
@@ -2104,12 +2433,69 @@ void MainWindow::crear_grafico_tablero(int n){
         contador_subclust++;
     }
 
-    //fin recorrer, separando fincol
-    //cout << "---------------- subgraf_cluster------------------" << endl;
-    //cout << subgraf_cluster.toStdString() << endl;
-
     QString archivo = "digraph G{\nnode [shape=record, height=.1;]\n" + nodo_label + subgraf_cluster + "\n}";
     generar_dot(archivo);
+}
+
+void MainWindow::crear_grafico_columna(int n){
+    QString tablero_completo="";
+    if(n==0){
+        tablero_completo=tablogic0->estado_columnas();
+    }else if(n==1){
+        tablero_completo=tablogic1->estado_columnas();
+    }else{
+        tablero_completo=tablogic2->estado_columnas();
+    }
+    QString nodo_columna="", nodo_label="";
+    QStringList columnas = tablero_completo.split("fincol");
+    for(int i=0;i<columnas.length();i++){
+        QString columna = columnas.value(i);
+        QStringList cada_nodo = columna.split("%");
+        for(int j=0;j<cada_nodo.length()-1;j++){
+            QString separado = cada_nodo.value(j);
+            QStringList dato = separado.split("#");
+            nodo_columna += dato.value(0);
+            nodo_label += dato.value(1) + "#";
+        }
+    }
+    //cout<<"todos los nodos"<<endl;
+    //cout<<nodo_label.toStdString()<<endl;
+    QStringList numero = nodo_label.split("#");
+    int aux=0, contador=0;
+    QString sub_cluster="", final="";
+    for(int i=0;i<numero.length()-2;i++){
+        QString nodo = numero.value(i);
+        if(aux==0){
+            //crea un nuevo subgraph
+            sub_cluster += "subgraph cluster"+QString::number(contador)+"{\n";
+            contador++;
+        }
+
+        if(aux==4){
+            sub_cluster += "\"node"+nodo+ "\";\n}\n";
+            if(i+1 < numero.length()-2){
+                QString tmp = numero.value(i+1);
+                final += "\"node"+nodo+"\"->\"node"+tmp+"\";";
+            }
+
+            aux=0;
+        }else{
+            if(i+2>numero.length()-2 && aux==0){
+                sub_cluster += "\"node"+nodo + "\";\n}\n";
+                aux++;
+            }else{
+                sub_cluster += "\"node"+nodo + "\" -> ";
+                aux++;
+            }
+        }
+    }
+    QString archivo = "digraph G{\nrankdir=LR;\n[shape=record, height=.1];\n"+sub_cluster+final+"\n}";
+    //cout<<archivo.toStdString()<<endl;
+    generar_dot(archivo);
+}
+
+void MainWindow::crear_grafico_fila(int n){
+
 }
 
 void MainWindow::generar_dot(QString contenido){
@@ -2125,7 +2511,10 @@ void MainWindow::generar_dot(QString contenido){
     system("dot -Tpng /home/eduardo/Descargas/dato.dot -o /home/eduardo/datosalida.png");
 
     grafica.load("/home/eduardo/datosalida.png");
-    ui->lblgrafica->setPixmap(QPixmap::fromImage(grafica));
+    int w = ui->lblgrafica->width();
+    int h = ui->lblgrafica->height();
+    //ui->lblgrafica->setPixmap(QPixmap::fromImage(grafica));
+    ui->lblgrafica->setPixmap(QPixmap::fromImage(grafica.scaled(w,h,Qt::KeepAspectRatio)));
 }
 
 QString MainWindow::nombre_pieza(int n){
@@ -2153,6 +2542,30 @@ QString MainWindow::nombre_pieza(int n){
         return "Cb";
     }else if(n==12){
         return "Pb";
+    }
+}
+
+void MainWindow::cronometro(int minutos){
+    int segundo=0, minuto=0;
+    QString tiempo="";
+    bool detener=false;
+    for(;;){
+        if(segundo==60){
+            minuto++;
+            segundo=0;
+        }
+        if(minuto==minutos){
+            detener=true;
+            ui->btnmover->setEnabled(false);
+            ui->txtmovimiento->setEnabled(false);
+            ui->txtjugador1->setEnabled(true);
+            ui->txtjugador2->setEnabled(true);
+            ui->btniniciar->setEnabled(true);
+            ui->txtcontratiempo->setEnabled(true);
+        }
+        tiempo = QString::number(minuto)+":"+QString::number(segundo);
+        segundo++;
+        //Sleep(1000);
     }
 }
 
@@ -3096,7 +3509,7 @@ bool MainWindow::validar_camino_torre(QString p, int actual_x, int actual_y, int
                 if(pi_actual!=0){
                     if(actual_x+i==destino_x && actual_y+i==destino_y){
                         if(p=="Tn"){
-                            if(pi_act>=1 && pi_act<=6){
+                            if(pi_actual>=1 && pi_actual<=6){
                                 //hay una pieza negra en esa posicion
                                 break;
                             }else{
@@ -3104,7 +3517,7 @@ bool MainWindow::validar_camino_torre(QString p, int actual_x, int actual_y, int
                                 break;
                             }
                         }else{
-                            if(pi_act>=7 && pi_act<=12){
+                            if(pi_actual>=7 && pi_actual<=12){
                                 //hay una pieza blanca en esa posicion
                                 break;
                             }else{
@@ -3136,7 +3549,7 @@ bool MainWindow::validar_camino_torre(QString p, int actual_x, int actual_y, int
                 if(pi_actual!=0){
                     if(actual_x+i==destino_x && actual_y-i==destino_y){
                         if(p=="Tn"){
-                            if(pi_act>=1 && pi_act<=6){
+                            if(pi_actual>=1 && pi_actual<=6){
                                 //hay una pieza negra en esa posicion
                                 break;
                             }else{
@@ -3144,7 +3557,7 @@ bool MainWindow::validar_camino_torre(QString p, int actual_x, int actual_y, int
                                 break;
                             }
                         }else{
-                            if(pi_act>=7 && pi_act<=12){
+                            if(pi_actual>=7 && pi_actual<=12){
                                 //hay una pieza blanca en esa posicion
                                 break;
                             }else{
@@ -3179,7 +3592,7 @@ bool MainWindow::validar_camino_torre(QString p, int actual_x, int actual_y, int
                 if(pi_actual!=0){
                     if(actual_x-i==destino_x && actual_y+i==destino_y){
                         if(p=="Tn"){
-                            if(pi_act>=1 && pi_act<=6){
+                            if(pi_actual>=1 && pi_actual<=6){
                                 //hay una pieza negra en esa posicion
                                 break;
                             }else{
@@ -3187,7 +3600,7 @@ bool MainWindow::validar_camino_torre(QString p, int actual_x, int actual_y, int
                                 break;
                             }
                         }else{
-                            if(pi_act>=7 && pi_act<=12){
+                            if(pi_actual>=7 && pi_actual<=12){
                                 //hay una pieza blanca en esa posicion
                                 break;
                             }else{
@@ -3219,7 +3632,7 @@ bool MainWindow::validar_camino_torre(QString p, int actual_x, int actual_y, int
                 if(pi_actual!=0){
                     if(actual_x-i==destino_x && actual_y-i==destino_y){
                         if(p=="Tn"){
-                            if(pi_act>=1 && pi_act<=6){
+                            if(pi_actual>=1 && pi_actual<=6){
                                 //hay una pieza negra en esa posicion
                                 break;
                             }else{
@@ -3227,7 +3640,7 @@ bool MainWindow::validar_camino_torre(QString p, int actual_x, int actual_y, int
                                 break;
                             }
                         }else{
-                            if(pi_act>=7 && pi_act<=12){
+                            if(pi_actual>=7 && pi_actual<=12){
                                 //hay una pieza blanca en esa posicion
                                 break;
                             }else{
@@ -3252,32 +3665,70 @@ bool MainWindow::validar_camino_torre(QString p, int actual_x, int actual_y, int
 
 void MainWindow::on_btnestado_clicked()
 {
-    if(ui->rbtnlvl0->isCheckable()){
+    if(ui->rbtnlvl0->isChecked()){
         crear_grafico_tablero(0);
     }
-        if(ui->rbtnlvl1->isCheckable()){
+    if(ui->rbtnlvl1->isChecked()){
         crear_grafico_tablero(1);
     }
-            if(ui->rbtnlvl2->isCheckable()){
+    if(ui->rbtnlvl2->isChecked()){
         crear_grafico_tablero(2);
-    }else{
-        QMessageBox::information(this,"Error!","Debes seleccionar un nivel.");
     }
 }
 
 void MainWindow::on_btnlinealizacion_clicked()
 {
-    if(ui->rbtnlvl0lin->isCheckable() && ui->rbtnfilaslin->isCheckable()){
+    if(ui->rbtnlvl0lin->isChecked() && ui->rbtnfilaslin->isChecked()){
 
-    }else if(ui->rbtnlvl0lin->isCheckable() && ui->rbtncolumnaslin->isCheckable()){
+    }
+    if(ui->rbtnlvl0lin->isChecked() && ui->rbtncolumnaslin->isChecked()){
 
-    }else if(ui->rbtnlvl1lin->isCheckable() && ui->rbtnfilaslin->isCheckable()){
+    }
+    if(ui->rbtnlvl1lin->isChecked() && ui->rbtnfilaslin->isChecked()){
 
-    }else if(ui->rbtnlvl1lin->isCheckable() && ui->rbtncolumnaslin->isCheckable()){
+    }
+    if(ui->rbtnlvl1lin->isChecked() && ui->rbtncolumnaslin->isChecked()){
 
-    }if(ui->rbtnlvl2lin->isCheckable() && ui->rbtnfilaslin->isCheckable()){
+    }
+    if(ui->rbtnlvl2lin->isChecked() && ui->rbtnfilaslin->isChecked()){
 
-    }else if(ui->rbtnlvl2lin->isCheckable() && ui->rbtncolumnaslin->isCheckable()){
+    }
+    if(ui->rbtnlvl2lin->isChecked() && ui->rbtncolumnaslin->isChecked()){
 
+    }
+}
+
+void MainWindow::on_btniniciar_clicked()
+{
+    jug1 = ui->txtjugador1->text();
+    jug2 = ui->txtjugador2->text();
+    if(jug1.isEmpty()||jug1.isNull()||jug2.isEmpty()||jug2.isNull()){
+        QMessageBox::information(this,"Error!","Deben llenar los campos con los nombres de usuario.");
+    }else{
+        if(ui->rbtncontratiempo->isChecked()){
+            QString tiempo = ui->txtcontratiempo->text();
+            if(tiempo.isEmpty()||tiempo.isNull()){
+                QMessageBox::information(this,"Error!","Ingresa un tiempo (min).");
+            }else{
+                ui->btnmover->setEnabled(true);
+                ui->txtmovimiento->setEnabled(true);
+                ui->btniniciar->setEnabled(false);
+                ui->txtjugador1->setEnabled(false);
+                ui->txtjugador2->setEnabled(false);
+                ui->txtcontratiempo->setEnabled(false);
+                //comienza el juego
+            }
+        }
+        if(ui->rbtnnormal->isChecked()){
+            ui->btnmover->setEnabled(true);
+            ui->txtmovimiento->setEnabled(true);
+            ui->btniniciar->setEnabled(false);
+            ui->txtjugador1->setEnabled(false);
+            ui->txtjugador2->setEnabled(false);
+            ui->txtcontratiempo->setEnabled(false);
+            ui->lblturnoactual->setText(jug1);
+            ui->listamovimientos->addItem("**INICIO DE PARTIDA**");
+            //comienza el juego
+        }
     }
 }

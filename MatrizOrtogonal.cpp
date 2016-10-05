@@ -596,8 +596,6 @@ int Matriz::ubicacion_torre(char *pieza, int destino_x, int destino_y){
 
         while(actual != NULL){
             if(actual->valor != NULL){
-
-                /*validaciones para alfil negro*/
                 if(strcmp(actual->valor,pieza) == 0){
                     /*encontro la pieza*/
                     int actual_x = actual->fila;
@@ -617,6 +615,9 @@ int Matriz::ubicacion_torre(char *pieza, int destino_x, int destino_y){
                                     break;
                                 }
                             }
+                            if(!correcto){
+                                actual = actual->abajo;
+                            }
                         }else if(actual_y > destino_y){
                             //hacia izquierda
                             int tmp = actual_y - destino_y;
@@ -628,6 +629,9 @@ int Matriz::ubicacion_torre(char *pieza, int destino_x, int destino_y){
                                     correcto=true;
                                     break;
                                 }
+                            }
+                            if(!correcto){
+                                actual = actual->abajo;
                             }
                         }else{
                             actual = actual->abajo;
@@ -646,6 +650,9 @@ int Matriz::ubicacion_torre(char *pieza, int destino_x, int destino_y){
                                     break;
                                 }
                             }
+                            if(!correcto){
+                                actual = actual->abajo;
+                            }
                         }else if(actual_y > destino_y){
                             //hacia izquierda
                             int tmp = actual_y - destino_y;
@@ -657,6 +664,9 @@ int Matriz::ubicacion_torre(char *pieza, int destino_x, int destino_y){
                                     correcto=true;
                                     break;
                                 }
+                            }
+                            if(!correcto){
+                                actual = actual->abajo;
                             }
                         }else{
                             actual = actual->abajo;
@@ -733,6 +743,54 @@ QString Matriz::estado_matriz(){
         eColumna = eColumna->siguiente;
     }//fin primer while
 
+    /*nota: retorna correctas las columnas*/
+    return tablero;
+}
+
+QString Matriz::estado_filas(){
+
+}
+
+QString Matriz::estado_columnas(){
+    Encabezado * eColumna = eColumnas->primero;
+    QString tablero = "";
+    char* dato_nodo = (char*)malloc(2);
+    int contador =0,y=0;
+    while(eColumna != NULL)
+    {
+        Nodo * actual = eColumna->acceso;
+        while(actual != NULL)
+        {
+            if(actual->valor != NULL){
+                strcpy(dato_nodo, actual->valor); //dato_nodo = "Rn"
+                /*char* a qstring*/
+                y = actual->columna;
+                QString texto_nodo = QString::fromStdString(dato_nodo);
+                QString pieza = nombre_correcto(texto_nodo);
+                tablero += "node" + QString::number(contador) + "[label=\"" + pieza + "\"];#" + QString::number(contador) + "#" + QString::number(y);
+                if(eColumna->siguiente != NULL || actual->abajo != NULL)
+                {
+                    tablero += "%";
+                    /*valores=node0[label="Rn"];#0#3%
+                     * Rn->
+                     * */
+                    contador++;
+                }else{
+                    tablero += "%";
+                }
+                actual = actual->abajo;
+
+            }else{
+                break;
+            }
+        }//fin segundo while
+        tablero += "fincol";
+        /*node0label[]#0%....%node10[label...]#10%fincol
+         * cn->pn->cb->fincol
+         * */
+        eColumna = eColumna->siguiente;
+    }//fin primer while
+    //cout<<tablero.toStdString()<<endl;
     /*nota: retorna correctas las columnas*/
     return tablero;
 }
@@ -942,7 +1000,8 @@ cout<<"4caso.1col."<<endl;
                         abj->arriba = arb;
                         //mov. horizontal
                         if(strcmp(actual->valor, eFila->acceso->valor)==0 && eFila->acceso->fila == actual->fila && eColumna->acceso->columna == actual->columna){
-                            eFila->acceso->derecha = NULL;
+                            //eFila->acceso->derecha = NULL;
+                            eFila = NULL;
                         }else{
                             cout<<eFila->acceso->fila<<endl;
                             cout<<eFila->acceso->columna<<endl;

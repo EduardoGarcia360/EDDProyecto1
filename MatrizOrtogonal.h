@@ -51,6 +51,8 @@ struct Matriz
     int ubicacion_caballo(char * pieza, int x, int y);
     int ubicacion_torre(char * pieza, int x, int y);
     QString estado_matriz();
+    QString estado_filas();
+    QString estado_columnas();
     void eliminar(int fila, int columna, char * dato);
 };
 
